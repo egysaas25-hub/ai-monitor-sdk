@@ -1,0 +1,46 @@
+{
+  "name": "fitcoach-ai-monitor",
+  "version": "2.0.0",
+  "description": "AI-powered monitoring service - now using plug-and-play packages",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "watch": "tsc-watch --onSuccess 'node dist/index.js'",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write 'src/**/*.ts'"
+  },
+  "keywords": [
+    "monitoring",
+    "ai",
+    "prometheus",
+    "grafana",
+    "telegram",
+    "jenkins"
+  ],
+  "author": "AKER Team",
+  "license": "MIT",
+  "dependencies": {
+    "@aker/ai-monitor-core": "file:../../packages/ai-monitor-core",
+    "@aker/ai-monitor-notifiers": "file:../../packages/ai-monitor-notifiers",
+    "telegram": "^2.22.2",
+    "axios": "^1.6.5",
+    "winston": "^3.11.0",
+    "dotenv": "^16.3.1",
+    "prom-client": "^15.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2",
+    "tsc-watch": "^6.0.4",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.11"
+  }
+}

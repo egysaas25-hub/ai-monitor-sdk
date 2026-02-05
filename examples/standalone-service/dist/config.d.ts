@@ -1,0 +1,37 @@
+export declare const config: {
+    AI_API_KEY: string | undefined;
+    AI_API_URL: string;
+    AI_MODEL: string;
+    TELEGRAM_BOT_TOKEN: string | undefined;
+    TELEGRAM_CHAT_ID: string | undefined;
+    SLACK_WEBHOOK: string | undefined;
+    EMAIL_ALERTS: boolean;
+    SMTP_HOST: string | undefined;
+    SMTP_PORT: number;
+    SMTP_USER: string | undefined;
+    SMTP_PASS: string | undefined;
+    EMAIL_FROM: string | undefined;
+    EMAIL_TO: string[] | undefined;
+    PROMETHEUS_URL: string;
+    CHECK_INTERVAL: number;
+    AUTO_HEAL_ENABLED: boolean;
+    AUTO_HEAL_MAX_ATTEMPTS: number;
+    AUTO_HEAL_COOLDOWN: number;
+    HIGH_ERROR_RATE_THRESHOLD: number;
+    HIGH_RESPONSE_TIME_THRESHOLD: number;
+    HIGH_MEMORY_USAGE_THRESHOLD: number;
+    HIGH_CPU_USAGE_THRESHOLD: number;
+    DISK_SPACE_LOW_THRESHOLD: number;
+    BRUTE_FORCE_THRESHOLD: number;
+    UNUSUAL_TRAFFIC_THRESHOLD: number;
+    PAYMENT_FAILURE_THRESHOLD: number;
+    USER_DROPOFF_THRESHOLD: number;
+    ENABLE_TELEGRAM: boolean;
+    ENABLE_SLACK: boolean;
+    ENABLE_EMAIL: boolean;
+    LOG_LEVEL: string;
+    LOG_FILE: string;
+    PORT: number;
+    HOST: string;
+};
+//# sourceMappingURL=config.d.ts.map
