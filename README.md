@@ -148,7 +148,8 @@ See [CHANGELOG.md](./CHANGELOG.md) for release history.
 
 ## 🚀 Deployment
 
-See [DEPLOYMENT.md](./docs/DEPLOYMENT.md) for instructions on updating the SDK on your servers.
+- [Deployment Guide](./docs/DEPLOYMENT.md) — How to update existing installations.
+- [Production Setup Guide](./docs/PRODUCTION_SETUP.md) — **Start Here** for new servers (includes Visualization & AI setup).
 
 ## 📄 License
 
