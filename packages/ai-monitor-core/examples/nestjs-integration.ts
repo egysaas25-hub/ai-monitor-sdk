@@ -1,16 +1,16 @@
 /**
  * Example: NestJS Integration
- * 
+ *
  * This example shows how to integrate AI Monitor into a NestJS application
  * using a custom module and interceptor for automatic monitoring.
  */
 
-import { Module, Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
 import { AIMonitor, WinstonLoggerAdapter } from '@aker/ai-monitor-core';
 import { TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { type CallHandler, type ExecutionContext, Injectable, Module, type NestInterceptor } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { type Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import winston from 'winston';
 
 // AI Monitor Provider
@@ -20,7 +20,7 @@ const aiMonitorProvider = {
     const logger = winston.createLogger({
       level: 'info',
       format: winston.format.json(),
-      transports: [new winston.transports.Console()]
+      transports: [new winston.transports.Console()],
     });
 
     const monitor = new AIMonitor({
@@ -29,14 +29,14 @@ const aiMonitorProvider = {
       notifiers: [
         new TelegramNotifier({
           token: process.env.TELEGRAM_BOT_TOKEN!,
-          chatId: process.env.TELEGRAM_CHAT_ID!
-        })
-      ]
+          chatId: process.env.TELEGRAM_CHAT_ID!,
+        }),
+      ],
     });
 
     await monitor.start();
     return monitor;
-  }
+  },
 };
 
 // Monitoring Interceptor
@@ -51,14 +51,14 @@ export class MonitoringInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const duration = Date.now() - start;
-        
+
         // Alert on slow requests
         if (duration > 5000) {
           this.monitor.alert({
             severity: 'WARNING',
             title: 'Slow Request',
             message: `${request.method} ${request.url} took ${duration}ms`,
-            metrics: { duration, method: request.method, url: request.url }
+            metrics: { duration, method: request.method, url: request.url },
           });
         }
       }),
@@ -72,12 +72,12 @@ export class MonitoringInterceptor implements NestInterceptor {
             stack: error.stack,
             method: request.method,
             url: request.url,
-            body: request.body
-          }
+            body: request.body,
+          },
         });
-        
+
         return throwError(() => error);
-      })
+      }),
     );
   }
 }
@@ -89,10 +89,10 @@ export class MonitoringInterceptor implements NestInterceptor {
     {
       provide: APP_INTERCEPTOR,
       useClass: MonitoringInterceptor,
-      inject: ['AI_MONITOR']
-    }
+      inject: ['AI_MONITOR'],
+    },
   ],
-  exports: ['AI_MONITOR']
+  exports: ['AI_MONITOR'],
 })
 export class MonitoringModule {}
 

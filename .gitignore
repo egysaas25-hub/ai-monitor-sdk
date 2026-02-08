@@ -1,2 +1,8 @@
-node_modules
-*.yml
+# Environment Variables
+node_modules/
+dist/
+.env
+*.log
+coverage/
+*.tsbuildinfo
+.turbo/

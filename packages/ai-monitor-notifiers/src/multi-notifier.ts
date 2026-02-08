@@ -1,10 +1,4 @@
-import type {
-  INotifier,
-  IAlert,
-  IPipelineStatus,
-  IDeployment,
-  IDailyReport
-} from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
 
 /**
  * Multi-notifier configuration
@@ -65,9 +59,7 @@ export class MultiNotifier implements INotifier {
       // Check if all failed
       const allFailed = results.every((result) => result.status === 'rejected');
       if (allFailed) {
-        const errors = results
-          .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
-          .map((r) => r.reason);
+        const errors = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
         throw new Error(`All notifiers failed: ${errors.join(', ')}`);
       }
 

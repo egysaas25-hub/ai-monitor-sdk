@@ -1,10 +1,4 @@
-import type {
-  INotifier,
-  IAlert,
-  IPipelineStatus,
-  IDeployment,
-  IDailyReport
-} from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
 
 /**
  * Telegram notifier configuration
@@ -53,7 +47,7 @@ export class TelegramNotifier implements INotifier {
     try {
       await this.bot.sendMessage(this.chatId, message, {
         parse_mode: this.parseMode,
-        disable_web_page_preview: this.disableWebPagePreview
+        disable_web_page_preview: this.disableWebPagePreview,
       });
     } catch (error) {
       console.error('Failed to send Telegram notification:', error);
@@ -92,9 +86,7 @@ ${alert.message}
         ? `\n*Changes:*\n${status.changes.map((c) => `• ${c}`).join('\n')}`
         : '';
 
-    const durationStr = status.duration
-      ? `\n*Duration:* ${this.formatDuration(status.duration)}`
-      : '';
+    const durationStr = status.duration ? `\n*Duration:* ${this.formatDuration(status.duration)}` : '';
 
     const urlStr = status.url ? `\n[View Build](${status.url})` : '';
 
@@ -117,9 +109,7 @@ ${emoji} *${status.jobName}* - Build #${status.buildNumber}
         ? `\n*Changes:*\n${deployment.changes.map((c) => `• ${c}`).join('\n')}`
         : '';
 
-    const durationStr = deployment.duration
-      ? `\n*Duration:* ${this.formatDuration(deployment.duration)}`
-      : '';
+    const durationStr = deployment.duration ? `\n*Duration:* ${this.formatDuration(deployment.duration)}` : '';
 
     const urlStr = deployment.url ? `\n[View Environment](${deployment.url})` : '';
 

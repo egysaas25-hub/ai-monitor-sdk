@@ -1,10 +1,4 @@
-import type {
-  INotifier,
-  IAlert,
-  IPipelineStatus,
-  IDeployment,
-  IDailyReport
-} from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
 
 /**
  * Email notifier configuration
@@ -40,7 +34,7 @@ export class EmailNotifier implements INotifier {
         host: config.host,
         port: config.port,
         secure: config.secure ?? false,
-        auth: config.auth
+        auth: config.auth,
       });
       this.enabled = true;
     } catch (error) {
@@ -62,7 +56,7 @@ export class EmailNotifier implements INotifier {
         to: this.config.to,
         subject: 'AI Monitor Notification',
         text: message,
-        html: `<pre>${message}</pre>`
+        html: `<pre>${message}</pre>`,
       });
     } catch (error) {
       console.error('Failed to send Email notification:', error);
@@ -84,7 +78,7 @@ export class EmailNotifier implements INotifier {
       to: this.config.to,
       subject: subject,
       text: text,
-      html: html
+      html: html,
     });
   }
 
@@ -100,7 +94,7 @@ export class EmailNotifier implements INotifier {
       to: this.config.to,
       subject: subject,
       text: text,
-      html: html
+      html: html,
     });
   }
 
@@ -116,7 +110,7 @@ export class EmailNotifier implements INotifier {
       to: this.config.to,
       subject: subject,
       text: text,
-      html: html
+      html: html,
     });
   }
 
@@ -132,15 +126,13 @@ export class EmailNotifier implements INotifier {
       to: this.config.to,
       subject: subject,
       text: text,
-      html: html
+      html: html,
     });
   }
 
   private generateAlertHtml(alert: IAlert, timestamp: Date): string {
     const severityColor = this.getSeverityColor(alert.severity);
-    const metricsHtml = alert.metrics
-      ? `<h3>Metrics</h3><pre>${JSON.stringify(alert.metrics, null, 2)}</pre>`
-      : '';
+    const metricsHtml = alert.metrics ? `<h3>Metrics</h3><pre>${JSON.stringify(alert.metrics, null, 2)}</pre>` : '';
 
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px;">
@@ -160,9 +152,7 @@ export class EmailNotifier implements INotifier {
   }
 
   private generateAlertText(alert: IAlert, timestamp: Date): string {
-    const metricsStr = alert.metrics
-      ? `\n\nMetrics:\n${JSON.stringify(alert.metrics, null, 2)}`
-      : '';
+    const metricsStr = alert.metrics ? `\n\nMetrics:\n${JSON.stringify(alert.metrics, null, 2)}` : '';
 
     return `
 ${alert.severity}: ${alert.title}

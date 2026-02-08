@@ -1,10 +1,4 @@
-import type {
-  IAIService,
-  IAIConfig,
-  IAIAnalysis,
-  ILogEntry,
-  IMetricData
-} from './ai-types';
+import type { IAIAnalysis, IAIConfig, IAIService, ILogEntry, IMetricData } from './ai-types';
 
 /**
  * AI-powered monitoring service
@@ -26,8 +20,8 @@ export class AIService implements IAIService {
         rootCauseAnalysis: config.features?.rootCauseAnalysis ?? true,
         autoHealing: config.features?.autoHealing ?? true,
         patternRecognition: config.features?.patternRecognition ?? true,
-        ...config.features
-      }
+        ...config.features,
+      },
     };
 
     if (!this.config.apiKey) {
@@ -113,21 +107,21 @@ export class AIService implements IAIService {
           messages: [
             {
               role: 'system',
-              content: this.getSystemPrompt()
+              content: this.getSystemPrompt(),
             },
             {
               role: 'user',
-              content: prompt
-            }
+              content: prompt,
+            },
           ],
-          response_format: { type: 'json_object' }
+          response_format: { type: 'json_object' },
         },
         {
           headers: {
-            'Authorization': `Bearer ${this.config.apiKey}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${this.config.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        },
       );
 
       const result = JSON.parse(response.data.choices[0].message.content);
@@ -160,9 +154,10 @@ Provide:
   }
 
   private buildLogsAnalysisPrompt(logs: ILogEntry[]): string {
-    const logSummary = logs.slice(0, 20).map(l => 
-      `[${l.timestamp.toISOString()}] ${l.level}: ${l.message}`
-    ).join('\n');
+    const logSummary = logs
+      .slice(0, 20)
+      .map((l) => `[${l.timestamp.toISOString()}] ${l.level}: ${l.message}`)
+      .join('\n');
 
     return `Analyze these log entries for patterns, anomalies, and issues:
 
@@ -179,9 +174,9 @@ Identify:
   }
 
   private buildMetricsAnalysisPrompt(metrics: IMetricData[]): string {
-    const metricSummary = metrics.map(m =>
-      `${m.name}: ${m.value}${m.unit || ''} at ${m.timestamp.toISOString()}`
-    ).join('\n');
+    const metricSummary = metrics
+      .map((m) => `${m.name}: ${m.value}${m.unit || ''} at ${m.timestamp.toISOString()}`)
+      .join('\n');
 
     return `Analyze these metrics for anomalies:
 
@@ -276,7 +271,7 @@ Be concise, actionable, and practical.`;
       isAnomaly: result.isAnomaly || false,
       confidence: result.confidence || 0.5,
       relatedPatterns: result.relatedPatterns || [],
-      autoHealCommand: result.autoHealCommand
+      autoHealCommand: result.autoHealCommand,
     };
   }
 
@@ -292,7 +287,7 @@ Be concise, actionable, and practical.`;
       isAnomaly: false,
       confidence: 0,
       relatedPatterns: [],
-      autoHealCommand: undefined
+      autoHealCommand: undefined,
     };
   }
 }

@@ -44,7 +44,7 @@ export class PerformanceMonitor {
       operation: operationName,
       duration,
       timestamp: new Date(),
-      context
+      context,
     };
 
     // Alert if duration exceeds threshold
@@ -57,8 +57,8 @@ export class PerformanceMonitor {
           ...metric,
           threshold: this.config.performanceThreshold,
           appName: this.config.appName,
-          environment: this.config.environment
-        }
+          environment: this.config.environment,
+        },
       });
     }
 
@@ -68,11 +68,7 @@ export class PerformanceMonitor {
   /**
    * Measure a function execution
    */
-  async measure<T>(
-    operationName: string,
-    fn: () => Promise<T> | T,
-    context?: Record<string, any>
-  ): Promise<T> {
+  async measure<T>(operationName: string, fn: () => Promise<T> | T, context?: Record<string, any>): Promise<T> {
     this.startMeasure(operationName);
 
     try {

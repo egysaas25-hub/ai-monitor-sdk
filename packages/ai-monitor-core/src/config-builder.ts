@@ -1,4 +1,4 @@
-import type { IMonitorConfig, IConfigBuilderOptions } from './types';
+import type { IConfigBuilderOptions, IMonitorConfig } from './types';
 
 /**
  * Fluent configuration builder for AIMonitor
@@ -101,6 +101,25 @@ export class ConfigBuilder {
     if (delay !== undefined) {
       this.config.testNotificationDelay = delay;
     }
+    return this;
+  }
+
+  /**
+   * Configure alert deduplication
+   */
+  deduplication(enabled: boolean = true, cooldownMs?: number): this {
+    (this.config as any).deduplication = { enabled, cooldownMs };
+    return this;
+  }
+
+  /**
+   * Add a plugin
+   */
+  addPlugin(plugin: any): this {
+    if (!(this.config as any).plugins) {
+      (this.config as any).plugins = [];
+    }
+    (this.config as any).plugins.push(plugin);
     return this;
   }
 

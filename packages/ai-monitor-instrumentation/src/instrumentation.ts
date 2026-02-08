@@ -1,12 +1,12 @@
 import type { AIMonitor } from '@aker/ai-monitor-core';
-import type { IInstrumentationConfig } from './types';
-import { SystemMetricsCollector } from './system-metrics';
 import { ErrorInterceptor } from './error-interceptor';
-import { PerformanceMonitor } from './performance-monitor';
 import { HttpInterceptor } from './http-interceptor';
 import { MetricAggregator } from './metric-aggregator';
+import { PerformanceMonitor } from './performance-monitor';
 import { PrometheusExporter } from './prometheus-exporter';
 import { ExternalResourceMonitor } from './resource-monitor';
+import { SystemMetricsCollector } from './system-metrics';
+import type { IInstrumentationConfig } from './types';
 
 export class Instrumentation {
   private config: Required<IInstrumentationConfig>;
@@ -32,7 +32,8 @@ export class Instrumentation {
       systemMetricsInterval: config.systemMetricsInterval ?? 60000,
       appName: config.appName ?? 'unknown',
       environment: config.environment ?? process.env.NODE_ENV ?? 'development',
-      errorFilter: config.errorFilter
+      errorFilter: config.errorFilter,
+      performanceThreshold: config.performanceThreshold ?? 500,
     } as Required<IInstrumentationConfig>;
 
     // Initialize all collectors
@@ -93,17 +94,23 @@ export class Instrumentation {
       // 2. Wrap next to capture timing for Aggregator
       const start = Date.now();
       const originalEnd = res.end;
-      
+
       res.end = (...args: any[]) => {
         const duration = Date.now() - start;
         const isError = res.statusCode >= 500;
-        
+
         // Feed Aggregator (P95, Error Rate)
         this.metricAggregator.recordRequest(duration, isError);
-        
+
         // Feed Prometheus
-        this.prometheusExporter.observe('http_request_duration_seconds', duration / 1000, { method: req.method, path: req.path });
-        this.prometheusExporter.observe('http_requests_total', 1, { method: req.method, status: res.statusCode.toString() });
+        this.prometheusExporter.observe('http_request_duration_seconds', duration / 1000, {
+          method: req.method,
+          path: req.path,
+        });
+        this.prometheusExporter.observe('http_requests_total', 1, {
+          method: req.method,
+          status: res.statusCode.toString(),
+        });
 
         return originalEnd.apply(res, args);
       };
@@ -123,11 +130,7 @@ export class Instrumentation {
   /**
    * Measure a function's performance
    */
-  async measure<T>(
-    operationName: string,
-    fn: () => Promise<T> | T,
-    context?: Record<string, any>
-  ): Promise<T> {
+  async measure<T>(operationName: string, fn: () => Promise<T> | T, context?: Record<string, any>): Promise<T> {
     return this.performanceMonitor.measure(operationName, fn, context);
   }
 

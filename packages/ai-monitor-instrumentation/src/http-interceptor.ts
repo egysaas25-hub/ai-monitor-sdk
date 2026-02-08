@@ -1,5 +1,5 @@
-import type { IInstrumentationConfig, IHttpMetric } from './types';
 import type { IncomingMessage, ServerResponse } from 'http';
+import type { IHttpMetric, IInstrumentationConfig } from './types';
 
 /**
  * HTTP interceptor
@@ -26,7 +26,7 @@ export class HttpInterceptor {
       const self = this;
 
       // Override res.end to capture metrics
-      res.end = function (...args: any[]) {
+      res.end = (...args: any[]) => {
         const duration = Date.now() - startTime;
 
         const metric: IHttpMetric = {
@@ -34,7 +34,7 @@ export class HttpInterceptor {
           url: req.url || req.originalUrl,
           statusCode: res.statusCode,
           duration,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         // Send metric asynchronously (don't block response)
@@ -59,16 +59,15 @@ export class HttpInterceptor {
     }
 
     const originalEmit = server.emit;
-    const self = this;
 
-    server.emit = function (event: string, ...args: any[]) {
+    server.emit = (event: string, ...args: any[]) => {
       if (event === 'request') {
         const req = args[0] as IncomingMessage;
         const res = args[1] as ServerResponse;
         const startTime = Date.now();
 
         const originalEnd = res.end;
-        res.end = function (...endArgs: any[]) {
+        res.end = (...endArgs: any[]) => {
           const duration = Date.now() - startTime;
 
           const metric: IHttpMetric = {
@@ -76,11 +75,11 @@ export class HttpInterceptor {
             url: req.url || '/',
             statusCode: res.statusCode,
             duration,
-            timestamp: new Date()
+            timestamp: new Date(),
           };
 
           setImmediate(async () => {
-            await self.handleHttpMetric(metric);
+            await this.handleHttpMetric(metric);
           });
 
           return originalEnd.apply(res, endArgs);
@@ -106,8 +105,8 @@ export class HttpInterceptor {
             ...metric,
             threshold: this.config.performanceThreshold,
             appName: this.config.appName,
-            environment: this.config.environment
-          }
+            environment: this.config.environment,
+          },
         });
       }
 
@@ -120,8 +119,8 @@ export class HttpInterceptor {
           metrics: {
             ...metric,
             appName: this.config.appName,
-            environment: this.config.environment
-          }
+            environment: this.config.environment,
+          },
         });
       }
 
@@ -139,7 +138,10 @@ export class HttpInterceptor {
   /**
    * Track outgoing HTTP requests (fetch, axios, etc.)
    */
-  trackOutgoingRequest(url: string, options?: { method?: string }): {
+  trackOutgoingRequest(
+    url: string,
+    options?: { method?: string },
+  ): {
     end: (statusCode?: number, error?: Error) => Promise<void>;
   } {
     const startTime = Date.now();
@@ -155,11 +157,11 @@ export class HttpInterceptor {
           statusCode,
           duration,
           timestamp: new Date(),
-          error: error?.message
+          error: error?.message,
         };
 
         await this.handleHttpMetric(metric);
-      }
+      },
     };
   }
 }

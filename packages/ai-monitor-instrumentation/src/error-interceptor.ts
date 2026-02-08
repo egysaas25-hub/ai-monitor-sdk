@@ -26,7 +26,7 @@ export class ErrorInterceptor {
     process.removeAllListeners('uncaughtException');
     process.on('uncaughtException', async (error: Error) => {
       await this.handleError(error, 'uncaughtException');
-      
+
       // Call original handlers
       this.originalUncaughtException.forEach((handler: any) => {
         try {
@@ -95,8 +95,8 @@ export class ErrorInterceptor {
           errorName: error.name,
           stack: error.stack,
           appName: this.config.appName,
-          environment: this.config.environment
-        }
+          environment: this.config.environment,
+        },
       });
     } catch (alertError) {
       console.error('Failed to send error alert:', alertError);
@@ -124,8 +124,8 @@ export class ErrorInterceptor {
         stack: error.stack,
         context,
         appName: this.config.appName,
-        environment: this.config.environment
-      }
+        environment: this.config.environment,
+      },
     });
   }
 }

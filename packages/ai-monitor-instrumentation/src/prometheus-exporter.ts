@@ -75,9 +75,9 @@ export class PrometheusExporter {
       for (const [key, value] of metric.values) {
         if (metric.type === 'histogram') {
           // Special handling for histogram simulation (sum/count)
-           output += `${name}${key.replace('_sum', '')}_sum ${value}\n`;
+          output += `${name}${key.replace('_sum', '')}_sum ${value}\n`;
         } else {
-           output += `${name}${key} ${value}\n`;
+          output += `${name}${key} ${value}\n`;
         }
       }
     }

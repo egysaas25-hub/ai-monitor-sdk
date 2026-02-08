@@ -1,6 +1,6 @@
 /**
  * Example: AI-Powered Monitoring in Any Project
- * 
+ *
  * Shows how to use the AI Monitor to analyze logs, detect anomalies,
  * and get intelligent insights in any Node.js application
  */
@@ -18,16 +18,16 @@ const monitor = new AIMonitor({
       anomalyDetection: true,
       rootCauseAnalysis: true,
       autoHealing: true,
-      patternRecognition: true
-    }
+      patternRecognition: true,
+    },
   },
   enableAIEnhancedAlerts: true, // AI will analyze all alerts
   notifiers: [
     new TelegramNotifier({
       token: process.env.TELEGRAM_BOT_TOKEN!,
-      chatId: process.env.TELEGRAM_CHAT_ID!
-    })
-  ]
+      chatId: process.env.TELEGRAM_CHAT_ID!,
+    }),
+  ],
 });
 
 await monitor.start();
@@ -41,8 +41,8 @@ await monitor.alert({
     activeConnections: 50,
     maxConnections: 50,
     queuedRequests: 120,
-    responseTime: 30000
-  }
+    responseTime: 30000,
+  },
 });
 
 // AI will:
@@ -55,7 +55,7 @@ await monitor.alert({
 // Example 2: Use AI service directly for custom analysis
 const aiService = new AIService({
   apiKey: process.env.OPENAI_API_KEY!,
-  enabled: true
+  enabled: true,
 });
 
 // Analyze logs for patterns
@@ -63,7 +63,7 @@ const logs = [
   { timestamp: new Date(), level: 'ERROR', message: 'Connection timeout' },
   { timestamp: new Date(), level: 'ERROR', message: 'Connection timeout' },
   { message: 'Connection timeout' },
-  { timestamp: new Date(), level: 'WARN', message: 'Slow query: 5.2s' }
+  { timestamp: new Date(), level: 'WARN', message: 'Slow query: 5.2s' },
 ];
 
 const analysis = await aiService.analyzeLogs(logs);
@@ -86,17 +86,18 @@ console.log('AI Analysis:', analysis);
 const metrics = [
   { name: 'cpu_usage', value: 95, timestamp: new Date() },
   { name: 'memory_usage', value: 88, timestamp: new Date() },
-  { name: 'response_time', value: 4500, timestamp: new Date() }
+  { name: 'response_time', value: 4500, timestamp: new Date() },
 ];
 
 const metricsAnalysis = await aiService.analyzeMetrics(metrics);
 console.log('Metrics Analysis:', metricsAnalysis);
 
 // Example 4: Get auto-healing suggestion
-const healingSuggestion = await aiService.suggestAutoHeal(
-  'High CPU usage detected',
-  { currentCPU: 95, threshold: 80, duration: '10m' }
-);
+const healingSuggestion = await aiService.suggestAutoHeal('High CPU usage detected', {
+  currentCPU: 95,
+  threshold: 80,
+  duration: '10m',
+});
 
 console.log('Auto-Heal:', healingSuggestion.autoHealCommand);
 // "kubectl scale deployment myapp --replicas=5"

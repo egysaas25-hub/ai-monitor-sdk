@@ -1,0 +1,179 @@
+﻿node.exe : 
+ts-jest[config] 
+(WARN) [94mmessage[
+0m[90m TS151001: 
+[0mIf you have 
+issues related to 
+imports, you should 
+consider setting 
+`esModuleInterop` to 
+`true` in your 
+TypeScript 
+configuration file 
+(usually 
+`tsconfig.json`). 
+See https://blogs.msd
+n.microsoft.com/types
+cript/2018/01/31/anno
+uncing-typescript-2-7
+/#easier-ecmascript-m
+odule-interoperabilit
+y for more 
+information.
+At C:\Program Files\n
+odejs\npx.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ts-jest   
+ [config]...re in    
+formation.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+  console.log
+    test log
+
+      at console.<computed> [as log] (packages/ai-monitor-instrumentation/src/log-aggregator.ts:64:37)
+
+  console.warn
+    test warn
+
+    [0m [90m 62 |[39m
+     [90m 63 |[39m         [90m// Call original[39m
+    [31m[1m>[22m[39m[90m 64 |[39m         [36mthis[39m[33m.[39moriginalConsole[method]([33m...[39margs)[33m;[39m
+     [90m    |[39m                                     [31m[1m^[22m[39m
+     [90m 65 |[39m       }[33m;[39m
+     [90m 66 |[39m     }
+     [90m 67 |[39m   }[0m
+
+      at console.<computed> [as warn] (packages/ai-monitor-instrumentation/src/log-aggregator.ts:64:37)
+      at Object.<anonymous> (packages/ai-monitor-instrumentation/src/__tests__/log-aggregator.spec.ts:53:15)
+
+  console.error
+    test error
+
+    [0m [90m 62 |[39m
+     [90m 63 |[39m         [90m// Call original[39m
+    [31m[1m>[22m[39m[90m 64 |[39m         [36mthis[39m[33m.[39moriginalConsole[method]([33m...[39margs)[33m;[39m
+     [90m    |[39m                                     [31m[1m^[22m[39m
+     [90m 65 |[39m       }[33m;[39m
+     [90m 66 |[39m     }
+     [90m 67 |[39m   }[0m
+
+      at console.<computed> [as error] (packages/ai-monitor-instrumentation/src/log-aggregator.ts:64:37)
+      at Object.<anonymous> (packages/ai-monitor-instrumentation/src/__tests__/log-aggregator.spec.ts:54:15)
+
+FAIL packages/ai-moni
+tor-instrumentation/s
+rc/__tests__/log-aggr
+egator.spec.ts
+  LogAggregator
+    capture()
+      ΓêÜ adds 
+entries to the 
+buffer (4 ms)
+      ΓêÜ stores 
+level, message, and 
+timestamp (2 ms)
+    ring buffer
+      ΓêÜ drops 
+oldest entries when 
+max is exceeded (1 
+ms)
+    
+interceptConsole()
+      ├ù captures con
+sole.log/warn/error/d
+ebug (31 ms)
+      ΓêÜ is 
+idempotent (double 
+intercept)
+    query()
+      ΓêÜ returns 
+all entries by 
+default (1 ms)
+      ΓêÜ filters by 
+level
+      ΓêÜ filters by 
+search pattern
+      ΓêÜ limits 
+results
+      ΓêÜ filters by 
+time range (1 ms)
+    getRecentErrors()
+      ΓêÜ returns 
+only error-level 
+entries
+    clear()
+      ΓêÜ empties 
+the buffer
+
+  ΓùÅ LogAggregator 
+ΓÇ║ 
+interceptConsole() 
+ΓÇ║ captures console.
+log/warn/error/debug
+
+    expect(received).
+toBe(expected) // 
+Object.is equality
+
+    Expected: 
+[Function log]
+    Received: 
+[Function bound log]
+
+    [0m [90m 64 
+|[39m
+     [90m 65 |[39m 
+      [90m// Ensure 
+original console is 
+restored[39m
+    [31m[1m>[22m[
+39m[90m 66 |[39m   
+    expect(console[3
+3m.[39mlog)[33m.[3
+9mtoBe(originalLog)[
+33m;[39m
+     [90m    |[39m 
+                     
+     
+[31m[1m^[22m[39m
+     [90m 67 |[39m 
+    })[33m;[39m
+     [90m 68 |[39m
+     [90m 69 |[39m 
+    it([32m'is 
+idempotent (double in
+tercept)'[39m[33m,
+[39m () [33m=>[39m 
+{[0m
+
+      at 
+Object.<anonymous> (p
+ackages/ai-monitor-in
+strumentation/src/__t
+ests__/log-aggregator
+.spec.ts:66:27)
+
+Test Suites: 1 
+failed, 1 total
+Tests:       1 
+failed, 11 passed, 
+12 total
+Snapshots:   0 total
+Time:        2.272 s
+Ran all test suites 
+matching /packages\\a
+i-monitor-instrumenta
+tion\\src\\__tests__\
+\log-aggregator.spec.
+ts/i.

@@ -1,6 +1,6 @@
 /**
  * Golden Signals Monitoring Example
- * 
+ *
  * This example demonstrates how to implement the specific "Golden Signals" monitoring
  * stack requested: Prometheus metrics, P95 latency, Error Rates, and Resource Saturation.
  */
@@ -12,15 +12,17 @@ import express from 'express';
 
 // 1. Setup Monitor (Alerting)
 const monitor = new AIMonitor({
-  notifiers: [new TelegramNotifier({
-    token: process.env.TELEGRAM_BOT_TOKEN!,
-    chatId: process.env.TELEGRAM_CHAT_ID!
-  })]
+  notifiers: [
+    new TelegramNotifier({
+      token: process.env.TELEGRAM_BOT_TOKEN!,
+      chatId: process.env.TELEGRAM_CHAT_ID!,
+    }),
+  ],
 });
 await monitor.start();
 
 // 2. Setup Instrumentation with Specific Thresholds
-// Matching the table: 
+// Matching the table:
 // | Metric | Good | Warning | Critical |
 // | Response Time | <200ms | 200-500ms | >500ms |
 // | Error Rate | <0.1% | 0.1-1% | >1% |
@@ -32,18 +34,18 @@ await monitor.start();
 const instrumentation = new Instrumentation({
   monitor,
   appName: 'golden-signals-app',
-  
+
   // Enable Prometheus /metrics
   enablePrometheus: true,
-  
+
   thresholds: {
     responseTime: { warning: 200, critical: 500 },
     errorRate: { warning: 0.1, critical: 1.0 },
     cpu: { warning: 0.5, critical: 0.7 },
     memory: { warning: 0.6, critical: 0.8 },
-    dbConnections: { warning: 50, critical: 80 },  // assuming 50%
-    queueLength: { warning: 100, critical: 1000 }
-  }
+    dbConnections: { warning: 50, critical: 80 }, // assuming 50%
+    queueLength: { warning: 100, critical: 1000 },
+  },
 });
 
 // 3. Register Resource Monitors (Plug your own logic)
@@ -69,7 +71,7 @@ app.use(instrumentation.httpMiddleware());
 
 app.get('/api/fast', (req, res) => res.json({ status: 'ok' })); // < 200ms
 app.get('/api/slow', async (req, res) => {
-  await new Promise(r => setTimeout(r, 600)); // > 500ms -> CRITICAL ALERT
+  await new Promise((r) => setTimeout(r, 600)); // > 500ms -> CRITICAL ALERT
   res.json({ status: 'slow' });
 });
 

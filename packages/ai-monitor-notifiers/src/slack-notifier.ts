@@ -1,10 +1,4 @@
-import type {
-  INotifier,
-  IAlert,
-  IPipelineStatus,
-  IDeployment,
-  IDailyReport
-} from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
 
 /**
  * Slack notifier configuration
@@ -44,7 +38,7 @@ export class SlackNotifier implements INotifier {
 
     try {
       await this.axios.post(this.webhookUrl, {
-        text: message
+        text: message,
       });
     } catch (error) {
       console.error('Failed to send Slack notification:', error);
@@ -63,20 +57,20 @@ export class SlackNotifier implements INotifier {
       {
         title: 'Severity',
         value: alert.severity,
-        short: true
+        short: true,
       },
       {
         title: 'Time',
         value: timestamp.toISOString(),
-        short: true
-      }
+        short: true,
+      },
     ];
 
     if (alert.metrics) {
       fields.push({
         title: 'Metrics',
         value: `\`\`\`${JSON.stringify(alert.metrics, null, 2).substring(0, 500)}\`\`\``,
-        short: false
+        short: false,
       });
     }
 
@@ -88,9 +82,9 @@ export class SlackNotifier implements INotifier {
           text: alert.message,
           fields: fields,
           footer: 'AI Monitor',
-          ts: Math.floor(timestamp.getTime() / 1000)
-        }
-      ]
+          ts: Math.floor(timestamp.getTime() / 1000),
+        },
+      ],
     });
   }
 
@@ -104,15 +98,15 @@ export class SlackNotifier implements INotifier {
       {
         title: 'Status',
         value: status.status,
-        short: true
-      }
+        short: true,
+      },
     ];
 
     if (status.duration) {
       fields.push({
         title: 'Duration',
         value: this.formatDuration(status.duration),
-        short: true
+        short: true,
       });
     }
 
@@ -120,7 +114,7 @@ export class SlackNotifier implements INotifier {
       fields.push({
         title: 'Changes',
         value: status.changes.map((c) => `• ${c}`).join('\n'),
-        short: false
+        short: false,
       });
     }
 
@@ -128,7 +122,7 @@ export class SlackNotifier implements INotifier {
       color: color,
       title: `${emoji} ${status.jobName} - Build #${status.buildNumber}`,
       fields: fields,
-      footer: 'AI Monitor'
+      footer: 'AI Monitor',
     };
 
     if (status.url) {
@@ -136,7 +130,7 @@ export class SlackNotifier implements INotifier {
     }
 
     await this.axios.post(this.webhookUrl, {
-      attachments: [attachment]
+      attachments: [attachment],
     });
   }
 
@@ -150,25 +144,25 @@ export class SlackNotifier implements INotifier {
       {
         title: 'Environment',
         value: deployment.environment,
-        short: true
+        short: true,
       },
       {
         title: 'Version',
         value: deployment.version,
-        short: true
+        short: true,
       },
       {
         title: 'Status',
         value: deployment.status,
-        short: true
-      }
+        short: true,
+      },
     ];
 
     if (deployment.duration) {
       fields.push({
         title: 'Duration',
         value: this.formatDuration(deployment.duration),
-        short: true
+        short: true,
       });
     }
 
@@ -176,7 +170,7 @@ export class SlackNotifier implements INotifier {
       fields.push({
         title: 'Changes',
         value: deployment.changes.map((c) => `• ${c}`).join('\n'),
-        short: false
+        short: false,
       });
     }
 
@@ -184,7 +178,7 @@ export class SlackNotifier implements INotifier {
       color: color,
       title: `${emoji} Deployment`,
       fields: fields,
-      footer: 'AI Monitor'
+      footer: 'AI Monitor',
     };
 
     if (deployment.url) {
@@ -192,7 +186,7 @@ export class SlackNotifier implements INotifier {
     }
 
     await this.axios.post(this.webhookUrl, {
-      attachments: [attachment]
+      attachments: [attachment],
     });
   }
 
@@ -206,30 +200,30 @@ export class SlackNotifier implements INotifier {
       {
         title: 'Total Alerts',
         value: report.totalAlerts.toString(),
-        short: true
+        short: true,
       },
       {
         title: 'Critical',
         value: report.criticalAlerts.toString(),
-        short: true
+        short: true,
       },
       {
         title: 'Auto-Fixed',
         value: report.autoFixes.toString(),
-        short: true
+        short: true,
       },
       {
         title: 'Uptime',
         value: report.uptime,
-        short: true
-      }
+        short: true,
+      },
     ];
 
     if (report.topIssues.length > 0) {
       fields.push({
         title: 'Top Issues',
         value: report.topIssues.map((issue, i) => `${i + 1}. ${issue}`).join('\n'),
-        short: false
+        short: false,
       });
     }
 
@@ -240,9 +234,9 @@ export class SlackNotifier implements INotifier {
           title: `📊 Daily Health Report - ${report.date.toLocaleDateString()}`,
           text: `*Overall Status:* ${overallStatus}`,
           fields: fields,
-          footer: 'AI Monitor'
-        }
-      ]
+          footer: 'AI Monitor',
+        },
+      ],
     });
   }
 

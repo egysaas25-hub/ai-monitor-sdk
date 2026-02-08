@@ -1,5 +1,5 @@
-import type { IInstrumentationConfig, IThresholds } from './types';
 import type { IncomingMessage, ServerResponse } from 'http';
+import type { IInstrumentationConfig, IThresholds } from './types';
 
 /**
  * Aggregates metrics for P95 and Error Rate calculations
@@ -19,7 +19,7 @@ export class MetricAggregator {
     cpu: { warning: 0.5, critical: 0.7 },
     memory: { warning: 0.6, critical: 0.8 },
     dbConnections: { warning: 0.5, critical: 0.8 },
-    queueLength: { warning: 100, critical: 1000 }
+    queueLength: { warning: 100, critical: 1000 },
   };
 
   private thresholds: Required<IThresholds>;
@@ -28,7 +28,7 @@ export class MetricAggregator {
     this.config = config;
     this.thresholds = {
       ...this.DEFAULT_THRESHOLDS,
-      ...config.thresholds
+      ...config.thresholds,
     } as Required<IThresholds>;
   }
 
@@ -70,14 +70,14 @@ export class MetricAggregator {
         severity: 'CRITICAL',
         title: 'Critical Latency (P95)',
         message: `P95 Response time is ${p95}ms (Critical > ${this.thresholds.responseTime.critical}ms)`,
-        metrics: { p95, threshold: this.thresholds.responseTime.critical, action: 'Optimize queries' }
+        metrics: { p95, threshold: this.thresholds.responseTime.critical, action: 'Optimize queries' },
       });
     } else if (p95 > this.thresholds.responseTime.warning) {
       await this.config.monitor.alert({
         severity: 'WARNING',
         title: 'High Latency (P95)',
         message: `P95 Response time is ${p95}ms (Warning > ${this.thresholds.responseTime.warning}ms)`,
-        metrics: { p95, threshold: this.thresholds.responseTime.warning, action: 'Optimize queries' }
+        metrics: { p95, threshold: this.thresholds.responseTime.warning, action: 'Optimize queries' },
       });
     }
 
@@ -87,14 +87,14 @@ export class MetricAggregator {
         severity: 'CRITICAL',
         title: 'Critical Error Rate',
         message: `Error rate is ${errorRate.toFixed(2)}% (Critical > ${this.thresholds.errorRate.critical}%)`,
-        metrics: { errorRate, threshold: this.thresholds.errorRate.critical, action: 'Investigate errors' }
+        metrics: { errorRate, threshold: this.thresholds.errorRate.critical, action: 'Investigate errors' },
       });
     } else if (errorRate > this.thresholds.errorRate.warning) {
       await this.config.monitor.alert({
         severity: 'WARNING',
         title: 'Elevated Error Rate',
         message: `Error rate is ${errorRate.toFixed(2)}% (Warning > ${this.thresholds.errorRate.warning}%)`,
-        metrics: { errorRate, threshold: this.thresholds.errorRate.warning, action: 'Investigate errors' }
+        metrics: { errorRate, threshold: this.thresholds.errorRate.warning, action: 'Investigate errors' },
       });
     }
 

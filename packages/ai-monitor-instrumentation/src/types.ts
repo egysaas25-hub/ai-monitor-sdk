@@ -125,6 +125,12 @@ export interface IInstrumentationConfig {
    * Environment (development, staging, production)
    */
   environment?: string;
+
+  /**
+   * Performance threshold in ms (default: 500)
+   * Operations exceeding this duration trigger WARNING alerts
+   */
+  performanceThreshold?: number;
 }
 
 /**

@@ -1,16 +1,16 @@
 /**
  * Complete Example: Plug-and-Play Monitoring
- * 
+ *
  * Shows the complete setup - three packages working together:
  * 1. @aker/ai-monitor-core - Core monitoring + AI
  * 2. @aker/ai-monitor-notifiers - Notification channels
  * 3. @aker/ai-monitor-instrumentation - Auto-instrumentation
  */
 
-import express from 'express';
 import { AIMonitor } from '@aker/ai-monitor-core';
-import { TelegramNotifier, SlackNotifier, MultiNotifier } from '@aker/ai-monitor-notifiers';
 import { Instrumentation } from '@aker/ai-monitor-instrumentation';
+import { MultiNotifier, SlackNotifier, TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import express from 'express';
 
 // ============================================================================
 // STEP 1: Create the monitor with AI and notifications
@@ -18,7 +18,7 @@ import { Instrumentation } from '@aker/ai-monitor-instrumentation';
 
 const monitor = new AIMonitor({
   port: 3333,
-  
+
   // AI Analysis (optional but recommended)
   aiConfig: {
     apiKey: process.env.OPENAI_API_KEY,
@@ -26,22 +26,22 @@ const monitor = new AIMonitor({
     features: {
       anomalyDetection: true,
       rootCauseAnalysis: true,
-      autoHealing: true
-    }
+      autoHealing: true,
+    },
   },
-  
+
   // Multi-channel notifications
   notifiers: new MultiNotifier({
     notifiers: [
       new TelegramNotifier({
         token: process.env.TELEGRAM_BOT_TOKEN!,
-        chatId: process.env.TELEGRAM_CHAT_ID!
+        chatId: process.env.TELEGRAM_CHAT_ID!,
       }),
       new SlackNotifier({
-        webhookUrl: process.env.SLACK_WEBHOOK_URL!
-      })
-    ]
-  })
+        webhookUrl: process.env.SLACK_WEBHOOK_URL!,
+      }),
+    ],
+  }),
 });
 
 await monitor.start();
@@ -51,26 +51,26 @@ await monitor.start();
 // ============================================================================
 
 const instrumentation = new Instrumentation({
-  monitor,                        // Pass the monitor
+  monitor, // Pass the monitor
   appName: 'my-awesome-app',
   environment: process.env.NODE_ENV || 'development',
-  
+
   // Thresholds
-  performanceThreshold: 500,      // Alert if requests > 500ms
-  memoryThreshold: 0.85,          // Alert if memory > 85%
-  cpuThreshold: 0.75,             // Alert if CPU > 75%
-  
+  performanceThreshold: 500, // Alert if requests > 500ms
+  memoryThreshold: 0.85, // Alert if memory > 85%
+  cpuThreshold: 0.75, // Alert if CPU > 75%
+
   // Features
-  captureErrors: true,            // Auto-capture all errors
-  capturePerformance: true,       // Auto-track slow operations
-  captureHttp: true,              // Auto-monitor HTTP requests
-  captureSystemMetrics: true,     // Auto-monitor CPU/memory
-  
+  captureErrors: true, // Auto-capture all errors
+  capturePerformance: true, // Auto-track slow operations
+  captureHttp: true, // Auto-monitor HTTP requests
+  captureSystemMetrics: true, // Auto-monitor CPU/memory
+
   // Error filter (optional)
   errorFilter: (error) => {
     // Ignore certain errors
     return !error.message.includes('ECONNRESET');
-  }
+  },
 });
 
 // Start auto-instrumentation
@@ -102,7 +102,7 @@ app.get('/api/users', async (req, res) => {
 // Example slow route - will trigger performance alert
 app.get('/api/slow', async (req, res) => {
   // Simulate slow operation
-  await new Promise(resolve => setTimeout(resolve, 600)); // > 500ms threshold
+  await new Promise((resolve) => setTimeout(resolve, 600)); // > 500ms threshold
   res.json({ message: 'This took too long!' });
 });
 
@@ -118,7 +118,7 @@ app.get('/api/data', async (req, res) => {
     const response = await fetch('https://api.example.com/data');
     return response.json();
   });
-  
+
   res.json(data);
 });
 
@@ -126,7 +126,7 @@ app.get('/api/data', async (req, res) => {
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Monitoring dashboard: http://localhost:3333/health`);
+  console.log('📊 Monitoring dashboard: http://localhost:3333/health');
   console.log('');
   console.log('✅ Active monitoring:');
   console.log('   • All errors are automatically captured');
@@ -147,10 +147,10 @@ app.listen(PORT, () => {
 
 async function fetchUsers() {
   // Simulate database query
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   return [
     { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' }
+    { id: 2, name: 'Bob' },
   ];
 }
 

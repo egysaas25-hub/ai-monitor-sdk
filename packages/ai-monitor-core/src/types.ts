@@ -3,6 +3,10 @@
  * These interfaces define the contracts for plug-and-play architecture
  */
 
+import type { IDeduplicationConfig } from './alert-deduplicator';
+import type { IProbeConfig } from './health-probes';
+import type { IPlugin } from './plugin';
+
 /**
  * Logger interface - implement this to use your own logger
  */
@@ -203,6 +207,21 @@ export interface IMonitorConfig {
    * Test notification delay in ms (default: 3000)
    */
   testNotificationDelay?: number;
+
+  /**
+   * Alert deduplication config — prevents notification storms
+   */
+  deduplication?: IDeduplicationConfig;
+
+  /**
+   * Plugins for extending monitor behavior
+   */
+  plugins?: IPlugin[];
+
+  /**
+   * Health check probes for active dependency monitoring
+   */
+  probes?: IProbeConfig[];
 }
 
 /**

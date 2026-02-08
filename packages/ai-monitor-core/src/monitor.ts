@@ -1,14 +1,10 @@
-import type {
-  IMonitorConfig,
-  INotifier,
-  ILogger,
-  IAlert,
-  IPipelineStatus,
-  IDeployment,
-  IDailyReport
-} from './types';
+import { createServer, type IncomingMessage, type ServerResponse } from 'http';
+import { AlertDeduplicator } from './alert-deduplicator';
+import { validateConfig } from './config-validator';
+import { HealthProbeManager } from './health-probes';
 import { ConsoleLogger } from './logger-adapter';
-import { createServer, IncomingMessage, ServerResponse } from 'http';
+import { PluginManager } from './plugin';
+import type { IAlert, IDailyReport, IDeployment, ILogger, IMonitorConfig, INotifier, IPipelineStatus } from './types';
 
 /**
  * Core AI Monitor class
@@ -20,9 +16,18 @@ export class AIMonitor {
   private logger: ILogger;
   private server: any;
   private isRunning: boolean = false;
-  private aiService: any = null; // IAIService type from ai-service.ts
+  private aiService: any = null;
+  private deduplicator: AlertDeduplicator | null = null;
+  private pluginManager = new PluginManager();
+  private probeManager: HealthProbeManager | null = null;
 
   constructor(config: IMonitorConfig = {}) {
+    // Validate configuration
+    const validation = validateConfig(config);
+    if (!validation.valid) {
+      throw new Error(`Invalid AIMonitor config:\n  - ${validation.errors.join('\n  - ')}`);
+    }
+
     // Try to load AI service if AI config is provided
     if (config.aiConfig?.enabled && config.aiConfig?.apiKey) {
       try {
@@ -42,22 +47,56 @@ export class AIMonitor {
       notifiers: config.notifiers ?? [],
       logger: config.logger ?? new ConsoleLogger(),
       aiConfig: config.aiConfig,
-      enableAIEnhancedAlerts: config.enableAIEnhancedAlerts ?? (this.aiService !== null),
+      enableAIEnhancedAlerts: config.enableAIEnhancedAlerts ?? this.aiService !== null,
       enableHealthEndpoint: config.enableHealthEndpoint ?? true,
       enableAlertEndpoint: config.enableAlertEndpoint ?? true,
       enablePipelineEndpoint: config.enablePipelineEndpoint ?? true,
       sendTestNotification: config.sendTestNotification ?? false,
-      testNotificationDelay: config.testNotificationDelay ?? 3000
+      testNotificationDelay: config.testNotificationDelay ?? 3000,
     } as Required<IMonitorConfig>;
 
     // Normalize notifiers to array
     this.notifiers = Array.isArray(this.config.notifiers)
       ? this.config.notifiers
-      :this.config.notifiers
-      ? [this.config.notifiers]
-      : [];
+      : this.config.notifiers
+        ? [this.config.notifiers]
+        : [];
 
     this.logger = this.config.logger;
+
+    // Initialize alert deduplication
+    if (config.deduplication?.enabled !== false && config.deduplication) {
+      this.deduplicator = new AlertDeduplicator(config.deduplication);
+      this.logger.info(`🔇 Alert deduplication enabled (cooldown: ${config.deduplication.cooldownMs ?? 300000}ms)`);
+    }
+
+    // Initialize plugins
+    if (config.plugins && config.plugins.length > 0) {
+      for (const plugin of config.plugins) {
+        this.pluginManager.register(plugin, this).catch((err) => {
+          this.logger.error(`Plugin '${plugin.name}' init failed:`, err);
+        });
+      }
+      this.logger.info(`🔌 ${config.plugins.length} plugin(s) registered`);
+    }
+
+    // Initialize health probes
+    if (config.probes && config.probes.length > 0) {
+      this.probeManager = new HealthProbeManager((alert) => this.alert(alert), this.logger);
+      for (const probe of config.probes) {
+        switch (probe.type) {
+          case 'http':
+            this.probeManager.addHttpProbe(probe.name, probe.url!, probe);
+            break;
+          case 'tcp':
+            this.probeManager.addTcpProbe(probe.name, probe.host!, probe.port!, probe);
+            break;
+          case 'custom':
+            this.probeManager.addCustomProbe(probe.name, probe.check!, probe);
+            break;
+        }
+      }
+    }
 
     // Create HTTP server
     this.server = createServer((req, res) => this.handleRequest(req, res));
@@ -65,6 +104,15 @@ export class AIMonitor {
     if (!this.config.enabled) {
       this.logger.warn('⚠️  AI Monitor is disabled.');
     }
+  }
+
+  /**
+   * Register a plugin at runtime.
+   */
+  async use(plugin: import('./plugin').IPlugin): Promise<this> {
+    await this.pluginManager.register(plugin, this);
+    this.logger.info(`🔌 Plugin '${plugin.name}' registered`);
+    return this;
   }
 
   /**
@@ -77,21 +125,25 @@ export class AIMonitor {
     }
 
     return new Promise((resolve) => {
-      this.server.listen(this.config.port, this.config.host, () => {
+      this.server.listen(this.config.port, this.config.host, async () => {
         this.isRunning = true;
 
         if (this.config.enabled) {
-          this.logger.info(
-            `🚀 AI Monitor started on http://${this.config.host}:${this.config.port}`
-          );
+          this.logger.info(`🚀 AI Monitor started on http://${this.config.host}:${this.config.port}`);
           this.logger.info(`📊 Health check: http://${this.config.host}:${this.config.port}/health`);
           this.logger.info(`📢 Notifiers: ${this.notifiers.length} configured`);
-          this.logger.info(`✅ AI Monitoring is ENABLED`);
+          this.logger.info('✅ AI Monitoring is ENABLED');
         } else {
-          this.logger.info(
-            `🚀 AI Monitor started on http://${this.config.host}:${this.config.port} (DISABLED MODE)`
-          );
-          this.logger.info(`⚠️  AI Monitoring is DISABLED`);
+          this.logger.info(`🚀 AI Monitor started on http://${this.config.host}:${this.config.port} (DISABLED MODE)`);
+          this.logger.info('⚠️  AI Monitoring is DISABLED');
+        }
+
+        // Run plugin onStart hooks
+        await this.pluginManager.runHook('onStart', this);
+
+        // Start health probes
+        if (this.probeManager) {
+          this.probeManager.start();
         }
 
         // Send test notification if enabled
@@ -113,6 +165,14 @@ export class AIMonitor {
     if (!this.isRunning) {
       return;
     }
+
+    // Stop health probes
+    if (this.probeManager) {
+      this.probeManager.stop();
+    }
+
+    // Run plugin onStop hooks
+    await this.pluginManager.runHook('onStop', this);
 
     return new Promise((resolve, reject) => {
       this.server.close((err: Error) => {
@@ -138,9 +198,15 @@ export class AIMonitor {
       return;
     }
 
+    // Check deduplication
+    if (this.deduplicator && !this.deduplicator.shouldSend(alert)) {
+      this.logger.debug(`🔇 Alert deduplicated: [${alert.severity}] ${alert.title}`);
+      return;
+    }
+
     let enhancedAlert = {
       ...alert,
-      timestamp: alert.timestamp || new Date()
+      timestamp: alert.timestamp || new Date(),
     };
 
     // Use AI to enhance the alert if enabled
@@ -150,7 +216,7 @@ export class AIMonitor {
           timestamp: enhancedAlert.timestamp,
           level: enhancedAlert.severity,
           message: enhancedAlert.message,
-          metadata: enhancedAlert.metrics
+          metadata: enhancedAlert.metrics,
         });
 
         // Enhance the alert with AI insights
@@ -165,15 +231,25 @@ export class AIMonitor {
           }`,
           metrics: {
             ...enhancedAlert.metrics,
-            aiAnalysis: analysis
-          }
+            aiAnalysis: analysis,
+          },
         };
 
-        this.logger.info(`🤖 AI Enhanced: [${alert.severity}] ${alert.title} (Confidence: ${Math.round((analysis.confidence || 0) * 100)}%)`);
+        this.logger.info(
+          `🤖 AI Enhanced: [${alert.severity}] ${alert.title} (Confidence: ${Math.round((analysis.confidence || 0) * 100)}%)`,
+        );
       } catch (error) {
         this.logger.warn('AI analysis failed, sending original alert:', error);
       }
     }
+
+    // Run through plugin pipeline
+    const processed = await this.pluginManager.processAlert(enhancedAlert, this);
+    if (!processed) {
+      this.logger.debug(`🔌 Alert suppressed by plugin: [${alert.severity}] ${alert.title}`);
+      return;
+    }
+    enhancedAlert = { ...processed, timestamp: processed.timestamp || enhancedAlert.timestamp };
 
     this.logger.info(`📢 Alert: [${enhancedAlert.severity}] ${enhancedAlert.title}`);
 
@@ -277,15 +353,24 @@ export class AIMonitor {
    * Handle health check endpoint
    */
   private handleHealthCheck(res: ServerResponse): void {
+    const health: Record<string, any> = {
+      status: 'healthy',
+      enabled: this.config.enabled,
+      notifiers: this.notifiers.length,
+      plugins: this.pluginManager.count,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (this.deduplicator) {
+      health.suppressedAlerts = this.deduplicator.suppressedCount;
+    }
+
+    if (this.probeManager) {
+      health.probes = this.probeManager.getStatus();
+    }
+
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(
-      JSON.stringify({
-        status: 'healthy',
-        enabled: this.config.enabled,
-        notifiers: this.notifiers.length,
-        timestamp: new Date().toISOString()
-      })
-    );
+    res.end(JSON.stringify(health));
   }
 
   /**
@@ -354,9 +439,7 @@ export class AIMonitor {
       return;
     }
 
-    const results = await Promise.allSettled(
-      this.notifiers.map((notifier) => action(notifier))
-    );
+    const results = await Promise.allSettled(this.notifiers.map((notifier) => action(notifier)));
 
     // Log any failures
     results.forEach((result, index) => {
