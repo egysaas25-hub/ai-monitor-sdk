@@ -1,118 +1,3 @@
-// src/system-metrics.ts
-import * as os from "os";
-var SystemMetricsCollector = class {
-  constructor(config) {
-    this.intervalId = null;
-    this.previousCpuUsage = null;
-    this.config = config;
-  }
-  /**
-   * Start collecting system metrics
-   */
-  start() {
-    if (!this.config.captureSystemMetrics) {
-      return;
-    }
-    this.collect();
-    this.intervalId = setInterval(() => {
-      this.collect();
-    }, this.config.systemMetricsInterval);
-  }
-  /**
-   * Stop collecting
-   */
-  stop() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
-  }
-  /**
-   * Collect current system metrics
-   */
-  async collect() {
-    try {
-      const metrics = this.getSystemMetrics();
-      const memUsage = metrics.memory.percentage;
-      const memThresholds = this.config.thresholds?.memory || { warning: 0.6, critical: 0.8 };
-      if (memUsage > memThresholds.critical) {
-        await this.config.monitor.alert({
-          severity: "CRITICAL",
-          title: "Critical Memory Usage",
-          message: `Memory usage at ${(memUsage * 100).toFixed(1)}% (Critical > ${memThresholds.critical * 100}%)`,
-          metrics: { ...metrics, action: "Check for leaks" }
-        });
-      } else if (memUsage > memThresholds.warning) {
-        await this.config.monitor.alert({
-          severity: "WARNING",
-          title: "High Memory Usage",
-          message: `Memory usage at ${(memUsage * 100).toFixed(1)}% (Warning > ${memThresholds.warning * 100}%)`,
-          metrics: { ...metrics, action: "Check for leaks" }
-        });
-      }
-      const cpuUsage = metrics.cpu.usage;
-      const cpuThresholds = this.config.thresholds?.cpu || { warning: 0.5, critical: 0.7 };
-      if (cpuUsage > cpuThresholds.critical) {
-        await this.config.monitor.alert({
-          severity: "CRITICAL",
-          title: "Critical CPU Usage",
-          message: `CPU usage at ${(cpuUsage * 100).toFixed(1)}% (Critical > ${cpuThresholds.critical * 100}%)`,
-          metrics: { ...metrics, action: "Scale up" }
-        });
-      } else if (cpuUsage > cpuThresholds.warning) {
-        await this.config.monitor.alert({
-          severity: "WARNING",
-          title: "High CPU Usage",
-          message: `CPU usage at ${(cpuUsage * 100).toFixed(1)}% (Warning > ${cpuThresholds.warning * 100}%)`,
-          metrics: { ...metrics, action: "Scale up" }
-        });
-      }
-    } catch (error) {
-      console.error("Failed to collect system metrics:", error);
-    }
-  }
-  /**
-   * Get current system metrics
-   */
-  getSystemMetrics() {
-    const totalMemory = os.totalmem();
-    const freeMemory = os.freemem();
-    const usedMemory = totalMemory - freeMemory;
-    const cpuInfo = this.getCpuUsage();
-    return {
-      cpu: {
-        usage: cpuInfo.usage,
-        average: cpuInfo.average
-      },
-      memory: {
-        used: usedMemory,
-        total: totalMemory,
-        percentage: usedMemory / totalMemory
-      },
-      uptime: process.uptime(),
-      timestamp: /* @__PURE__ */ new Date()
-    };
-  }
-  /**
-   * Calculate CPU usage
-   */
-  getCpuUsage() {
-    const currentUsage = process.cpuUsage(this.previousCpuUsage || void 0);
-    this.previousCpuUsage = process.cpuUsage();
-    const totalUsage = currentUsage.user + currentUsage.system;
-    const elapsedTime = this.config.systemMetricsInterval * 1e3;
-    const usage = totalUsage / elapsedTime;
-    const loadAvg = os.loadavg()[0];
-    const cpuCount = os.cpus().length;
-    const average = loadAvg / cpuCount;
-    return {
-      usage: Math.min(usage, 1),
-      // Cap at 100%
-      average: Math.min(average, 1)
-    };
-  }
-};
-
 // src/error-interceptor.ts
 var ErrorInterceptor = class {
   constructor(config) {
@@ -132,7 +17,7 @@ var ErrorInterceptor = class {
       this.originalUncaughtException.forEach((handler) => {
         try {
           handler(error);
-        } catch (e) {
+        } catch (_e) {
         }
       });
     });
@@ -144,7 +29,7 @@ var ErrorInterceptor = class {
       this.originalUnhandledRejection.forEach((handler) => {
         try {
           handler(reason, promise);
-        } catch (e) {
+        } catch (_e) {
         }
       });
     });
@@ -215,85 +100,6 @@ var ErrorInterceptor = class {
   }
 };
 
-// src/performance-monitor.ts
-var PerformanceMonitor = class {
-  constructor(config) {
-    this.measurements = /* @__PURE__ */ new Map();
-    this.config = config;
-  }
-  /**
-   * Start measuring an operation
-   */
-  startMeasure(operationName) {
-    if (!this.config.capturePerformance) {
-      return;
-    }
-    this.measurements.set(operationName, Date.now());
-  }
-  /**
-   * End measurement and alert if slow
-   */
-  async endMeasure(operationName, context) {
-    if (!this.config.capturePerformance) {
-      return null;
-    }
-    const startTime = this.measurements.get(operationName);
-    if (!startTime) {
-      console.warn(`No start time found for operation: ${operationName}`);
-      return null;
-    }
-    const duration = Date.now() - startTime;
-    this.measurements.delete(operationName);
-    const metric = {
-      operation: operationName,
-      duration,
-      timestamp: /* @__PURE__ */ new Date(),
-      context
-    };
-    if (duration > this.config.performanceThreshold) {
-      await this.config.monitor.alert({
-        severity: "WARNING",
-        title: "Slow Operation Detected",
-        message: `Operation "${operationName}" took ${duration}ms (threshold: ${this.config.performanceThreshold}ms)`,
-        metrics: {
-          ...metric,
-          threshold: this.config.performanceThreshold,
-          appName: this.config.appName,
-          environment: this.config.environment
-        }
-      });
-    }
-    return metric;
-  }
-  /**
-   * Measure a function execution
-   */
-  async measure(operationName, fn, context) {
-    this.startMeasure(operationName);
-    try {
-      const result = await fn();
-      await this.endMeasure(operationName, context);
-      return result;
-    } catch (error) {
-      await this.endMeasure(operationName, { ...context, error: true });
-      throw error;
-    }
-  }
-  /**
-   * Create a decorator for methods
-   */
-  measureDecorator(operationName) {
-    return (target, propertyKey, descriptor) => {
-      const originalMethod = descriptor.value;
-      const opName = operationName || `${target.constructor.name}.${propertyKey}`;
-      descriptor.value = async function(...args) {
-        return this.measure(opName, () => originalMethod.apply(this, args));
-      };
-      return descriptor;
-    };
-  }
-};
-
 // src/http-interceptor.ts
 var HttpInterceptor = class {
   constructor(config) {
@@ -310,7 +116,7 @@ var HttpInterceptor = class {
       const startTime = Date.now();
       const originalEnd = res.end;
       const self = this;
-      res.end = function(...args) {
+      res.end = (...args) => {
         const duration = Date.now() - startTime;
         const metric = {
           method: req.method,
@@ -335,14 +141,13 @@ var HttpInterceptor = class {
       return;
     }
     const originalEmit = server.emit;
-    const self = this;
-    server.emit = function(event, ...args) {
+    server.emit = (event, ...args) => {
       if (event === "request") {
         const req = args[0];
         const res = args[1];
         const startTime = Date.now();
         const originalEnd = res.end;
-        res.end = function(...endArgs) {
+        res.end = (...endArgs) => {
           const duration = Date.now() - startTime;
           const metric = {
             method: req.method || "UNKNOWN",
@@ -352,7 +157,7 @@ var HttpInterceptor = class {
             timestamp: /* @__PURE__ */ new Date()
           };
           setImmediate(async () => {
-            await self.handleHttpMetric(metric);
+            await this.handleHttpMetric(metric);
           });
           return originalEnd.apply(res, endArgs);
         };
@@ -508,6 +313,86 @@ var MetricAggregator = class {
   }
 };
 
+// src/performance-monitor.ts
+var PerformanceMonitor = class {
+  constructor(config) {
+    this.measurements = /* @__PURE__ */ new Map();
+    this.config = config;
+  }
+  /**
+   * Start measuring an operation
+   */
+  startMeasure(operationName) {
+    if (!this.config.capturePerformance) {
+      return;
+    }
+    this.measurements.set(operationName, Date.now());
+  }
+  /**
+   * End measurement and alert if slow
+   */
+  async endMeasure(operationName, context) {
+    if (!this.config.capturePerformance) {
+      return null;
+    }
+    const startTime = this.measurements.get(operationName);
+    if (!startTime) {
+      console.warn(`No start time found for operation: ${operationName}`);
+      return null;
+    }
+    const duration = Date.now() - startTime;
+    this.measurements.delete(operationName);
+    const metric = {
+      operation: operationName,
+      duration,
+      timestamp: /* @__PURE__ */ new Date(),
+      context
+    };
+    if (duration > this.config.performanceThreshold) {
+      await this.config.monitor.alert({
+        severity: "WARNING",
+        title: "Slow Operation Detected",
+        message: `Operation "${operationName}" took ${duration}ms (threshold: ${this.config.performanceThreshold}ms)`,
+        metrics: {
+          ...metric,
+          threshold: this.config.performanceThreshold,
+          appName: this.config.appName,
+          environment: this.config.environment
+        }
+      });
+    }
+    return metric;
+  }
+  /**
+   * Measure a function execution
+   */
+  async measure(operationName, fn, context) {
+    this.startMeasure(operationName);
+    try {
+      const result = await fn();
+      await this.endMeasure(operationName, context);
+      return result;
+    } catch (error) {
+      await this.endMeasure(operationName, { ...context, error: true });
+      throw error;
+    }
+  }
+  /**
+   * Create a decorator for methods
+   */
+  measureDecorator(operationName) {
+    const self = this;
+    return (target, propertyKey, descriptor) => {
+      const originalMethod = descriptor.value;
+      const opName = operationName || `${target.constructor.name}.${propertyKey}`;
+      descriptor.value = async function(...args) {
+        return self.measure(opName, () => originalMethod.apply(this, args));
+      };
+      return descriptor;
+    };
+  }
+};
+
 // src/prometheus-exporter.ts
 var PrometheusExporter = class {
   constructor() {
@@ -528,10 +413,10 @@ var PrometheusExporter = class {
     const key = this.serializeLabels(labels);
     if (metric.type === "histogram") {
       const sumKey = this.serializeLabels({ ...labels });
-      const currentSum = metric.values.get(sumKey + "_sum") || 0;
-      const currentCount = metric.values.get(sumKey + "_count") || 0;
-      metric.values.set(sumKey + "_sum", currentSum + value);
-      metric.values.set(sumKey + "_count", currentCount + 1);
+      const currentSum = metric.values.get(`${sumKey}_sum`) || 0;
+      const currentCount = metric.values.get(`${sumKey}_count`) || 0;
+      metric.values.set(`${sumKey}_sum`, currentSum + value);
+      metric.values.set(`${sumKey}_count`, currentCount + 1);
     } else if (metric.type === "counter") {
       const current = metric.values.get(key) || 0;
       metric.values.set(key, current + value);
@@ -542,7 +427,7 @@ var PrometheusExporter = class {
   /**
    * Handle /metrics endpoint
    */
-  async handleRequest(req, res) {
+  async handleRequest(_req, res) {
     const output = this.generateOutput();
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end(output);
@@ -569,7 +454,7 @@ var PrometheusExporter = class {
   serializeLabels(labels) {
     const entries = Object.entries(labels);
     if (entries.length === 0) return "";
-    return "{" + entries.map(([k, v]) => `${k}="${v}"`).join(",") + "}";
+    return `{${entries.map(([k, v]) => `${k}="${v}"`).join(",")}}`;
   }
 };
 
@@ -651,6 +536,121 @@ var ExternalResourceMonitor = class {
   }
 };
 
+// src/system-metrics.ts
+import * as os from "os";
+var SystemMetricsCollector = class {
+  constructor(config) {
+    this.intervalId = null;
+    this.previousCpuUsage = null;
+    this.config = config;
+  }
+  /**
+   * Start collecting system metrics
+   */
+  start() {
+    if (!this.config.captureSystemMetrics) {
+      return;
+    }
+    this.collect();
+    this.intervalId = setInterval(() => {
+      this.collect();
+    }, this.config.systemMetricsInterval);
+  }
+  /**
+   * Stop collecting
+   */
+  stop() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+  /**
+   * Collect current system metrics
+   */
+  async collect() {
+    try {
+      const metrics = this.getSystemMetrics();
+      const memUsage = metrics.memory.percentage;
+      const memThresholds = this.config.thresholds?.memory || { warning: 0.6, critical: 0.8 };
+      if (memUsage > memThresholds.critical) {
+        await this.config.monitor.alert({
+          severity: "CRITICAL",
+          title: "Critical Memory Usage",
+          message: `Memory usage at ${(memUsage * 100).toFixed(1)}% (Critical > ${memThresholds.critical * 100}%)`,
+          metrics: { ...metrics, action: "Check for leaks" }
+        });
+      } else if (memUsage > memThresholds.warning) {
+        await this.config.monitor.alert({
+          severity: "WARNING",
+          title: "High Memory Usage",
+          message: `Memory usage at ${(memUsage * 100).toFixed(1)}% (Warning > ${memThresholds.warning * 100}%)`,
+          metrics: { ...metrics, action: "Check for leaks" }
+        });
+      }
+      const cpuUsage = metrics.cpu.usage;
+      const cpuThresholds = this.config.thresholds?.cpu || { warning: 0.5, critical: 0.7 };
+      if (cpuUsage > cpuThresholds.critical) {
+        await this.config.monitor.alert({
+          severity: "CRITICAL",
+          title: "Critical CPU Usage",
+          message: `CPU usage at ${(cpuUsage * 100).toFixed(1)}% (Critical > ${cpuThresholds.critical * 100}%)`,
+          metrics: { ...metrics, action: "Scale up" }
+        });
+      } else if (cpuUsage > cpuThresholds.warning) {
+        await this.config.monitor.alert({
+          severity: "WARNING",
+          title: "High CPU Usage",
+          message: `CPU usage at ${(cpuUsage * 100).toFixed(1)}% (Warning > ${cpuThresholds.warning * 100}%)`,
+          metrics: { ...metrics, action: "Scale up" }
+        });
+      }
+    } catch (error) {
+      console.error("Failed to collect system metrics:", error);
+    }
+  }
+  /**
+   * Get current system metrics
+   */
+  getSystemMetrics() {
+    const totalMemory = os.totalmem();
+    const freeMemory = os.freemem();
+    const usedMemory = totalMemory - freeMemory;
+    const cpuInfo = this.getCpuUsage();
+    return {
+      cpu: {
+        usage: cpuInfo.usage,
+        average: cpuInfo.average
+      },
+      memory: {
+        used: usedMemory,
+        total: totalMemory,
+        percentage: usedMemory / totalMemory
+      },
+      uptime: process.uptime(),
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }
+  /**
+   * Calculate CPU usage
+   */
+  getCpuUsage() {
+    const currentUsage = process.cpuUsage(this.previousCpuUsage || void 0);
+    this.previousCpuUsage = process.cpuUsage();
+    const totalUsage = currentUsage.user + currentUsage.system;
+    const elapsedTime = this.config.systemMetricsInterval * 1e3;
+    const usage = totalUsage / elapsedTime;
+    const loadAvg = os.loadavg()[0];
+    const cpuCount = os.cpus().length;
+    const average = loadAvg / cpuCount;
+    return {
+      usage: Math.min(usage, 1),
+      // Cap at 100%
+      average: Math.min(average, 1)
+    };
+  }
+};
+
 // src/instrumentation.ts
 var Instrumentation = class {
   constructor(config) {
@@ -667,7 +667,8 @@ var Instrumentation = class {
       systemMetricsInterval: config.systemMetricsInterval ?? 6e4,
       appName: config.appName ?? "unknown",
       environment: config.environment ?? process.env.NODE_ENV ?? "development",
-      errorFilter: config.errorFilter
+      errorFilter: config.errorFilter,
+      performanceThreshold: config.performanceThreshold ?? 500
     };
     this.systemMetrics = new SystemMetricsCollector(this.config);
     this.errorInterceptor = new ErrorInterceptor(this.config);
@@ -720,8 +721,14 @@ var Instrumentation = class {
         const duration = Date.now() - start;
         const isError = res.statusCode >= 500;
         this.metricAggregator.recordRequest(duration, isError);
-        this.prometheusExporter.observe("http_request_duration_seconds", duration / 1e3, { method: req.method, path: req.path });
-        this.prometheusExporter.observe("http_requests_total", 1, { method: req.method, status: res.statusCode.toString() });
+        this.prometheusExporter.observe("http_request_duration_seconds", duration / 1e3, {
+          method: req.method,
+          path: req.path
+        });
+        this.prometheusExporter.observe("http_requests_total", 1, {
+          method: req.method,
+          status: res.statusCode.toString()
+        });
         return originalEnd.apply(res, args);
       };
       return baseMiddleware(req, res, next);
@@ -770,13 +777,225 @@ var Instrumentation = class {
     return this.performanceMonitor;
   }
 };
+
+// src/log-aggregator.ts
+var LogAggregator = class {
+  constructor(maxEntries = 1e4) {
+    this.buffer = [];
+    this.originalConsole = {};
+    this.intercepting = false;
+    this.maxEntries = maxEntries;
+  }
+  /**
+   * Manually capture a log entry.
+   */
+  capture(level, message, meta) {
+    this.push({ level, message, timestamp: /* @__PURE__ */ new Date(), meta });
+  }
+  /**
+   * Monkey-patch console.log/warn/error/debug to auto-capture logs.
+   * Original console methods are preserved and still called.
+   */
+  interceptConsole() {
+    if (this.intercepting) return;
+    this.intercepting = true;
+    const methods = ["log", "warn", "error", "debug"];
+    const levelMap = { log: "info", warn: "warn", error: "error", debug: "debug" };
+    for (const method of methods) {
+      this.originalConsole[method] = console[method];
+      console[method] = (...args) => {
+        const message = args.map((a) => typeof a === "string" ? a : JSON.stringify(a)).join(" ");
+        this.capture(levelMap[method], message);
+        this.originalConsole[method](...args);
+      };
+    }
+  }
+  /**
+   * Restore original console methods.
+   */
+  restoreConsole() {
+    if (!this.intercepting) return;
+    this.intercepting = false;
+    for (const [method, original] of Object.entries(this.originalConsole)) {
+      console[method] = original;
+    }
+    this.originalConsole = {};
+  }
+  /**
+   * Query logs with optional filters.
+   */
+  query(opts = {}) {
+    let results = [...this.buffer];
+    if (opts.levels && opts.levels.length > 0) {
+      const levels = new Set(opts.levels.map((l) => l.toLowerCase()));
+      results = results.filter((e) => levels.has(e.level.toLowerCase()));
+    }
+    if (opts.since) {
+      const since = opts.since.getTime();
+      results = results.filter((e) => e.timestamp.getTime() >= since);
+    }
+    if (opts.until) {
+      const until = opts.until.getTime();
+      results = results.filter((e) => e.timestamp.getTime() <= until);
+    }
+    if (opts.search) {
+      const pattern = opts.search.toLowerCase();
+      results = results.filter((e) => e.message.toLowerCase().includes(pattern));
+    }
+    const limit = opts.limit ?? 100;
+    return results.slice(-limit);
+  }
+  /**
+   * Shorthand: get recent error logs.
+   */
+  getRecentErrors(limit = 50) {
+    return this.query({ levels: ["error"], limit });
+  }
+  /**
+   * Clear all buffered logs.
+   */
+  clear() {
+    this.buffer = [];
+  }
+  /**
+   * Current buffer size.
+   */
+  get size() {
+    return this.buffer.length;
+  }
+  /**
+   * Serializable snapshot of the buffer.
+   */
+  toJSON() {
+    return [...this.buffer];
+  }
+  /**
+   * Push to ring buffer — drops oldest entries when full.
+   */
+  push(entry) {
+    this.buffer.push(entry);
+    if (this.buffer.length > this.maxEntries) {
+      this.buffer.shift();
+    }
+  }
+};
+
+// src/trace-context.ts
+import { AsyncLocalStorage } from "async_hooks";
+import { randomBytes } from "crypto";
+var traceStorage = new AsyncLocalStorage();
+var TraceContext = class _TraceContext {
+  /**
+   * Generate a random 32-hex-char trace ID.
+   */
+  static generateTraceId() {
+    return randomBytes(16).toString("hex");
+  }
+  /**
+   * Generate a random 16-hex-char span ID.
+   */
+  static generateSpanId() {
+    return randomBytes(8).toString("hex");
+  }
+  /**
+   * Create a W3C traceparent header value.
+   */
+  static createTraceparent(ctx) {
+    const flags = ctx.sampled ? "01" : "00";
+    return `00-${ctx.traceId}-${ctx.spanId}-${flags}`;
+  }
+  /**
+   * Parse a W3C traceparent header into a trace context.
+   * Returns null if the header is invalid.
+   */
+  static parseTraceparent(header) {
+    const parts = header.split("-");
+    if (parts.length !== 4) return null;
+    const [version, traceId, spanId, flags] = parts;
+    if (version !== "00") return null;
+    if (traceId.length !== 32 || !/^[0-9a-f]+$/.test(traceId)) return null;
+    if (spanId.length !== 16 || !/^[0-9a-f]+$/.test(spanId)) return null;
+    return {
+      traceId,
+      spanId,
+      sampled: flags === "01"
+    };
+  }
+  /**
+   * Get the current trace context from AsyncLocalStorage.
+   */
+  static current() {
+    return traceStorage.getStore();
+  }
+  /**
+   * Get the current trace ID, or undefined if no active trace.
+   */
+  static currentTraceId() {
+    return traceStorage.getStore()?.traceId;
+  }
+  /**
+   * Run a function within a trace context.
+   */
+  static run(ctx, fn) {
+    return traceStorage.run(ctx, fn);
+  }
+  /**
+   * Create a new child span from the current context.
+   */
+  static createChildSpan() {
+    const parent = traceStorage.getStore();
+    if (!parent) return null;
+    return {
+      traceId: parent.traceId,
+      spanId: _TraceContext.generateSpanId(),
+      parentSpanId: parent.spanId,
+      sampled: parent.sampled
+    };
+  }
+};
+function traceMiddleware() {
+  return (req, res, next) => {
+    let ctx;
+    const incomingHeader = req.headers?.traceparent;
+    if (incomingHeader) {
+      const parsed = TraceContext.parseTraceparent(incomingHeader);
+      if (parsed) {
+        ctx = {
+          traceId: parsed.traceId,
+          spanId: TraceContext.generateSpanId(),
+          parentSpanId: parsed.spanId,
+          sampled: parsed.sampled
+        };
+      } else {
+        ctx = {
+          traceId: TraceContext.generateTraceId(),
+          spanId: TraceContext.generateSpanId(),
+          sampled: true
+        };
+      }
+    } else {
+      ctx = {
+        traceId: TraceContext.generateTraceId(),
+        spanId: TraceContext.generateSpanId(),
+        sampled: true
+      };
+    }
+    res.setHeader("traceparent", TraceContext.createTraceparent(ctx));
+    req.traceContext = ctx;
+    req.traceId = ctx.traceId;
+    TraceContext.run(ctx, () => next());
+  };
+}
 export {
   ErrorInterceptor,
   ExternalResourceMonitor,
   HttpInterceptor,
   Instrumentation,
+  LogAggregator,
   MetricAggregator,
   PerformanceMonitor,
   PrometheusExporter,
-  SystemMetricsCollector
+  SystemMetricsCollector,
+  TraceContext,
+  traceMiddleware
 };

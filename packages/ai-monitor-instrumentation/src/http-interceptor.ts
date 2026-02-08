@@ -1,4 +1,4 @@
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { IHttpMetric, IInstrumentationConfig } from './types';
 
 /**
@@ -82,7 +82,7 @@ export class HttpInterceptor {
             await this.handleHttpMetric(metric);
           });
 
-          return originalEnd.apply(res, endArgs);
+          return originalEnd.apply(res, endArgs as any);
         };
       }
 

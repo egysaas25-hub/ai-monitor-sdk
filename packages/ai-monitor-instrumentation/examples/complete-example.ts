@@ -88,31 +88,26 @@ app.use(instrumentation.httpMiddleware());
 app.use(express.json());
 
 // Example route - automatically monitored!
-app.get('/api/users', async (req, res) => {
-  try {
-    // This will be monitored for performance
-    const users = await fetchUsers();
-    res.json(users);
-  } catch (error) {
-    // This error is automatically captured!
-    throw error;
-  }
+app.get('/api/users', async (_req, res) => {
+  // This will be monitored for performance
+  const users = await fetchUsers();
+  res.json(users);
 });
 
 // Example slow route - will trigger performance alert
-app.get('/api/slow', async (req, res) => {
+app.get('/api/slow', async (_req, res) => {
   // Simulate slow operation
   await new Promise((resolve) => setTimeout(resolve, 600)); // > 500ms threshold
   res.json({ message: 'This took too long!' });
 });
 
 // Example error route - will trigger error alert
-app.get('/api/error', async (req, res) => {
+app.get('/api/error', async (_req, _res) => {
   throw new Error('This is a test error!');
 });
 
 // Example manual measurement
-app.get('/api/data', async (req, res) => {
+app.get('/api/data', async (_req, res) => {
   // Manually measure a specific operation
   const data = await instrumentation.measure('fetch-external-api', async () => {
     const response = await fetch('https://api.example.com/data');

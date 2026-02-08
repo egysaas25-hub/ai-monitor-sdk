@@ -1,4 +1,4 @@
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
 /**
  * Valid Prometheus metric types
@@ -43,10 +43,10 @@ export class PrometheusExporter {
       // For simplicity in this zero-dependency version, we just store the sum and count
       // A full histogram implementation would require buckets
       const sumKey = this.serializeLabels({ ...labels });
-      const currentSum = metric.values.get(sumKey + '_sum') || 0;
-      const currentCount = metric.values.get(sumKey + '_count') || 0;
-      metric.values.set(sumKey + '_sum', currentSum + value);
-      metric.values.set(sumKey + '_count', currentCount + 1);
+      const currentSum = metric.values.get(`${sumKey}_sum`) || 0;
+      const currentCount = metric.values.get(`${sumKey}_count`) || 0;
+      metric.values.set(`${sumKey}_sum`, currentSum + value);
+      metric.values.set(`${sumKey}_count`, currentCount + 1);
     } else if (metric.type === 'counter') {
       const current = metric.values.get(key) || 0;
       metric.values.set(key, current + value);
@@ -59,7 +59,7 @@ export class PrometheusExporter {
   /**
    * Handle /metrics endpoint
    */
-  async handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  async handleRequest(_req: IncomingMessage, res: ServerResponse): Promise<void> {
     const output = this.generateOutput();
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end(output);
@@ -87,6 +87,6 @@ export class PrometheusExporter {
   private serializeLabels(labels: Record<string, string>): string {
     const entries = Object.entries(labels);
     if (entries.length === 0) return '';
-    return '{' + entries.map(([k, v]) => `${k}="${v}"`).join(',') + '}';
+    return `{${entries.map(([k, v]) => `${k}="${v}"`).join(',')}}`;
   }
 }

@@ -10,8 +10,8 @@
  *   flags:   2 hex chars (01 = sampled)
  */
 
-import { AsyncLocalStorage } from 'async_hooks';
-import { randomBytes } from 'crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { randomBytes } from 'node:crypto';
 
 export interface ITraceContext {
   traceId: string;
@@ -114,7 +114,7 @@ export function traceMiddleware() {
   return (req: any, res: any, next: any) => {
     let ctx: ITraceContext;
 
-    const incomingHeader = req.headers?.['traceparent'];
+    const incomingHeader = req.headers?.traceparent;
     if (incomingHeader) {
       const parsed = TraceContext.parseTraceparent(incomingHeader);
       if (parsed) {

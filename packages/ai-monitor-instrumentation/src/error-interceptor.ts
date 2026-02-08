@@ -31,7 +31,7 @@ export class ErrorInterceptor {
       this.originalUncaughtException.forEach((handler: any) => {
         try {
           handler(error);
-        } catch (e) {
+        } catch (_e) {
           // Ignore handler errors
         }
       });
@@ -48,7 +48,7 @@ export class ErrorInterceptor {
       this.originalUnhandledRejection.forEach((handler: any) => {
         try {
           handler(reason, promise);
-        } catch (e) {
+        } catch (_e) {
           // Ignore handler errors
         }
       });

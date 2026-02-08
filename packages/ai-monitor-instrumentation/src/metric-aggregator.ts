@@ -1,4 +1,3 @@
-import type { IncomingMessage, ServerResponse } from 'http';
 import type { IInstrumentationConfig, IThresholds } from './types';
 
 /**

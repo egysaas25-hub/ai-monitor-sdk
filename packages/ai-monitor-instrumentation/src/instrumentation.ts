@@ -1,4 +1,3 @@
-import type { AIMonitor } from '@aker/ai-monitor-core';
 import { ErrorInterceptor } from './error-interceptor';
 import { HttpInterceptor } from './http-interceptor';
 import { MetricAggregator } from './metric-aggregator';

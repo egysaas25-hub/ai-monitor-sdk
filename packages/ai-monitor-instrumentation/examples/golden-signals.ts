@@ -69,8 +69,8 @@ instrumentation.start();
 const app = express();
 app.use(instrumentation.httpMiddleware());
 
-app.get('/api/fast', (req, res) => res.json({ status: 'ok' })); // < 200ms
-app.get('/api/slow', async (req, res) => {
+app.get('/api/fast', (_req, res) => res.json({ status: 'ok' })); // < 200ms
+app.get('/api/slow', async (_req, res) => {
   await new Promise((r) => setTimeout(r, 600)); // > 500ms -> CRITICAL ALERT
   res.json({ status: 'slow' });
 });

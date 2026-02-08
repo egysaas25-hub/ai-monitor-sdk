@@ -85,12 +85,14 @@ export class PerformanceMonitor {
    * Create a decorator for methods
    */
   measureDecorator(operationName?: string) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const self = this;
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
       const originalMethod = descriptor.value;
       const opName = operationName || `${target.constructor.name}.${propertyKey}`;
 
-      descriptor.value = async function (...args: any[]) {
-        return this.measure(opName, () => originalMethod.apply(this, args));
+      descriptor.value = async function (this: any, ...args: any[]) {
+        return self.measure(opName, () => originalMethod.apply(this, args));
       };
 
       return descriptor;
