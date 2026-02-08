@@ -146,6 +146,10 @@ See [`.env.example`](./.env.example) for all available configuration options.
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history.
 
+## 🚀 Deployment
+
+See [DEPLOYMENT.md](./docs/DEPLOYMENT.md) for instructions on updating the SDK on your servers.
+
 ## 📄 License
 
 MIT © AKER Team
