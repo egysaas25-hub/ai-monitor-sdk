@@ -1,0 +1,69 @@
+
+> @aker/ai-monitor-sdk@1.0.0 build D:\AKER-LINK\ai-monitor-sdk
+> pnpm -r run build
+
+Scope: 4 of 5 workspace projects
+packages/ai-monitor-core build$ tsup src/index.ts --format cjs,esm --dts --clean
+packages/ai-monitor-core build: [34mCLI[39m Building entry: src/index.ts
+packages/ai-monitor-core build: [34mCLI[39m Using tsconfig: tsconfig.json
+packages/ai-monitor-core build: [34mCLI[39m tsup v8.5.1
+packages/ai-monitor-core build: [34mCLI[39m Target: es2020
+packages/ai-monitor-core build: [34mCLI[39m Cleaning output folder
+packages/ai-monitor-core build: [34mCJS[39m Build start
+packages/ai-monitor-core build: [34mESM[39m Build start
+packages/ai-monitor-core build: [43m[30m WARN [39m[49m [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
+packages/ai-monitor-core build:     package.json:12:6:
+packages/ai-monitor-core build: [37m      12 │       [32m"types"[37m: "./dist/index.d.ts"
+packages/ai-monitor-core build:          ╵       [32m~~~~~~~[0m
+packages/ai-monitor-core build:   The "import" condition comes earlier and will be used for all "import" statements:
+packages/ai-monitor-core build:     package.json:10:6:
+packages/ai-monitor-core build: [37m      10 │       [32m"import"[37m: "./dist/index.mjs",
+packages/ai-monitor-core build:          ╵       [32m~~~~~~~~[0m
+packages/ai-monitor-core build:   The "require" condition comes earlier and will be used for all "require" calls:
+packages/ai-monitor-core build:     package.json:11:6:
+packages/ai-monitor-core build: [37m      11 │       [32m"require"[37m: "./dist/index.js",
+packages/ai-monitor-core build:          ╵       [32m~~~~~~~~~[0m
+packages/ai-monitor-core build: [43m[30m WARN [39m[49m [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
+packages/ai-monitor-core build:     package.json:12:6:
+packages/ai-monitor-core build: [37m      12 │       [32m"types"[37m: "./dist/index.d.ts"
+packages/ai-monitor-core build:          ╵       [32m~~~~~~~[0m
+packages/ai-monitor-core build:   The "import" condition comes earlier and will be used for all "import" statements:
+packages/ai-monitor-core build:     package.json:10:6:
+packages/ai-monitor-core build: [37m      10 │       [32m"import"[37m: "./dist/index.mjs",
+packages/ai-monitor-core build:          ╵       [32m~~~~~~~~[0m
+packages/ai-monitor-core build:   The "require" condition comes earlier and will be used for all "require" calls:
+packages/ai-monitor-core build:     package.json:11:6:
+packages/ai-monitor-core build: [37m      11 │       [32m"require"[37m: "./dist/index.js",
+packages/ai-monitor-core build:          ╵       [32m~~~~~~~~~[0m
+packages/ai-monitor-core build: [32mCJS[39m [1mdist\index.js [22m[32m37.20 KB[39m
+packages/ai-monitor-core build: [32mCJS[39m ⚡️ Build success in 45ms
+packages/ai-monitor-core build: [32mESM[39m [1mdist\index.mjs [22m[32m36.97 KB[39m
+packages/ai-monitor-core build: [32mESM[39m ⚡️ Build success in 45ms
+packages/ai-monitor-core build: [34mDTS[39m Build start
+packages/ai-monitor-core build: error TS2688: Cannot find type definition file for 'bcryptjs'.
+packages/ai-monitor-core build:   The file is in the program because:
+packages/ai-monitor-core build:     Entry point for implicit type library 'bcryptjs'
+packages/ai-monitor-core build: error TS2688: Cannot find type definition file for 'cypress'.
+packages/ai-monitor-core build:   The file is in the program because:
+packages/ai-monitor-core build:     Entry point for implicit type library 'cypress'
+packages/ai-monitor-core build: error TS2688: Cannot find type definition file for 'jsonwebtoken'.
+packages/ai-monitor-core build:   The file is in the program because:
+packages/ai-monitor-core build:     Entry point for implicit type library 'jsonwebtoken'
+packages/ai-monitor-core build: error TS2688: Cannot find type definition file for 'react'.
+packages/ai-monitor-core build:   The file is in the program because:
+packages/ai-monitor-core build:     Entry point for implicit type library 'react'
+packages/ai-monitor-core build: error TS2688: Cannot find type definition file for 'react-dom'.
+packages/ai-monitor-core build:   The file is in the program because:
+packages/ai-monitor-core build:     Entry point for implicit type library 'react-dom'
+packages/ai-monitor-core build: [31mError: error occurred in dts build
+packages/ai-monitor-core build:     at Worker.<anonymous> (D:\AKER-LINK\ai-monitor-sdk\node_modules\.pnpm\tsup@8.5.1_typescript@5.9.3\node_modules\tsup\dist\index.js:1545:26)
+packages/ai-monitor-core build:     at Worker.emit (node:events:518:28)
+packages/ai-monitor-core build:     at MessagePort.<anonymous> (node:internal/worker:268:53)
+packages/ai-monitor-core build:     at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+packages/ai-monitor-core build:     at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)[39m
+packages/ai-monitor-core build: [31mDTS[39m [31mBuild error[39m
+packages/ai-monitor-core build: Failed
+D:\AKER-LINK\ai-monitor-sdk\packages\ai-monitor-core:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @aker/ai-monitor-core@1.0.0 build: `tsup src/index.ts --format cjs,esm --dts --clean`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

@@ -1,0 +1,25 @@
+
+> @aker/ai-monitor-instrumentation@1.0.0 lint D:\AKER-LINK\ai-monitor-sdk\packages\ai-monitor-instrumentation
+> biome check .
+
+src\trace-context.ts:26:8 lint/complexity/noStaticOnlyClass ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Avoid classes that contain only static members.
+  
+     24 │ const traceStorage = new AsyncLocalStorage<ITraceContext>();
+     25 │ 
+   > 26 │ export class TraceContext {
+        │        ^^^^^^^^^^^^^^^^^^^^
+   > 27 │   /**
+         ...
+  > 103 │   }
+  > 104 │ }
+        │ ^
+    105 │ 
+    106 │ /**
+  
+  i Prefer using simple functions instead of classes with only static members.
+  
+
+Checked 20 files in 24ms. No fixes applied.
+Found 1 warning.

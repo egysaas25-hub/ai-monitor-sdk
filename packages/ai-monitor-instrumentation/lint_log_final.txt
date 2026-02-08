@@ -1,0 +1,428 @@
+
+> @aker/ai-monitor-instrumentation@1.0.0 lint D:\AKER-LINK\ai-monitor-sdk\packages\ai-monitor-instrumentation
+> biome check .
+
+examples\complete-example.ts:98:5 lint/complexity/noUselessCatch  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i The catch clause that only rethrows the original error is useless.
+  
+     96 │   } catch (error) {
+     97 │     // This error is automatically captured!
+   > 98 │     throw error;
+        │     ^^^^^^^^^^^^
+     99 │   }
+    100 │ });
+  
+  i An unnecessary catch clause can be confusing.
+  
+  i Unsafe fix: Remove the try/catch clause.
+  
+     90  90 │   // Example route - automatically monitored!
+     91  91 │   app.get('/api/users', async (req, res) => {
+     92     │ - ··try·{
+     93  92 │       // This will be monitored for performance
+     94  93 │       const users = await fetchUsers();
+     95     │ - ····res.json(users);
+     96     │ - ··}·catch·(error)·{
+     97     │ - ····//·This·error·is·automatically·captured!
+     98     │ - ····throw·error;
+     99     │ - ··}
+         94 │ + ····res.json(users);
+    100  95 │   });
+    101  96 │   
+  
+
+src\http-interceptor.ts:1:54 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+  > 1 │ import type { IncomingMessage, ServerResponse } from 'http';
+      │                                                      ^^^^^^
+    2 │ import type { IHttpMetric, IInstrumentationConfig } from './types';
+    3 │ 
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+      1     │ - import·type·{·IncomingMessage,·ServerResponse·}·from·'http';
+          1 │ + import·type·{·IncomingMessage,·ServerResponse·}·from·'node:http';
+      2   2 │   import type { IHttpMetric, IInstrumentationConfig } from './types';
+      3   3 │   
+  
+
+src\metric-aggregator.ts:1:54 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+  > 1 │ import type { IncomingMessage, ServerResponse } from 'http';
+      │                                                      ^^^^^^
+    2 │ import type { IInstrumentationConfig, IThresholds } from './types';
+    3 │ 
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+      1     │ - import·type·{·IncomingMessage,·ServerResponse·}·from·'http';
+          1 │ + import·type·{·IncomingMessage,·ServerResponse·}·from·'node:http';
+      2   2 │   import type { IInstrumentationConfig, IThresholds } from './types';
+      3   3 │   
+  
+
+src\prometheus-exporter.ts:1:54 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+  > 1 │ import type { IncomingMessage, ServerResponse } from 'http';
+      │                                                      ^^^^^^
+    2 │ 
+    3 │ /**
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     1    │ - import·type·{·IncomingMessage,·ServerResponse·}·from·'http';
+        1 │ + import·type·{·IncomingMessage,·ServerResponse·}·from·'node:http';
+     2  2 │   
+     3  3 │   /**
+  
+
+src\system-metrics.ts:1:21 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+  > 1 │ import * as os from 'os';
+      │                     ^^^^
+    2 │ import type { IInstrumentationConfig, ISystemMetrics } from './types';
+    3 │ 
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+      1     │ - import·*·as·os·from·'os';
+          1 │ + import·*·as·os·from·'node:os';
+      2   2 │   import type { IInstrumentationConfig, ISystemMetrics } from './types';
+      3   3 │   
+  
+
+src\trace-context.ts:13:35 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+    11 │  */
+    12 │ 
+  > 13 │ import { AsyncLocalStorage } from 'async_hooks';
+       │                                   ^^^^^^^^^^^^^
+    14 │ import { randomBytes } from 'crypto';
+    15 │ 
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     11  11 │    */
+     12  12 │   
+     13     │ - import·{·AsyncLocalStorage·}·from·'async_hooks';
+         13 │ + import·{·AsyncLocalStorage·}·from·'node:async_hooks';
+     14  14 │   import { randomBytes } from 'crypto';
+     15  15 │   
+  
+
+src\trace-context.ts:14:29 lint/style/useNodejsImportProtocol  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i A Node.js builtin module should be imported with the node: protocol.
+  
+    13 │ import { AsyncLocalStorage } from 'async_hooks';
+  > 14 │ import { randomBytes } from 'crypto';
+       │                             ^^^^^^^^
+    15 │ 
+    16 │ export interface ITraceContext {
+  
+  i Using the node: protocol is more explicit and signals that the imported module belongs to Node.js.
+  
+  i Unsafe fix: Add the node: protocol.
+  
+     12  12 │   
+     13  13 │   import { AsyncLocalStorage } from 'async_hooks';
+     14     │ - import·{·randomBytes·}·from·'crypto';
+         14 │ + import·{·randomBytes·}·from·'node:crypto';
+     15  15 │   
+     16  16 │   export interface ITraceContext {
+  
+
+src\trace-context.ts:117:42 lint/complexity/useLiteralKeys  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i The computed expression can be simplified without the use of a string literal.
+  
+    115 │     let ctx: ITraceContext;
+    116 │ 
+  > 117 │     const incomingHeader = req.headers?.['traceparent'];
+        │                                          ^^^^^^^^^^^^^
+    118 │     if (incomingHeader) {
+    119 │       const parsed = TraceContext.parseTraceparent(incomingHeader);
+  
+  i Unsafe fix: Use a literal key instead.
+  
+    117 │ ····const·incomingHeader·=·req.headers?.['traceparent'];
+        │                                         --           -- 
+
+examples\complete-example.ts:91:30 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    90 │ // Example route - automatically monitored!
+  > 91 │ app.get('/api/users', async (req, res) => {
+       │                              ^^^
+    92 │   try {
+    93 │     // This will be monitored for performance
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend req with an underscore.
+  
+     89  89 │   
+     90  90 │   // Example route - automatically monitored!
+     91     │ - app.get('/api/users',·async·(req,·res)·=>·{
+         91 │ + app.get('/api/users',·async·(_req,·res)·=>·{
+     92  92 │     try {
+     93  93 │       // This will be monitored for performance
+  
+
+examples\complete-example.ts:103:29 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    102 │ // Example slow route - will trigger performance alert
+  > 103 │ app.get('/api/slow', async (req, res) => {
+        │                             ^^^
+    104 │   // Simulate slow operation
+    105 │   await new Promise((resolve) => setTimeout(resolve, 600)); // > 500ms threshold
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend req with an underscore.
+  
+    101 101 │   
+    102 102 │   // Example slow route - will trigger performance alert
+    103     │ - app.get('/api/slow',·async·(req,·res)·=>·{
+        103 │ + app.get('/api/slow',·async·(_req,·res)·=>·{
+    104 104 │     // Simulate slow operation
+    105 105 │     await new Promise((resolve) => setTimeout(resolve, 600)); // > 500ms threshold
+  
+
+examples\complete-example.ts:110:30 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    109 │ // Example error route - will trigger error alert
+  > 110 │ app.get('/api/error', async (req, res) => {
+        │                              ^^^
+    111 │   throw new Error('This is a test error!');
+    112 │ });
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend req with an underscore.
+  
+    108 108 │   
+    109 109 │   // Example error route - will trigger error alert
+    110     │ - app.get('/api/error',·async·(req,·res)·=>·{
+        110 │ + app.get('/api/error',·async·(_req,·res)·=>·{
+    111 111 │     throw new Error('This is a test error!');
+    112 112 │   });
+  
+
+examples\complete-example.ts:110:35 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    109 │ // Example error route - will trigger error alert
+  > 110 │ app.get('/api/error', async (req, res) => {
+        │                                   ^^^
+    111 │   throw new Error('This is a test error!');
+    112 │ });
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend res with an underscore.
+  
+    108 108 │   
+    109 109 │   // Example error route - will trigger error alert
+    110     │ - app.get('/api/error',·async·(req,·res)·=>·{
+        110 │ + app.get('/api/error',·async·(req,·_res)·=>·{
+    111 111 │     throw new Error('This is a test error!');
+    112 112 │   });
+  
+
+examples\complete-example.ts:115:29 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    114 │ // Example manual measurement
+  > 115 │ app.get('/api/data', async (req, res) => {
+        │                             ^^^
+    116 │   // Manually measure a specific operation
+    117 │   const data = await instrumentation.measure('fetch-external-api', async () => {
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend req with an underscore.
+  
+    113 113 │   
+    114 114 │   // Example manual measurement
+    115     │ - app.get('/api/data',·async·(req,·res)·=>·{
+        115 │ + app.get('/api/data',·async·(_req,·res)·=>·{
+    116 116 │     // Manually measure a specific operation
+    117 117 │     const data = await instrumentation.measure('fetch-external-api', async () => {
+  
+
+examples\golden-signals.ts:72:23 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    70 │ app.use(instrumentation.httpMiddleware());
+    71 │ 
+  > 72 │ app.get('/api/fast', (req, res) => res.json({ status: 'ok' })); // < 200ms
+       │                       ^^^
+    73 │ app.get('/api/slow', async (req, res) => {
+    74 │   await new Promise((r) => setTimeout(r, 600)); // > 500ms -> CRITICAL ALERT
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend req with an underscore.
+  
+    70 70 │   app.use(instrumentation.httpMiddleware());
+    71 71 │   
+    72    │ - app.get('/api/fast',·(req,·res)·=>·res.json({·status:·'ok'·}));·//·<·200ms
+       72 │ + app.get('/api/fast',·(_req,·res)·=>·res.json({·status:·'ok'·}));·//·<·200ms
+    73 73 │   app.get('/api/slow', async (req, res) => {
+    74 74 │     await new Promise((r) => setTimeout(r, 600)); // > 500ms -> CRITICAL ALERT
+  
+
+examples\golden-signals.ts:73:29 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    72 │ app.get('/api/fast', (req, res) => res.json({ status: 'ok' })); // < 200ms
+  > 73 │ app.get('/api/slow', async (req, res) => {
+       │                             ^^^
+    74 │   await new Promise((r) => setTimeout(r, 600)); // > 500ms -> CRITICAL ALERT
+    75 │   res.json({ status: 'slow' });
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend req with an underscore.
+  
+    71 71 │   
+    72 72 │   app.get('/api/fast', (req, res) => res.json({ status: 'ok' })); // < 200ms
+    73    │ - app.get('/api/slow',·async·(req,·res)·=>·{
+       73 │ + app.get('/api/slow',·async·(_req,·res)·=>·{
+    74 74 │     await new Promise((r) => setTimeout(r, 600)); // > 500ms -> CRITICAL ALERT
+    75 75 │     res.json({ status: 'slow' });
+  
+
+src\error-interceptor.ts:34:18 lint/correctness/noUnusedVariables  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! This variable e is unused.
+  
+    32 │         try {
+    33 │           handler(error);
+  > 34 │         } catch (e) {
+       │                  ^
+    35 │           // Ignore handler errors
+    36 │         }
+  
+  i Unused variables are often the result of typos, incomplete refactors, or other sources of bugs.
+  
+  i Unsafe fix: If this is intentional, prepend e with an underscore.
+  
+     32  32 │           try {
+     33  33 │             handler(error);
+     34     │ - ········}·catch·(e)·{
+         34 │ + ········}·catch·(_e)·{
+     35  35 │             // Ignore handler errors
+     36  36 │           }
+  
+
+src\error-interceptor.ts:51:18 lint/correctness/noUnusedVariables  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! This variable e is unused.
+  
+    49 │         try {
+    50 │           handler(reason, promise);
+  > 51 │         } catch (e) {
+       │                  ^
+    52 │           // Ignore handler errors
+    53 │         }
+  
+  i Unused variables are often the result of typos, incomplete refactors, or other sources of bugs.
+  
+  i Unsafe fix: If this is intentional, prepend e with an underscore.
+  
+     49  49 │           try {
+     50  50 │             handler(reason, promise);
+     51     │ - ········}·catch·(e)·{
+         51 │ + ········}·catch·(_e)·{
+     52  52 │             // Ignore handler errors
+     53  53 │           }
+  
+
+src\instrumentation.ts:1:13 lint/correctness/noUnusedImports  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! This import is unused.
+  
+  > 1 │ import type { AIMonitor } from '@aker/ai-monitor-core';
+      │             ^^^^^^^^^^^^^
+    2 │ import { ErrorInterceptor } from './error-interceptor';
+    3 │ import { HttpInterceptor } from './http-interceptor';
+  
+  i Unused imports might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: Remove the unused imports.
+  
+    1 │ import·type·{·AIMonitor·}·from·'@aker/ai-monitor-core';
+      │ -------------------------------------------------------
+
+src\metric-aggregator.ts:1:13 lint/correctness/noUnusedImports  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! This import is unused.
+  
+  > 1 │ import type { IncomingMessage, ServerResponse } from 'http';
+      │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 │ import type { IInstrumentationConfig, IThresholds } from './types';
+    3 │ 
+  
+  i Unused imports might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: Remove the unused imports.
+  
+    1 │ import·type·{·IncomingMessage,·ServerResponse·}·from·'http';
+      │ ------------------------------------------------------------
+
+src\trace-context.ts:26:8 lint/complexity/noStaticOnlyClass ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Avoid classes that contain only static members.
+  
+     24 │ const traceStorage = new AsyncLocalStorage<ITraceContext>();
+     25 │ 
+   > 26 │ export class TraceContext {
+        │        ^^^^^^^^^^^^^^^^^^^^
+   > 27 │   /**
+         ...
+  > 103 │   }
+  > 104 │ }
+        │ ^
+    105 │ 
+    106 │ /**
+  
+  i Prefer using simple functions instead of classes with only static members.
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 6.
+Checked 20 files in 21ms. No fixes applied.
+Found 13 warnings.
+Found 13 infos.

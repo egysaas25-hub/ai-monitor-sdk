@@ -127,21 +127,9 @@ importers:
       '@types/node':
         specifier: ^20.11.0
         version: 20.19.31
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^6.19.0
-        version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
-      '@typescript-eslint/parser':
-        specifier: ^6.19.0
-        version: 6.21.0(eslint@8.57.1)(typescript@5.9.3)
-      eslint:
-        specifier: ^8.56.0
-        version: 8.57.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.31)(ts-node@10.9.2(@types/node@20.19.31)(typescript@5.9.3))
-      prettier:
-        specifier: ^3.2.4
-        version: 3.8.1
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(typescript@5.9.3)

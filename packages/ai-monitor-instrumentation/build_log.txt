@@ -1,0 +1,82 @@
+
+> @aker/ai-monitor-instrumentation@1.0.0 build D:\AKER-LINK\ai-monitor-sdk\packages\ai-monitor-instrumentation
+> tsup src/index.ts --format cjs,esm --dts --clean
+
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.5.1
+[34mCLI[39m Target: es2020
+[34mCLI[39m Cleaning output folder
+[34mCJS[39m Build start
+[34mESM[39m Build start
+
+[43m[30m WARN [39m[49m [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
+
+    package.json:12:6:
+[37m      12 │       [32m"types"[37m: "./dist/index.d.ts"
+         ╵       [32m~~~~~~~[0m
+
+  The "import" condition comes earlier and will be used for all "import" statements:
+
+    package.json:10:6:
+[37m      10 │       [32m"import"[37m: "./dist/index.mjs",
+         ╵       [32m~~~~~~~~[0m
+
+  The "require" condition comes earlier and will be used for all "require" calls:
+
+    package.json:11:6:
+[37m      11 │       [32m"require"[37m: "./dist/index.js",
+         ╵       [32m~~~~~~~~~[0m
+
+
+
+
+[43m[30m WARN [39m[49m [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
+
+    package.json:12:6:
+[37m      12 │       [32m"types"[37m: "./dist/index.d.ts"
+         ╵       [32m~~~~~~~[0m
+
+  The "import" condition comes earlier and will be used for all "import" statements:
+
+    package.json:10:6:
+[37m      10 │       [32m"import"[37m: "./dist/index.mjs",
+         ╵       [32m~~~~~~~~[0m
+
+  The "require" condition comes earlier and will be used for all "require" calls:
+
+    package.json:11:6:
+[37m      11 │       [32m"require"[37m: "./dist/index.js",
+         ╵       [32m~~~~~~~~~[0m
+
+
+
+[32mESM[39m [1mdist\index.mjs [22m[32m29.75 KB[39m
+[32mESM[39m ⚡️ Build success in 46ms
+[32mCJS[39m [1mdist\index.js [22m[32m31.85 KB[39m
+[32mCJS[39m ⚡️ Build success in 46ms
+[34mDTS[39m Build start
+error TS2688: Cannot find type definition file for 'bcryptjs'.
+  The file is in the program because:
+    Entry point for implicit type library 'bcryptjs'
+error TS2688: Cannot find type definition file for 'cypress'.
+  The file is in the program because:
+    Entry point for implicit type library 'cypress'
+error TS2688: Cannot find type definition file for 'jsonwebtoken'.
+  The file is in the program because:
+    Entry point for implicit type library 'jsonwebtoken'
+error TS2688: Cannot find type definition file for 'react'.
+  The file is in the program because:
+    Entry point for implicit type library 'react'
+error TS2688: Cannot find type definition file for 'react-dom'.
+  The file is in the program because:
+    Entry point for implicit type library 'react-dom'
+
+[31mError: error occurred in dts build
+    at Worker.<anonymous> (D:\AKER-LINK\ai-monitor-sdk\node_modules\.pnpm\tsup@8.5.1_typescript@5.9.3\node_modules\tsup\dist\index.js:1545:26)
+    at Worker.emit (node:events:518:28)
+    at MessagePort.<anonymous> (node:internal/worker:268:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)[39m
+[31mDTS[39m [31mBuild error[39m
+ ELIFECYCLE  Command failed with exit code 1.
