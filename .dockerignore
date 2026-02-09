@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+**/dist
+**/build
+coverage
+
+# Development files
+.git
+.github
+.vscode
+.idea
+
+# Logs
+*.log
+*.txt
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Docker files
+docker-compose.*
+Dockerfile*
+
+# Documentation
+*.md
+!package.json
+
+# Testing
+**/__tests__
+*.test.ts
+*.spec.ts
+jest.config.*
+
+# Misc
+.DS_Store
+.eslintcache
+biome.json
