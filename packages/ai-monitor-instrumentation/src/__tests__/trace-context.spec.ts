@@ -49,9 +49,9 @@ describe('TraceContext', () => {
       const ctx = TraceContext.parseTraceparent(header);
 
       expect(ctx).not.toBeNull();
-      expect(ctx!.traceId).toBe(traceId);
-      expect(ctx!.spanId).toBe(spanId);
-      expect(ctx!.sampled).toBe(true);
+      expect(ctx.traceId).toBe(traceId);
+      expect(ctx.spanId).toBe(spanId);
+      expect(ctx.sampled).toBe(true);
     });
 
     it('returns null for invalid header', () => {
@@ -91,9 +91,9 @@ describe('TraceContext', () => {
       TraceContext.run(parentCtx, () => {
         const child = TraceContext.createChildSpan();
         expect(child).not.toBeNull();
-        expect(child!.traceId).toBe(parentCtx.traceId);
-        expect(child!.parentSpanId).toBe(parentCtx.spanId);
-        expect(child!.spanId).not.toBe(parentCtx.spanId);
+        expect(child.traceId).toBe(parentCtx.traceId);
+        expect(child.parentSpanId).toBe(parentCtx.spanId);
+        expect(child.spanId).not.toBe(parentCtx.spanId);
       });
     });
 
