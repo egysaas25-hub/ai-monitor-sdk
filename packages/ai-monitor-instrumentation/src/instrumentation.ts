@@ -19,10 +19,14 @@ export class Instrumentation {
   private isRunning: boolean = false;
 
   constructor(config: IInstrumentationConfig) {
+    if (!config.monitor) {
+      throw new Error('Instrumentation requires a monitor instance (config.monitor)');
+    }
+
     this.config = {
       monitor: config.monitor,
       enablePrometheus: config.enablePrometheus ?? true,
-      thresholds: config.thresholds,
+      thresholds: config.thresholds ?? {},
       captureErrors: config.captureErrors ?? true,
       capturePerformance: config.capturePerformance ?? true,
       captureHttp: config.captureHttp ?? true,

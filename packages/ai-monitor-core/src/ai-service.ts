@@ -121,6 +121,7 @@ export class AIService implements IAIService {
             Authorization: `Bearer ${this.config.apiKey}`,
             'Content-Type': 'application/json',
           },
+          timeout: 30_000, // 30 second timeout
         },
       );
 
@@ -136,9 +137,10 @@ export class AIService implements IAIService {
    * Build prompts for different analysis types
    */
   private buildLogAnalysisPrompt(log: ILogEntry): string {
+    const ts = log.timestamp instanceof Date ? log.timestamp.toISOString() : String(log.timestamp);
     return `Analyze this log entry and provide insights:
 
-Timestamp: ${log.timestamp.toISOString()}
+Timestamp: ${ts}
 Level: ${log.level}
 Message: ${log.message}
 Context: ${log.context || 'N/A'}

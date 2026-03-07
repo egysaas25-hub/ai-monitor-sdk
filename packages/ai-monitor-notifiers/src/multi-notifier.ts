@@ -18,6 +18,9 @@ export class MultiNotifier implements INotifier {
   private stopOnFirstError: boolean;
 
   constructor(config: IMultiNotifierConfig) {
+    if (!config.notifiers || config.notifiers.length === 0) {
+      throw new Error('MultiNotifier requires at least one notifier');
+    }
     this.notifiers = config.notifiers;
     this.stopOnFirstError = config.stopOnFirstError ?? false;
   }
@@ -59,7 +62,9 @@ export class MultiNotifier implements INotifier {
       // Check if all failed
       const allFailed = results.every((result) => result.status === 'rejected');
       if (allFailed) {
-        const errors = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
+        const errors = results
+          .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+          .map((r) => r.reason instanceof Error ? r.reason.message : String(r.reason));
         throw new Error(`All notifiers failed: ${errors.join(', ')}`);
       }
 

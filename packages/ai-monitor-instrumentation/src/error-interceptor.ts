@@ -24,8 +24,11 @@ export class ErrorInterceptor {
     // Intercept uncaught exceptions
     this.originalUncaughtException = process.listeners('uncaughtException');
     process.removeAllListeners('uncaughtException');
-    process.on('uncaughtException', async (error: Error) => {
-      await this.handleError(error, 'uncaughtException');
+    process.on('uncaughtException', (error: Error) => {
+      // Fire-and-forget: do not await in process exception handler
+      this.handleError(error, 'uncaughtException').catch((e) => {
+        console.error('Failed to handle uncaught exception:', e);
+      });
 
       // Call original handlers
       this.originalUncaughtException.forEach((handler: any) => {
@@ -40,9 +43,12 @@ export class ErrorInterceptor {
     // Intercept unhandled promise rejections
     this.originalUnhandledRejection = process.listeners('unhandledRejection');
     process.removeAllListeners('unhandledRejection');
-    process.on('unhandledRejection', async (reason: any, promise: Promise<any>) => {
+    process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
       const error = reason instanceof Error ? reason : new Error(String(reason));
-      await this.handleError(error, 'unhandledRejection');
+      // Fire-and-forget: do not await in process rejection handler
+      this.handleError(error, 'unhandledRejection').catch((e) => {
+        console.error('Failed to handle unhandled rejection:', e);
+      });
 
       // Call original handlers
       this.originalUnhandledRejection.forEach((handler: any) => {

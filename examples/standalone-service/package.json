@@ -1,6 +1,7 @@
 {
   "name": "fitcoach-ai-monitor",
   "version": "2.0.0",
+  "private": true,
   "description": "AI-powered monitoring service - now using plug-and-play packages",
   "main": "dist/index.js",
   "scripts": {

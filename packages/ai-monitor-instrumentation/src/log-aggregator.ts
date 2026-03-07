@@ -57,7 +57,14 @@ export class LogAggregator {
       this.originalConsole[method] = console[method];
       console[method] = (...args: any[]) => {
         // Capture the log
-        const message = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
+        const message = args.map((a) => {
+          if (typeof a === 'string') return a;
+          try {
+            return JSON.stringify(a);
+          } catch {
+            return String(a);
+          }
+        }).join(' ');
         this.capture(levelMap[method], message);
 
         // Call original
