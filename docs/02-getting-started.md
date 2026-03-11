@@ -210,16 +210,6 @@ class MyLogger implements ILogger {
 
 ---
 
-## What's Next?
-
-- **[API Reference — Core](./03-api-core.md)** — Full `AIMonitor`, `AIService`, `ConfigBuilder`, Plugins, Health Probes API
-- **[API Reference — Notifiers](./04-api-notifiers.md)** — Telegram, Slack, Email, Discord, Webhook, Multi-channel
-- **[API Reference — Instrumentation](./05-api-instrumentation.md)** — Auto-instrumentation, Golden Signals, Tracing, Log Aggregation
-- **[Configuration Guide](./06-configuration.md)** — All environment variables and options
-- **[Deployment Guide](./07-deployment.md)** — Docker, Prometheus, Grafana setup
-
----
-
 ## Step 5: Enable Production-Grade Features
 
 ### Alert Deduplication
@@ -320,3 +310,13 @@ logs.interceptConsole(); // Captures console.log/warn/error/debug
 // Query later
 const errors = logs.query({ levels: ["error"], search: "timeout" });
 ```
+
+---
+
+## What's Next?
+
+- **[API Reference — Core](./03-api-core.md)** — Full `AIMonitor`, `AIService`, `ConfigBuilder`, Plugins, Health Probes API
+- **[API Reference — Notifiers](./04-api-notifiers.md)** — Telegram, Slack, Email, Discord, Webhook, Multi-channel
+- **[API Reference — Instrumentation](./05-api-instrumentation.md)** — Auto-instrumentation, Golden Signals, Tracing, Log Aggregation
+- **[Configuration Guide](./06-configuration.md)** — All environment variables and options
+- **[Deployment Guide](./07-deployment.md)** — Docker, Prometheus, Grafana setup

@@ -37,6 +37,10 @@ npm install /path/to/ai-monitor-sdk/packages/ai-monitor-notifiers
 
 **Option B: Git Dependency**
 
+> **⚠️ Note:** Installing the monorepo root via Git will **not** make individual
+> packages (`@aker/ai-monitor-core`, etc.) resolvable as separate dependencies.
+> Use **Option A** (local link) or publish the packages to npm for production use.
+
 ```bash
 npm install github:AKER-LINK/ai-monitor-sdk#main
 ```

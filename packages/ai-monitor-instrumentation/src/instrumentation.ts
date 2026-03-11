@@ -35,7 +35,7 @@ export class Instrumentation {
       systemMetricsInterval: config.systemMetricsInterval ?? 60000,
       appName: config.appName ?? 'unknown',
       environment: config.environment ?? process.env.NODE_ENV ?? 'development',
-      errorFilter: config.errorFilter,
+      errorFilter: config.errorFilter ?? (() => true),
       performanceThreshold: config.performanceThreshold ?? 500,
     } as Required<IInstrumentationConfig>;
 
@@ -102,18 +102,23 @@ export class Instrumentation {
         const duration = Date.now() - start;
         const isError = res.statusCode >= 500;
 
-        // Feed Aggregator (P95, Error Rate)
-        this.metricAggregator.recordRequest(duration, isError);
+        try {
+          // Feed Aggregator (P95, Error Rate)
+          this.metricAggregator.recordRequest(duration, isError);
 
-        // Feed Prometheus
-        this.prometheusExporter.observe('http_request_duration_seconds', duration / 1000, {
-          method: req.method,
-          path: req.path,
-        });
-        this.prometheusExporter.observe('http_requests_total', 1, {
-          method: req.method,
-          status: res.statusCode.toString(),
-        });
+          // Feed Prometheus
+          this.prometheusExporter.observe('http_request_duration_seconds', duration / 1000, {
+            method: req.method,
+            path: req.path,
+          });
+          this.prometheusExporter.observe('http_requests_total', 1, {
+            method: req.method,
+            status: res.statusCode.toString(),
+          });
+        } catch (err) {
+          // Log but don't break the response
+          console.error('Error recording metrics:', err);
+        }
 
         return originalEnd.apply(res, args);
       };

@@ -28,8 +28,8 @@ const aiMonitorProvider = {
       logger: new WinstonLoggerAdapter(logger),
       notifiers: [
         new TelegramNotifier({
-          token: process.env.TELEGRAM_BOT_TOKEN!,
-          chatId: process.env.TELEGRAM_CHAT_ID!,
+          token: process.env.TELEGRAM_BOT_TOKEN || '',
+          chatId: process.env.TELEGRAM_CHAT_ID || '',
         }),
       ],
     });
@@ -69,10 +69,9 @@ export class MonitoringInterceptor implements NestInterceptor {
           title: 'NestJS Error',
           message: error.message,
           metrics: {
-            stack: error.stack,
             method: request.method,
             url: request.url,
-            body: request.body,
+            // Note: do NOT include request.body or error.stack to avoid PII leakage
           },
         });
 
@@ -88,7 +87,7 @@ export class MonitoringInterceptor implements NestInterceptor {
     aiMonitorProvider,
     {
       provide: APP_INTERCEPTOR,
-      useClass: MonitoringInterceptor,
+      useFactory: (monitor: AIMonitor) => new MonitoringInterceptor(monitor),
       inject: ['AI_MONITOR'],
     },
   ],
