@@ -1,9 +1,9 @@
-import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@momen124/ai-monitor-core';
 
 /**
  * Webhook Notifier
  *
- * Generic HTTP notifier — POST JSON to any URL.
+ * Generic HTTP notifier â€” POST JSON to any URL.
  * Works with PagerDuty, Opsgenie, custom dashboards,
  * or any webhook consumer.
  */
@@ -17,7 +17,7 @@ export interface IWebhookConfig {
   headers?: Record<string, string>;
   /** Max retry attempts (default: 3) */
   retries?: number;
-  /** Base delay between retries in ms (default: 1000) — uses exponential backoff */
+  /** Base delay between retries in ms (default: 1000) â€” uses exponential backoff */
   retryDelayMs?: number;
 }
 

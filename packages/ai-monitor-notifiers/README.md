@@ -1,4 +1,4 @@
-# @aker/ai-monitor-notifiers
+# @momen124/ai-monitor-notifiers
 
 > **Notification providers for AI Monitor**  
 > Telegram, Slack, Email, and Multi-channel support
@@ -6,25 +6,25 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-## ✨ Features
+## âœ¨ Features
 
-- 📱 **Telegram** - Send alerts via Telegram bot
-- 💬 **Slack** - Beautiful formatted messages via webhook
-- 📧 **Email** - HTML and text emails via SMTP
-- 🔀 **Multi-Channel** - Send to multiple channels simultaneously
-- 🔌 **Plug-and-Play** - Works seamlessly with `@aker/ai-monitor-core`
-- 🌳 **Tree-Shakeable** - Only bundle what you use
+- ðŸ“± **Telegram** - Send alerts via Telegram bot
+- ðŸ’¬ **Slack** - Beautiful formatted messages via webhook
+- ðŸ“§ **Email** - HTML and text emails via SMTP
+- ðŸ”€ **Multi-Channel** - Send to multiple channels simultaneously
+- ðŸ”Œ **Plug-and-Play** - Works seamlessly with `@momen124/ai-monitor-core`
+- ðŸŒ³ **Tree-Shakeable** - Only bundle what you use
 
 ---
 
-## 📦 Installation
+## ðŸ“¦ Installation
 
 ```bash
 # Install core package
-npm install @aker/ai-monitor-core
+npm install @momen124/ai-monitor-core
 
 # Install notifiers package
-npm install @aker/ai-monitor-notifiers
+npm install @momen124/ai-monitor-notifiers
 
 # Install peer dependencies for the notifiers you want to use
 npm install telegram     # For Telegram
@@ -34,13 +34,13 @@ npm install nodemailer   # For Email
 
 ---
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ### Telegram Notifier
 
 ```typescript
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   notifiers: [
@@ -57,7 +57,7 @@ await monitor.start();
 ### Slack Notifier
 
 ```typescript
-import { SlackNotifier } from "@aker/ai-monitor-notifiers";
+import { SlackNotifier } from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   notifiers: [
@@ -71,7 +71,7 @@ const monitor = new AIMonitor({
 ### Email Notifier
 
 ```typescript
-import { EmailNotifier } from "@aker/ai-monitor-notifiers";
+import { EmailNotifier } from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   notifiers: [
@@ -99,7 +99,7 @@ import {
   MultiNotifier,
   TelegramNotifier,
   SlackNotifier,
-} from "@aker/ai-monitor-notifiers";
+} from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   notifiers: [
@@ -129,7 +129,7 @@ await monitor.alert({
 
 ---
 
-## 📚 API Reference
+## ðŸ“š API Reference
 
 ### TelegramNotifier
 
@@ -162,7 +162,7 @@ interface ISlackConfig {
 **Getting Slack webhook:**
 
 1. Go to https://api.slack.com/apps
-2. Create an app → Incoming Webhooks → Add to Workspace
+2. Create an app â†’ Incoming Webhooks â†’ Add to Workspace
 3. Copy webhook URL
 
 ### EmailNotifier
@@ -196,20 +196,20 @@ interface IMultiNotifierConfig {
 
 ---
 
-## 🎨 Message Formatting
+## ðŸŽ¨ Message Formatting
 
 ### Alert Messages
 
 All notifiers format alerts with:
 
-- Severity emoji (🚨 Critical, ⚠️ Warning, ℹ️ Info)
+- Severity emoji (ðŸš¨ Critical, âš ï¸ Warning, â„¹ï¸ Info)
 - Title and message
 - Timestamp
 - Optional metrics
 
 ### Pipeline Status
 
-- Status emoji (✅ Success, ❌ Failure, ⚠️ Unstable, ⏹️ Aborted)
+- Status emoji (âœ… Success, âŒ Failure, âš ï¸ Unstable, â¹ï¸ Aborted)
 - Job name and build number
 - Duration
 - Changes list (if provided)
@@ -231,7 +231,7 @@ All notifiers format alerts with:
 
 ---
 
-## 🎯 Examples
+## ðŸŽ¯ Examples
 
 ### Conditional Notifiers
 
@@ -284,7 +284,7 @@ const monitor = new AIMonitor({
 Create your own notifier:
 
 ```typescript
-import type { INotifier, IAlert } from "@aker/ai-monitor-core";
+import type { INotifier, IAlert } from "@momen124/ai-monitor-core";
 
 class DiscordNotifier implements INotifier {
   constructor(private webhookUrl: string) {}
@@ -313,7 +313,7 @@ const monitor = new AIMonitor({
 
 ---
 
-## 🔧 Troubleshooting
+## ðŸ”§ Troubleshooting
 
 ### Telegram not sending messages
 
@@ -337,16 +337,16 @@ const monitor = new AIMonitor({
 
 ---
 
-## 📖 Related Packages
+## ðŸ“– Related Packages
 
-- **[@aker/ai-monitor-core](../ai-monitor-core)** - Core monitoring functionality
-
----
-
-## 📝 License
-
-MIT © AKER Team
+- **[@momen124/ai-monitor-core](../ai-monitor-core)** - Core monitoring functionality
 
 ---
 
-**Made with ❤️ by the AKER Team**
+## ðŸ“ License
+
+MIT Â© AKER Team
+
+---
+
+**Made with â¤ï¸ by the AKER Team**

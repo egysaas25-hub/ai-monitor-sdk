@@ -1,5 +1,5 @@
 {
-  "name": "@aker/ai-monitor-core",
+  "name": "@momen124/ai-monitor-core",
   "version": "1.0.0",
   "description": "Plug-and-play AI monitoring core - drop into any project",
   "main": "dist/index.js",

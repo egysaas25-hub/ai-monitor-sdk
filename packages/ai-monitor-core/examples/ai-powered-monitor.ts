@@ -5,8 +5,8 @@
  * and get intelligent insights in any Node.js application
  */
 
-import { AIMonitor, AIService } from '@aker/ai-monitor-core';
-import { TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor, AIService } from '@momen124/ai-monitor-core';
+import { TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 
 // Create monitor with AI enabled
 const monitor = new AIMonitor({

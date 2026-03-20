@@ -1,4 +1,4 @@
-# @aker/ai-monitor-sdk
+# @momen124/ai-monitor-sdk
 
 [![CI](https://github.com/AKER-LINK/ai-monitor-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/AKER-LINK/ai-monitor-sdk/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -15,10 +15,10 @@ graph TB
         APP[Node.js App]
     end
 
-    subgraph "@aker/ai-monitor-sdk"
-        CORE["@aker/ai-monitor-core<br/>AIMonitor · AIService · Deduplicator · Plugins · Probes"]
-        INST["@aker/ai-monitor-instrumentation<br/>Golden Signals · TraceContext · LogAggregator"]
-        NOTIF["@aker/ai-monitor-notifiers<br/>Telegram · Slack · Discord · Webhook · Email"]
+    subgraph "@momen124/ai-monitor-sdk"
+        CORE["@momen124/ai-monitor-core<br/>AIMonitor Â· AIService Â· Deduplicator Â· Plugins Â· Probes"]
+        INST["@momen124/ai-monitor-instrumentation<br/>Golden Signals Â· TraceContext Â· LogAggregator"]
+        NOTIF["@momen124/ai-monitor-notifiers<br/>Telegram Â· Slack Â· Discord Â· Webhook Â· Email"]
     end
 
     subgraph "Observability Stack"
@@ -41,25 +41,25 @@ graph TB
     style NOTIF fill:#1a1a2e,stroke:#16213e,color:#fff
 ```
 
-## 📦 Packages
+## ðŸ“¦ Packages
 
 | Package                                                                       | Description                                                                                 |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **[@aker/ai-monitor-core](./packages/ai-monitor-core)**                       | Core monitoring, AI analysis, **Alert Deduplication**, **Health Probes**, **Plugin System** |
-| **[@aker/ai-monitor-instrumentation](./packages/ai-monitor-instrumentation)** | Golden Signals, **Distributed Tracing**, **Log Aggregation**, Prometheus exporter           |
-| **[@aker/ai-monitor-notifiers](./packages/ai-monitor-notifiers)**             | **Discord**, **Webhook**, Telegram, Slack, Email, Multi-channel                             |
+| **[@momen124/ai-monitor-core](./packages/ai-monitor-core)**                       | Core monitoring, AI analysis, **Alert Deduplication**, **Health Probes**, **Plugin System** |
+| **[@momen124/ai-monitor-instrumentation](./packages/ai-monitor-instrumentation)** | Golden Signals, **Distributed Tracing**, **Log Aggregation**, Prometheus exporter           |
+| **[@momen124/ai-monitor-notifiers](./packages/ai-monitor-notifiers)**             | **Discord**, **Webhook**, Telegram, Slack, Email, Multi-channel                             |
 
-## 🚀 Quickstart
+## ðŸš€ Quickstart
 
 ### As a Library
 
 ```bash
-pnpm add @aker/ai-monitor-core @aker/ai-monitor-notifiers
+pnpm add @momen124/ai-monitor-core @momen124/ai-monitor-notifiers
 ```
 
 ```typescript
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   port: 3333,
@@ -88,7 +88,7 @@ await monitor.alert({
 ### With Auto-Instrumentation
 
 ```typescript
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
 
 const instrumentation = new Instrumentation({
   monitor,
@@ -101,7 +101,7 @@ const instrumentation = new Instrumentation({
 
 instrumentation.start();
 
-// Express middleware — auto-tracks all HTTP requests
+// Express middleware â€” auto-tracks all HTTP requests
 app.use(instrumentation.httpMiddleware());
 ```
 
@@ -117,7 +117,7 @@ docker compose up -d
 # Grafana:    http://localhost:3000
 ```
 
-## 🛠️ Development
+## ðŸ› ï¸ Development
 
 ```bash
 # Install dependencies
@@ -133,24 +133,24 @@ pnpm run test
 pnpm run test:coverage
 ```
 
-## 📋 Environment Variables
+## ðŸ“‹ Environment Variables
 
 See [`.env.example`](./.env.example) for all available configuration options.
 
-## 🔄 CI/CD
+## ðŸ”„ CI/CD
 
 - **CI**: Runs on every push to `main` and all PRs (Node 18 + 20)
-- **Publish**: Triggered on Git tags `v*` — publishes all packages to npm
+- **Publish**: Triggered on Git tags `v*` â€” publishes all packages to npm
 
-## 📖 Changelog
+## ðŸ“– Changelog
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history.
 
-## 🚀 Deployment
+## ðŸš€ Deployment
 
-- [Deployment Guide](./docs/DEPLOYMENT.md) — How to update existing installations.
-- [Production Setup Guide](./docs/PRODUCTION_SETUP.md) — **Start Here** for new servers (includes Visualization & AI setup).
+- [Deployment Guide](./docs/DEPLOYMENT.md) â€” How to update existing installations.
+- [Production Setup Guide](./docs/PRODUCTION_SETUP.md) â€” **Start Here** for new servers (includes Visualization & AI setup).
 
-## 📄 License
+## ðŸ“„ License
 
-MIT © AKER Team
+MIT Â© AKER Team

@@ -37,8 +37,8 @@ npm install /path/to/ai-monitor-sdk/packages/ai-monitor-notifiers
 
 **Option B: Git Dependency**
 
-> **⚠️ Note:** Installing the monorepo root via Git will **not** make individual
-> packages (`@aker/ai-monitor-core`, etc.) resolvable as separate dependencies.
+> **âš ï¸ Note:** Installing the monorepo root via Git will **not** make individual
+> packages (`@momen124/ai-monitor-core`, etc.) resolvable as separate dependencies.
 > Use **Option A** (local link) or publish the packages to npm for production use.
 
 ```bash
@@ -50,8 +50,8 @@ npm install github:AKER-LINK/ai-monitor-sdk#main
 Add this to your app entry point (e.g. `src/main.ts` or `index.js`):
 
 ```typescript
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
 import * as dotenv from "dotenv";
 dotenv.config();
 

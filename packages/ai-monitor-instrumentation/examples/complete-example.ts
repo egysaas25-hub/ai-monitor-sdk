@@ -2,14 +2,14 @@
  * Complete Example: Plug-and-Play Monitoring
  *
  * Shows the complete setup - three packages working together:
- * 1. @aker/ai-monitor-core - Core monitoring + AI
- * 2. @aker/ai-monitor-notifiers - Notification channels
- * 3. @aker/ai-monitor-instrumentation - Auto-instrumentation
+ * 1. @momen124/ai-monitor-core - Core monitoring + AI
+ * 2. @momen124/ai-monitor-notifiers - Notification channels
+ * 3. @momen124/ai-monitor-instrumentation - Auto-instrumentation
  */
 
-import { AIMonitor } from '@aker/ai-monitor-core';
-import { Instrumentation } from '@aker/ai-monitor-instrumentation';
-import { MultiNotifier, SlackNotifier, TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor } from '@momen124/ai-monitor-core';
+import { Instrumentation } from '@momen124/ai-monitor-instrumentation';
+import { MultiNotifier, SlackNotifier, TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 import express from 'express';
 
 // ============================================================================
@@ -120,15 +120,15 @@ app.get('/api/data', async (_req, res) => {
 // Start the server
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log('📊 Monitoring dashboard: http://localhost:3333/health');
+  console.log(`ðŸš€ Server running on port ${PORT}`);
+  console.log('ðŸ“Š Monitoring dashboard: http://localhost:3333/health');
   console.log('');
-  console.log('✅ Active monitoring:');
-  console.log('   • All errors are automatically captured');
-  console.log('   • All HTTP requests are monitored');
-  console.log('   • CPU and memory are tracked every 60s');
-  console.log('   • Slow operations trigger alerts (> 500ms)');
-  console.log('   • AI analyzes all issues automatically');
+  console.log('âœ… Active monitoring:');
+  console.log('   â€¢ All errors are automatically captured');
+  console.log('   â€¢ All HTTP requests are monitored');
+  console.log('   â€¢ CPU and memory are tracked every 60s');
+  console.log('   â€¢ Slow operations trigger alerts (> 500ms)');
+  console.log('   â€¢ AI analyzes all issues automatically');
   console.log('');
   console.log('Try these endpoints:');
   console.log(`   GET  http://localhost:${PORT}/api/users - Normal operation`);

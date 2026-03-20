@@ -1,6 +1,6 @@
 # Deployment Guide
 
-How to update and use the `@aker/ai-monitor-sdk` on your server.
+How to update and use the `@momen124/ai-monitor-sdk` on your server.
 
 Choose the scenario that matches your setup:
 
@@ -23,7 +23,7 @@ Choose the scenario that matches your setup:
     ```
 
 3.  **Install Dependencies & Build:**
-    ⚠️ **Critical Step:** You typically invoke the SDK's build script to generate the `.js` files in `dist/`.
+    âš ï¸ **Critical Step:** You typically invoke the SDK's build script to generate the `.js` files in `dist/`.
 
     ```bash
     # using pnpm (recommended)
@@ -48,7 +48,7 @@ Choose the scenario that matches your setup:
 ## Scenario B: Git Dependency (package.json)
 
 **Use this if:** Your application's `package.json` points directly to the GitHub URL.
-Example: `"@aker/ai-monitor-core": "github:AKER-LINK/ai-monitor-sdk#main"`
+Example: `"@momen124/ai-monitor-core": "github:AKER-LINK/ai-monitor-sdk#main"`
 
 1.  **Update Lockfile & Reinstall:**
     Running install will fetch the latest commit from the branch.
@@ -57,10 +57,10 @@ Example: `"@aker/ai-monitor-core": "github:AKER-LINK/ai-monitor-sdk#main"`
     cd /path/to/your-app
 
     # Force upgrade the package from git
-    npm update @aker/ai-monitor-core @aker/ai-monitor-notifiers @aker/ai-monitor-instrumentation
+    npm update @momen124/ai-monitor-core @momen124/ai-monitor-notifiers @momen124/ai-monitor-instrumentation
 
     # OR remove and re-add to force fetch
-    npm uninstall @aker/ai-monitor-core
+    npm uninstall @momen124/ai-monitor-core
     npm install github:AKER-LINK/ai-monitor-sdk#main
     ```
 
@@ -92,13 +92,13 @@ _Note: This method requires the SDK repo to have a `prepare` script or compiled 
 2.  **Update on Server:**
     ```bash
     cd /path/to/your-app
-    npm install @aker/ai-monitor-core@latest
+    npm install @momen124/ai-monitor-core@latest
     pm2 restart all
     ```
 
 ---
 
-## 🔍 Troubleshooting
+## ðŸ” Troubleshooting
 
 **"Cannot find module..."**
 

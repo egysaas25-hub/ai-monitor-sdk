@@ -5,8 +5,8 @@
  * that receives alerts from other services via HTTP endpoints.
  */
 
-import { AIMonitor, createConfig } from '@aker/ai-monitor-core';
-import { EmailNotifier, MultiNotifier, SlackNotifier, TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor, createConfig } from '@momen124/ai-monitor-core';
+import { EmailNotifier, MultiNotifier, SlackNotifier, TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 import 'dotenv/config';
 
 // Create notifiers
@@ -19,7 +19,7 @@ if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
       chatId: process.env.TELEGRAM_CHAT_ID,
     }),
   );
-  console.log('✅ Telegram notifier enabled');
+  console.log('âœ… Telegram notifier enabled');
 }
 
 if (process.env.SLACK_WEBHOOK_URL) {
@@ -28,7 +28,7 @@ if (process.env.SLACK_WEBHOOK_URL) {
       webhookUrl: process.env.SLACK_WEBHOOK_URL,
     }),
   );
-  console.log('✅ Slack notifier enabled');
+  console.log('âœ… Slack notifier enabled');
 }
 
 if (process.env.SMTP_HOST && process.env.EMAIL_TO) {
@@ -45,7 +45,7 @@ if (process.env.SMTP_HOST && process.env.EMAIL_TO) {
       to: process.env.EMAIL_TO.split(','),
     }),
   );
-  console.log('✅ Email notifier enabled');
+  console.log('âœ… Email notifier enabled');
 }
 
 // Create monitor configuration
@@ -59,13 +59,13 @@ const monitor = new AIMonitor(config);
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  console.log('\nðŸ›‘ Shutting down gracefully...');
   await monitor.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  console.log('\nðŸ›‘ Shutting down gracefully...');
   await monitor.stop();
   process.exit(0);
 });
@@ -74,15 +74,15 @@ process.on('SIGTERM', async () => {
 (async () => {
   try {
     await monitor.start();
-    console.log('\n📊 Monitoring Dashboard:');
+    console.log('\nðŸ“Š Monitoring Dashboard:');
     console.log(`   Health Check: curl http://localhost:${config.port}/health`);
     console.log(
       `   Send Alert:   curl -X POST http://localhost:${config.port}/alert -H "Content-Type: application/json" -d '{"severity":"INFO","title":"Test","message":"Hello"}'`,
     );
-    console.log('\n🔔 Notifiers:', notifiers.length);
-    console.log('✅ Press Ctrl+C to stop\n');
+    console.log('\nðŸ”” Notifiers:', notifiers.length);
+    console.log('âœ… Press Ctrl+C to stop\n');
   } catch (error) {
-    console.error('❌ Failed to start AI Monitor:', error);
+    console.error('âŒ Failed to start AI Monitor:', error);
     process.exit(1);
   }
 })();

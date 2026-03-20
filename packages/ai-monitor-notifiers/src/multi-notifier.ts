@@ -1,4 +1,4 @@
-import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@momen124/ai-monitor-core';
 
 /**
  * Multi-notifier configuration

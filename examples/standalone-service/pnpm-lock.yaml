@@ -8,10 +8,10 @@ importers:
 
   .:
     dependencies:
-      '@aker/ai-monitor-core':
+      '@momen124/ai-monitor-core':
         specifier: file:../ai-monitor-core
         version: file:../ai-monitor-core(winston@3.19.0)
-      '@aker/ai-monitor-notifiers':
+      '@momen124/ai-monitor-notifiers':
         specifier: file:../ai-monitor-notifiers
         version: file:../ai-monitor-notifiers(axios@1.13.4)(telegram@2.26.22)
       axios:
@@ -63,12 +63,12 @@ importers:
 
 packages:
 
-  '@aker/ai-monitor-core@file:../ai-monitor-core':
+  '@momen124/ai-monitor-core@file:../ai-monitor-core':
     resolution: {directory: ../ai-monitor-core, type: directory}
     peerDependencies:
       winston: ^3.11.0
 
-  '@aker/ai-monitor-notifiers@file:../ai-monitor-notifiers':
+  '@momen124/ai-monitor-notifiers@file:../ai-monitor-notifiers':
     resolution: {directory: ../ai-monitor-notifiers, type: directory}
     peerDependencies:
       axios: ^1.6.5
@@ -1973,11 +1973,11 @@ packages:
 
 snapshots:
 
-  '@aker/ai-monitor-core@file:../ai-monitor-core(winston@3.19.0)':
+  '@momen124/ai-monitor-core@file:../ai-monitor-core(winston@3.19.0)':
     dependencies:
       winston: 3.19.0
 
-  '@aker/ai-monitor-notifiers@file:../ai-monitor-notifiers(axios@1.13.4)(telegram@2.26.22)':
+  '@momen124/ai-monitor-notifiers@file:../ai-monitor-notifiers(axios@1.13.4)(telegram@2.26.22)':
     optionalDependencies:
       axios: 1.13.4
       telegram: 2.26.22

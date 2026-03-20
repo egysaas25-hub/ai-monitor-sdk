@@ -6,18 +6,18 @@
 
 ## 1. Express API with Full Stack Monitoring
 
-The most common use case — monitoring an Express API with all Golden Signals, AI analysis, and multi-channel notifications.
+The most common use case â€” monitoring an Express API with all Golden Signals, AI analysis, and multi-channel notifications.
 
 ```typescript
 import express from "express";
-import { AIMonitor, WinstonLoggerAdapter } from "@aker/ai-monitor-core";
+import { AIMonitor, WinstonLoggerAdapter } from "@momen124/ai-monitor-core";
 import {
   TelegramNotifier,
   SlackNotifier,
   EmailNotifier,
   MultiNotifier,
-} from "@aker/ai-monitor-notifiers";
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
+} from "@momen124/ai-monitor-notifiers";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
 import winston from "winston";
 
 // 1. Create logger
@@ -98,9 +98,9 @@ app.listen(8080, () => logger.info("API running on :8080"));
 ```typescript
 // monitoring.module.ts
 import { Module, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
 
 @Module({})
 export class MonitoringModule implements OnModuleInit, OnModuleDestroy {
@@ -144,8 +144,8 @@ Send build and deployment status from your CI pipeline:
 
 ```typescript
 // In your deploy script
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { SlackNotifier } from "@aker/ai-monitor-notifiers";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { SlackNotifier } from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   notifiers: [

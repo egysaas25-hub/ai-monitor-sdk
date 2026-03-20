@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.monitor = void 0;
 require("dotenv/config");
 const winston_1 = __importDefault(require("winston"));
-const ai_monitor_core_1 = require("@aker/ai-monitor-core");
-const ai_monitor_notifiers_1 = require("@aker/ai-monitor-notifiers");
+const ai_monitor_core_1 = require("@momen124/ai-monitor-core");
+const ai_monitor_notifiers_1 = require("@momen124/ai-monitor-notifiers");
 /**
  * Example: AI Monitor as a standalone service
  * This demonstrates how to use the plug-and-play packages

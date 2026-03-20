@@ -1,5 +1,5 @@
 /**
- * @aker/ai-monitor-notifiers
+ * @momen124/ai-monitor-notifiers
  *
  * Notification providers for AI Monitor
  * Telegram, Slack, Email, and Multi-channel support

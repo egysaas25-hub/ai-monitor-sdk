@@ -1,6 +1,6 @@
 # Deployment & Operations Guide
 
-> How to run the AI Monitor SDK in production — Docker, Prometheus, Grafana, CI/CD, and operational best practices.
+> How to run the AI Monitor SDK in production â€” Docker, Prometheus, Grafana, CI/CD, and operational best practices.
 
 ---
 
@@ -103,10 +103,10 @@ scrape_configs:
 | ------------------------------- | --------- | ------------------ | ----------------------- |
 | `http_request_duration_seconds` | histogram | `method`, `path`   | Request latency         |
 | `http_requests_total`           | counter   | `method`, `status` | Total request count     |
-| `process_cpu_usage_ratio`       | gauge     | —                  | CPU usage (0–1)         |
-| `process_memory_usage_bytes`    | gauge     | —                  | Memory usage in bytes   |
-| `db_connections_active`         | gauge     | —                  | Active DB connections   |
-| `job_queue_length`              | gauge     | —                  | Current job queue depth |
+| `process_cpu_usage_ratio`       | gauge     | â€”                  | CPU usage (0â€“1)         |
+| `process_memory_usage_bytes`    | gauge     | â€”                  | Memory usage in bytes   |
+| `db_connections_active`         | gauge     | â€”                  | Active DB connections   |
+| `job_queue_length`              | gauge     | â€”                  | Current job queue depth |
 
 ### Example PromQL Queries
 
@@ -145,7 +145,7 @@ datasources:
 
 1. Open Grafana at `http://localhost:3000`
 2. Log in with `admin` / `admin`
-3. Go to **Dashboards → New Dashboard**
+3. Go to **Dashboards â†’ New Dashboard**
 4. Add panels using the PromQL queries above
 
 ---
@@ -173,9 +173,9 @@ Triggers on Git tags matching `v*`:
 | Step                    | Description                                                |
 | ----------------------- | ---------------------------------------------------------- |
 | Build & Test            | Full build + test suite                                    |
-| Publish core            | `pnpm publish --access public` for `@aker/ai-monitor-core` |
-| Publish notifiers       | Same for `@aker/ai-monitor-notifiers`                      |
-| Publish instrumentation | Same for `@aker/ai-monitor-instrumentation`                |
+| Publish core            | `pnpm publish --access public` for `@momen124/ai-monitor-core` |
+| Publish notifiers       | Same for `@momen124/ai-monitor-notifiers`                      |
+| Publish instrumentation | Same for `@momen124/ai-monitor-instrumentation`                |
 
 Requires `NPM_TOKEN` secret in GitHub repository settings.
 

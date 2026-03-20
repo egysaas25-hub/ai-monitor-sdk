@@ -18,7 +18,7 @@ importers:
         specifier: ^2.22.2
         version: 2.26.22
     devDependencies:
-      '@aker/ai-monitor-core':
+      '@momen124/ai-monitor-core':
         specifier: file:../ai-monitor-core
         version: file:../ai-monitor-core(winston@3.19.0)
       '@types/jest':
@@ -54,7 +54,7 @@ importers:
 
 packages:
 
-  '@aker/ai-monitor-core@file:../ai-monitor-core':
+  '@momen124/ai-monitor-core@file:../ai-monitor-core':
     resolution: {directory: ../ai-monitor-core, type: directory}
     peerDependencies:
       winston: ^3.11.0
@@ -2282,7 +2282,7 @@ packages:
 
 snapshots:
 
-  '@aker/ai-monitor-core@file:../ai-monitor-core(winston@3.19.0)':
+  '@momen124/ai-monitor-core@file:../ai-monitor-core(winston@3.19.0)':
     dependencies:
       winston: 3.19.0
 

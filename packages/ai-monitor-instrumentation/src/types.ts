@@ -1,4 +1,4 @@
-import type { AIMonitor } from '@aker/ai-monitor-core';
+import type { AIMonitor } from '@momen124/ai-monitor-core';
 
 /**
  * Golden Signal Thresholds

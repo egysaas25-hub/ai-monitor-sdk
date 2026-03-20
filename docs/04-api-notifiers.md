@@ -1,4 +1,4 @@
-# API Reference — `@aker/ai-monitor-notifiers`
+# API Reference â€” `@momen124/ai-monitor-notifiers`
 
 > Notification delivery channels for the AI Monitor SDK. Each notifier implements the `INotifier` interface and can format alerts, pipeline statuses, deployments, and daily reports for its target platform.
 
@@ -7,21 +7,21 @@
 ## Package Overview
 
 ```bash
-pnpm add @aker/ai-monitor-notifiers
+pnpm add @momen124/ai-monitor-notifiers
 ```
 
-All notifier dependencies are **optional peer dependencies** — install only the ones you need:
+All notifier dependencies are **optional peer dependencies** â€” install only the ones you need:
 
 | Notifier           | Peer Dependency | Install Command       |
 | ------------------ | --------------- | --------------------- |
 | `TelegramNotifier` | `telegram`      | `pnpm add telegram`   |
 | `SlackNotifier`    | `axios`         | `pnpm add axios`      |
 | `EmailNotifier`    | `nodemailer`    | `pnpm add nodemailer` |
-| `MultiNotifier`    | —               | —                     |
+| `MultiNotifier`    | â€”               | â€”                     |
 | `WebhookNotifier`  | `axios`         | `pnpm add axios`      |
 | `DiscordNotifier`  | `axios`         | `pnpm add axios`      |
 
-If a peer dependency is not installed, the notifier disables itself gracefully and logs a warning — it will **never** crash your application.
+If a peer dependency is not installed, the notifier disables itself gracefully and logs a warning â€” it will **never** crash your application.
 
 ---
 
@@ -43,7 +43,7 @@ interface ITelegramConfig {
 ### Usage
 
 ```typescript
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
 
 const telegram = new TelegramNotifier({
   token: process.env.TELEGRAM_BOT_TOKEN!,
@@ -55,9 +55,9 @@ const telegram = new TelegramNotifier({
 
 | Severity   | Emoji |
 | ---------- | ----- |
-| `CRITICAL` | 🚨    |
-| `WARNING`  | ⚠️    |
-| `INFO`     | ℹ️    |
+| `CRITICAL` | ðŸš¨    |
+| `WARNING`  | âš ï¸    |
+| `INFO`     | â„¹ï¸    |
 
 ---
 
@@ -76,7 +76,7 @@ interface ISlackConfig {
 ### Usage
 
 ```typescript
-import { SlackNotifier } from "@aker/ai-monitor-notifiers";
+import { SlackNotifier } from "@momen124/ai-monitor-notifiers";
 
 const slack = new SlackNotifier({
   webhookUrl: process.env.SLACK_WEBHOOK_URL!,
@@ -105,7 +105,7 @@ interface IEmailConfig {
 ### Usage
 
 ```typescript
-import { EmailNotifier } from "@aker/ai-monitor-notifiers";
+import { EmailNotifier } from "@momen124/ai-monitor-notifiers";
 
 const email = new EmailNotifier({
   host: "smtp.gmail.com",
@@ -125,7 +125,7 @@ Composite notifier that fans out to multiple channels.
 ### Usage
 
 ```typescript
-import { MultiNotifier } from "@aker/ai-monitor-notifiers";
+import { MultiNotifier } from "@momen124/ai-monitor-notifiers";
 
 const multi = new MultiNotifier({
   notifiers: [telegram, slack, email],
@@ -137,7 +137,7 @@ const multi = new MultiNotifier({
 
 ## `WebhookNotifier`
 
-Generic HTTP notifier — POST JSON payloads to any URL. Works with PagerDuty, Opsgenie, custom dashboards, or any webhook consumer.
+Generic HTTP notifier â€” POST JSON payloads to any URL. Works with PagerDuty, Opsgenie, custom dashboards, or any webhook consumer.
 
 ### Configuration
 
@@ -154,7 +154,7 @@ interface IWebhookConfig {
 ### Usage
 
 ```typescript
-import { WebhookNotifier } from "@aker/ai-monitor-notifiers";
+import { WebhookNotifier } from "@momen124/ai-monitor-notifiers";
 
 const pagerduty = new WebhookNotifier({
   url: "https://events.pagerduty.com/v2/enqueue",
@@ -169,7 +169,7 @@ const pagerduty = new WebhookNotifier({
 
 ### Retry Behavior
 
-Uses **exponential backoff**: delay = `retryDelayMs × 2^attempt`. After all retries are exhausted, the last error is thrown.
+Uses **exponential backoff**: delay = `retryDelayMs Ã— 2^attempt`. After all retries are exhausted, the last error is thrown.
 
 ### Payload Format
 
@@ -204,7 +204,7 @@ interface IDiscordConfig {
 ### Usage
 
 ```typescript
-import { DiscordNotifier } from "@aker/ai-monitor-notifiers";
+import { DiscordNotifier } from "@momen124/ai-monitor-notifiers";
 
 const discord = new DiscordNotifier({
   webhookUrl: process.env.DISCORD_WEBHOOK_URL!,
@@ -222,16 +222,16 @@ const discord = new DiscordNotifier({
 
 ### Rich Embed Features
 
-- **Alerts** — Severity color sidebar, title with emoji, structured fields, optional metrics code block
-- **Pipelines** — Status emoji (✅/❌/⚠️), job name, build number, duration, changes list
-- **Deployments** — Environment, version, rocket/cross emoji, change log
-- **Daily Reports** — Total/critical/auto-fixed counts, uptime, top issues
+- **Alerts** â€” Severity color sidebar, title with emoji, structured fields, optional metrics code block
+- **Pipelines** â€” Status emoji (âœ…/âŒ/âš ï¸), job name, build number, duration, changes list
+- **Deployments** â€” Environment, version, rocket/cross emoji, change log
+- **Daily Reports** â€” Total/critical/auto-fixed counts, uptime, top issues
 
 ---
 
 ## Creating a Custom Notifier
 
-Implement the `INotifier` interface from `@aker/ai-monitor-core`:
+Implement the `INotifier` interface from `@momen124/ai-monitor-core`:
 
 ```typescript
 import type {
@@ -240,7 +240,7 @@ import type {
   IPipelineStatus,
   IDeployment,
   IDailyReport,
-} from "@aker/ai-monitor-core";
+} from "@momen124/ai-monitor-core";
 
 class MyNotifier implements INotifier {
   async send(message: string): Promise<void> {

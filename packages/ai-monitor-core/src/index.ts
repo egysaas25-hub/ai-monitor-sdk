@@ -1,5 +1,5 @@
 /**
- * @aker/ai-monitor-core
+ * @momen124/ai-monitor-core
  *
  * Plug-and-play AI monitoring for any Node.js application
  * Drop it in, configure, and start monitoring with AI-powered insights

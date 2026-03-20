@@ -1,5 +1,5 @@
 # ============================================================
-# Multi-stage Dockerfile for @aker/ai-monitor-sdk
+# Multi-stage Dockerfile for @momen124/ai-monitor-sdk
 # ============================================================
 
 # --- Stage 1: Build ---

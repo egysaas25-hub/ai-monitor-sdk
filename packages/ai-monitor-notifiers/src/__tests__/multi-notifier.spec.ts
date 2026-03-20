@@ -1,4 +1,4 @@
-import type { IAlert, INotifier } from '@aker/ai-monitor-core';
+import type { IAlert, INotifier } from '@momen124/ai-monitor-core';
 import { MultiNotifier } from '../multi-notifier';
 
 function mockNotifier(): jest.Mocked<INotifier> {

@@ -1,6 +1,6 @@
 # Contributing Guide
 
-> How to contribute to the AI Monitor SDK — development setup, project structure, coding standards, testing, and release process.
+> How to contribute to the AI Monitor SDK â€” development setup, project structure, coding standards, testing, and release process.
 
 ---
 
@@ -8,8 +8,8 @@
 
 ### Prerequisites
 
-- **Node.js** ≥ 18
-- **pnpm** ≥ 9
+- **Node.js** â‰¥ 18
+- **pnpm** â‰¥ 9
 
 ### Getting Started
 
@@ -39,59 +39,59 @@ pnpm run format
 
 ```
 ai-monitor-sdk/
-├── packages/
-│   ├── ai-monitor-core/           # Core monitoring engine
-│   │   ├── src/
-│   │   │   ├── monitor.ts         # AIMonitor class
-│   │   │   ├── ai-service.ts      # AIService (LLM integration)
-│   │   │   ├── config-builder.ts  # Fluent ConfigBuilder
-│   │   │   ├── logger-adapter.ts  # Console + Winston adapters
-│   │   │   ├── types.ts           # Core interfaces (INotifier, IAlert, etc.)
-│   │   │   ├── ai-types.ts        # AI-specific types (IAIAnalysis, etc.)
-│   │   │   ├── index.ts           # Public API barrel
-│   │   │   └── __tests__/         # Unit tests
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   ├── ai-monitor-notifiers/      # Notification channels
-│   │   ├── src/
-│   │   │   ├── telegram-notifier.ts
-│   │   │   ├── slack-notifier.ts
-│   │   │   ├── email-notifier.ts
-│   │   │   ├── multi-notifier.ts
-│   │   │   ├── index.ts
-│   │   │   └── __tests__/
-│   │   └── package.json
-│   │
-│   └── ai-monitor-instrumentation/  # Auto-instrumentation
-│       ├── src/
-│       │   ├── instrumentation.ts    # Main orchestrator
-│       │   ├── system-metrics.ts     # CPU/memory collector
-│       │   ├── http-interceptor.ts   # HTTP middleware
-│       │   ├── error-interceptor.ts  # Uncaught error handler
-│       │   ├── performance-monitor.ts# Operation timing
-│       │   ├── metric-aggregator.ts  # P95 + error rate windows
-│       │   ├── prometheus-exporter.ts# /metrics endpoint
-│       │   ├── resource-monitor.ts   # DB + queue monitoring
-│       │   ├── types.ts
-│       │   ├── index.ts
-│       │   └── __tests__/
-│       └── package.json
-│
-├── examples/
-│   └── standalone-service/        # Production-ready example
-│
-├── .github/workflows/
-│   ├── ci.yml                     # Lint → Build → Test
-│   └── publish.yml                # Tag-triggered npm publish
-│
-├── docker-compose.yml             # Monitor + Prometheus + Grafana
-├── Dockerfile                     # Multi-stage production build
-├── prometheus/prometheus.yml      # Scrape config
-├── grafana/provisioning/          # Auto-provisioned datasources
-├── jest.config.js                 # Root test config
-├── pnpm-workspace.yaml            # Monorepo workspace
-└── package.json                   # Root scripts
+â”œâ”€â”€ packages/
+â”‚   â”œâ”€â”€ ai-monitor-core/           # Core monitoring engine
+â”‚   â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”‚   â”œâ”€â”€ monitor.ts         # AIMonitor class
+â”‚   â”‚   â”‚   â”œâ”€â”€ ai-service.ts      # AIService (LLM integration)
+â”‚   â”‚   â”‚   â”œâ”€â”€ config-builder.ts  # Fluent ConfigBuilder
+â”‚   â”‚   â”‚   â”œâ”€â”€ logger-adapter.ts  # Console + Winston adapters
+â”‚   â”‚   â”‚   â”œâ”€â”€ types.ts           # Core interfaces (INotifier, IAlert, etc.)
+â”‚   â”‚   â”‚   â”œâ”€â”€ ai-types.ts        # AI-specific types (IAIAnalysis, etc.)
+â”‚   â”‚   â”‚   â”œâ”€â”€ index.ts           # Public API barrel
+â”‚   â”‚   â”‚   â””â”€â”€ __tests__/         # Unit tests
+â”‚   â”‚   â”œâ”€â”€ package.json
+â”‚   â”‚   â””â”€â”€ tsconfig.json
+â”‚   â”‚
+â”‚   â”œâ”€â”€ ai-monitor-notifiers/      # Notification channels
+â”‚   â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”‚   â”œâ”€â”€ telegram-notifier.ts
+â”‚   â”‚   â”‚   â”œâ”€â”€ slack-notifier.ts
+â”‚   â”‚   â”‚   â”œâ”€â”€ email-notifier.ts
+â”‚   â”‚   â”‚   â”œâ”€â”€ multi-notifier.ts
+â”‚   â”‚   â”‚   â”œâ”€â”€ index.ts
+â”‚   â”‚   â”‚   â””â”€â”€ __tests__/
+â”‚   â”‚   â””â”€â”€ package.json
+â”‚   â”‚
+â”‚   â””â”€â”€ ai-monitor-instrumentation/  # Auto-instrumentation
+â”‚       â”œâ”€â”€ src/
+â”‚       â”‚   â”œâ”€â”€ instrumentation.ts    # Main orchestrator
+â”‚       â”‚   â”œâ”€â”€ system-metrics.ts     # CPU/memory collector
+â”‚       â”‚   â”œâ”€â”€ http-interceptor.ts   # HTTP middleware
+â”‚       â”‚   â”œâ”€â”€ error-interceptor.ts  # Uncaught error handler
+â”‚       â”‚   â”œâ”€â”€ performance-monitor.ts# Operation timing
+â”‚       â”‚   â”œâ”€â”€ metric-aggregator.ts  # P95 + error rate windows
+â”‚       â”‚   â”œâ”€â”€ prometheus-exporter.ts# /metrics endpoint
+â”‚       â”‚   â”œâ”€â”€ resource-monitor.ts   # DB + queue monitoring
+â”‚       â”‚   â”œâ”€â”€ types.ts
+â”‚       â”‚   â”œâ”€â”€ index.ts
+â”‚       â”‚   â””â”€â”€ __tests__/
+â”‚       â””â”€â”€ package.json
+â”‚
+â”œâ”€â”€ examples/
+â”‚   â””â”€â”€ standalone-service/        # Production-ready example
+â”‚
+â”œâ”€â”€ .github/workflows/
+â”‚   â”œâ”€â”€ ci.yml                     # Lint â†’ Build â†’ Test
+â”‚   â””â”€â”€ publish.yml                # Tag-triggered npm publish
+â”‚
+â”œâ”€â”€ docker-compose.yml             # Monitor + Prometheus + Grafana
+â”œâ”€â”€ Dockerfile                     # Multi-stage production build
+â”œâ”€â”€ prometheus/prometheus.yml      # Scrape config
+â”œâ”€â”€ grafana/provisioning/          # Auto-provisioned datasources
+â”œâ”€â”€ jest.config.js                 # Root test config
+â”œâ”€â”€ pnpm-workspace.yaml            # Monorepo workspace
+â””â”€â”€ package.json                   # Root scripts
 ```
 
 ---
@@ -108,10 +108,10 @@ packages:
 
 ### Package Dependencies
 
-- `ai-monitor-core` — **zero runtime deps**, self-contained
-- `ai-monitor-notifiers` — depends on `core` (dev), optional peers: `telegram`, `axios`, `nodemailer`
-- `ai-monitor-instrumentation` — depends on `core` (peer + dev)
-- `examples/standalone-service` — depends on `core` + `notifiers`
+- `ai-monitor-core` â€” **zero runtime deps**, self-contained
+- `ai-monitor-notifiers` â€” depends on `core` (dev), optional peers: `telegram`, `axios`, `nodemailer`
+- `ai-monitor-instrumentation` â€” depends on `core` (peer + dev)
+- `examples/standalone-service` â€” depends on `core` + `notifiers`
 
 ---
 
@@ -135,9 +135,9 @@ tsup src/index.ts --format cjs,esm --dts --clean
 
 This produces:
 
-- `dist/index.js` — CommonJS
-- `dist/index.mjs` — ESM
-- `dist/index.d.ts` — TypeScript declarations
+- `dist/index.js` â€” CommonJS
+- `dist/index.mjs` â€” ESM
+- `dist/index.d.ts` â€” TypeScript declarations
 
 ### Code Style
 
@@ -182,9 +182,9 @@ The root `jest.config.js` maps package imports to source directories for seamles
 
 ```javascript
 moduleNameMapper: {
-  '^@aker/ai-monitor-core$': '<rootDir>/packages/ai-monitor-core/src',
-  '^@aker/ai-monitor-notifiers$': '<rootDir>/packages/ai-monitor-notifiers/src',
-  '^@aker/ai-monitor-instrumentation$': '<rootDir>/packages/ai-monitor-instrumentation/src',
+  '^@momen124/ai-monitor-core$': '<rootDir>/packages/ai-monitor-core/src',
+  '^@momen124/ai-monitor-notifiers$': '<rootDir>/packages/ai-monitor-notifiers/src',
+  '^@momen124/ai-monitor-instrumentation$': '<rootDir>/packages/ai-monitor-instrumentation/src',
 }
 ```
 
@@ -193,7 +193,7 @@ moduleNameMapper: {
 ## Creating a New Notifier
 
 1. Create `packages/ai-monitor-notifiers/src/my-notifier.ts`
-2. Implement `INotifier` from `@aker/ai-monitor-core`
+2. Implement `INotifier` from `@momen124/ai-monitor-core`
 3. Export from `packages/ai-monitor-notifiers/src/index.ts`
 4. Add peer dependency to `package.json` (if needed) with `optional: true`
 5. Write tests in `src/__tests__/my-notifier.spec.ts`
@@ -214,4 +214,4 @@ moduleNameMapper: {
 
 ## License
 
-MIT © AKER Team
+MIT Â© AKER Team

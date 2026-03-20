@@ -2,7 +2,7 @@ const mockAxios = jest.fn().mockResolvedValue({ data: 'ok' });
 
 jest.mock('axios', () => mockAxios, { virtual: true });
 
-import type { IAlert, IDailyReport, IDeployment, IPipelineStatus } from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, IPipelineStatus } from '@momen124/ai-monitor-core';
 import { WebhookNotifier } from '../webhook-notifier';
 
 describe('WebhookNotifier', () => {

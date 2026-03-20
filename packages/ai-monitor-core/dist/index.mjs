@@ -131,7 +131,9 @@ var init_ai_service = __esm({
               headers: {
                 Authorization: `Bearer ${this.config.apiKey}`,
                 "Content-Type": "application/json"
-              }
+              },
+              timeout: 3e4
+              // 30 second timeout
             }
           );
           const result = JSON.parse(response.data.choices[0].message.content);
@@ -145,9 +147,10 @@ var init_ai_service = __esm({
        * Build prompts for different analysis types
        */
       buildLogAnalysisPrompt(log) {
+        const ts = log.timestamp instanceof Date ? log.timestamp.toISOString() : String(log.timestamp);
         return `Analyze this log entry and provide insights:
 
-Timestamp: ${log.timestamp.toISOString()}
+Timestamp: ${ts}
 Level: ${log.level}
 Message: ${log.message}
 Context: ${log.context || "N/A"}
@@ -1126,11 +1129,22 @@ ${analysis.suggestions.map((s) => `\u2022 ${s}`).join("\n")}` : ""}`,
    * Handle alert endpoint
    */
   handleAlertEndpoint(req, res) {
+    const MAX_BODY_SIZE = 1048576;
     let body = "";
+    let exceeded = false;
     req.on("data", (chunk) => {
       body += chunk.toString();
+      if (body.length > MAX_BODY_SIZE) {
+        exceeded = true;
+        req.destroy();
+      }
     });
     req.on("end", async () => {
+      if (exceeded) {
+        res.writeHead(413, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Request body too large" }));
+        return;
+      }
       try {
         const alert = JSON.parse(body);
         await this.alert(alert);
@@ -1147,11 +1161,22 @@ ${analysis.suggestions.map((s) => `\u2022 ${s}`).join("\n")}` : ""}`,
    * Handle pipeline endpoint
    */
   handlePipelineEndpoint(req, res) {
+    const MAX_BODY_SIZE = 1048576;
     let body = "";
+    let exceeded = false;
     req.on("data", (chunk) => {
       body += chunk.toString();
+      if (body.length > MAX_BODY_SIZE) {
+        exceeded = true;
+        req.destroy();
+      }
     });
     req.on("end", async () => {
+      if (exceeded) {
+        res.writeHead(413, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Request body too large" }));
+        return;
+      }
       try {
         const status = JSON.parse(body);
         await this.pipelineStatus(status);

@@ -8,7 +8,7 @@ jest.mock(
   { virtual: true },
 );
 
-import type { IAlert, IDailyReport, IDeployment, IPipelineStatus } from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, IPipelineStatus } from '@momen124/ai-monitor-core';
 import { DiscordNotifier } from '../discord-notifier';
 
 describe('DiscordNotifier', () => {
@@ -43,7 +43,7 @@ describe('DiscordNotifier', () => {
 
       const payload = mockAxiosPost.mock.calls[0][1];
       expect(payload.embeds).toHaveLength(1);
-      expect(payload.embeds[0].title).toContain('🚨');
+      expect(payload.embeds[0].title).toContain('ðŸš¨');
       expect(payload.embeds[0].title).toContain('Server Down');
       expect(payload.embeds[0].color).toBe(0xed4245); // Red
       expect(payload.embeds[0].description).toBe('API not responding');
@@ -77,7 +77,7 @@ describe('DiscordNotifier', () => {
       await notifier.sendPipelineStatus(status);
 
       const embed = mockAxiosPost.mock.calls[0][1].embeds[0];
-      expect(embed.title).toContain('✅');
+      expect(embed.title).toContain('âœ…');
       expect(embed.color).toBe(0x57f287); // Green
     });
   });
@@ -93,7 +93,7 @@ describe('DiscordNotifier', () => {
       await notifier.sendDeploymentNotification(dep);
 
       const embed = mockAxiosPost.mock.calls[0][1].embeds[0];
-      expect(embed.title).toContain('❌');
+      expect(embed.title).toContain('âŒ');
       expect(embed.color).toBe(0xed4245); // Red
     });
   });
@@ -112,7 +112,7 @@ describe('DiscordNotifier', () => {
       await notifier.sendDailyReport(report);
 
       const embed = mockAxiosPost.mock.calls[0][1].embeds[0];
-      expect(embed.title).toContain('📊');
+      expect(embed.title).toContain('ðŸ“Š');
       const totalField = embed.fields.find((f: any) => f.name === 'Total Alerts');
       expect(totalField.value).toBe('3');
     });

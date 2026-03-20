@@ -1,5 +1,5 @@
 {
-  "name": "@aker/ai-monitor-notifiers",
+  "name": "@momen124/ai-monitor-notifiers",
   "version": "1.0.0",
   "description": "Notification providers for AI Monitor - Telegram, Slack, Email",
   "main": "dist/index.js",
@@ -39,7 +39,7 @@
     "nodemailer": "^6.9.0"
   },
   "devDependencies": {
-    "@aker/ai-monitor-core": "file:../ai-monitor-core",
+    "@momen124/ai-monitor-core": "file:../ai-monitor-core",
     "@types/node": "^20.11.0",
     "@types/nodemailer": "^6.4.14",
     "typescript": "^5.3.3",

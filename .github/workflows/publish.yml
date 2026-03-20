@@ -38,19 +38,19 @@ jobs:
       - name: Run tests
         run: pnpm run test
 
-      - name: Publish @aker/ai-monitor-core
+      - name: Publish @momen124/ai-monitor-core
         working-directory: packages/ai-monitor-core
         run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @aker/ai-monitor-notifiers
+      - name: Publish @momen124/ai-monitor-notifiers
         working-directory: packages/ai-monitor-notifiers
         run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @aker/ai-monitor-instrumentation
+      - name: Publish @momen124/ai-monitor-instrumentation
         working-directory: packages/ai-monitor-instrumentation
         run: pnpm publish --access public --no-git-checks
         env:

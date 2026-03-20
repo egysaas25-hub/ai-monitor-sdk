@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import winston from 'winston';
-import { AIMonitor, WinstonLoggerAdapter } from '@aker/ai-monitor-core';
-import { TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor, WinstonLoggerAdapter } from '@momen124/ai-monitor-core';
+import { TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 
 /**
  * Example: AI Monitor as a standalone service

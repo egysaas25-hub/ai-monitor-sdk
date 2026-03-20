@@ -24,8 +24,8 @@
   "author": "AKER Team",
   "license": "MIT",
   "dependencies": {
-    "@aker/ai-monitor-core": "file:../../packages/ai-monitor-core",
-    "@aker/ai-monitor-notifiers": "file:../../packages/ai-monitor-notifiers",
+    "@momen124/ai-monitor-core": "file:../../packages/ai-monitor-core",
+    "@momen124/ai-monitor-notifiers": "file:../../packages/ai-monitor-notifiers",
     "telegram": "^2.22.2",
     "axios": "^1.6.5",
     "winston": "^3.11.0",

@@ -1,4 +1,4 @@
-# API Reference — `@aker/ai-monitor-core`
+# API Reference â€” `@momen124/ai-monitor-core`
 
 > The brain of the SDK. Contains the monitoring server, AI analysis service, configuration builder, and all shared type contracts.
 
@@ -50,7 +50,7 @@ Starts the HTTP server and begins listening for requests.
 
 ```typescript
 await monitor.start();
-// 🚀 AI Monitor started on http://0.0.0.0:3333
+// ðŸš€ AI Monitor started on http://0.0.0.0:3333
 ```
 
 #### `stop(): Promise<void>`
@@ -125,7 +125,7 @@ await monitor.dailyReport({
 Sends a raw text message through all notifiers.
 
 ```typescript
-await monitor.notify("🚀 Deployment v2.1.0 complete!");
+await monitor.notify("ðŸš€ Deployment v2.1.0 complete!");
 ```
 
 ---
@@ -164,7 +164,7 @@ interface IAIAnalysis {
   rootCause?: string;
   suggestions?: string[];
   isAnomaly?: boolean;
-  confidence?: number; // 0–1
+  confidence?: number; // 0â€“1
   relatedPatterns?: string[];
   autoHealCommand?: string;
 }
@@ -179,7 +179,7 @@ Fluent configuration builder with environment variable auto-loading.
 ### Usage
 
 ```typescript
-import { createConfig } from "@aker/ai-monitor-core";
+import { createConfig } from "@momen124/ai-monitor-core";
 
 const config = createConfig({ fromEnv: true })
   .port(4000)
@@ -235,7 +235,7 @@ Adapts any Winston logger instance to the `ILogger` interface:
 
 ```typescript
 import winston from "winston";
-import { WinstonLoggerAdapter } from "@aker/ai-monitor-core";
+import { WinstonLoggerAdapter } from "@momen124/ai-monitor-core";
 
 const adapter = new WinstonLoggerAdapter(
   winston.createLogger({
@@ -384,10 +384,10 @@ const monitor = new AIMonitor({
   deduplication: { enabled: true, cooldownMs: 300_000 }, // 5min window
 });
 
-// First alert fires → notifiers called
+// First alert fires â†’ notifiers called
 await monitor.alert({ severity: "CRITICAL", title: "DB Down", message: "..." });
 
-// Same alert within 5 minutes → suppressed, no notification
+// Same alert within 5 minutes â†’ suppressed, no notification
 await monitor.alert({ severity: "CRITICAL", title: "DB Down", message: "..." });
 ```
 
@@ -448,7 +448,7 @@ const monitor = new AIMonitor({
 | Condition                        | Severity   | When                                    |
 | -------------------------------- | ---------- | --------------------------------------- |
 | First failure                    | `WARNING`  | Immediately on first failed check       |
-| Consecutive failures ≥ threshold | `CRITICAL` | After N consecutive failures            |
+| Consecutive failures â‰¥ threshold | `CRITICAL` | After N consecutive failures            |
 | Recovery                         | `INFO`     | When a previously-failed probe succeeds |
 
 ### Health Endpoint
@@ -497,8 +497,8 @@ interface IPlugin {
 | `onInit`         | Plugin is registered         | No                                                               |
 | `onStart`        | `monitor.start()` is called  | No                                                               |
 | `onStop`         | `monitor.stop()` is called   | No                                                               |
-| `onAlert`        | Before notification          | ✅ Return `null` to suppress, return modified alert to change it |
-| `onBeforeNotify` | After `onAlert`, before send | ✅ Return `false` to suppress                                    |
+| `onAlert`        | Before notification          | âœ… Return `null` to suppress, return modified alert to change it |
+| `onBeforeNotify` | After `onAlert`, before send | âœ… Return `false` to suppress                                    |
 
 ### Usage
 
@@ -532,23 +532,23 @@ const config = createConfig()
 
 ## `validateConfig()`
 
-Runtime validation of `IMonitorConfig`. Called automatically in the `AIMonitor` constructor — invalid configs throw with clear error messages.
+Runtime validation of `IMonitorConfig`. Called automatically in the `AIMonitor` constructor â€” invalid configs throw with clear error messages.
 
 ### Usage
 
 ```typescript
-import { validateConfig } from "@aker/ai-monitor-core";
+import { validateConfig } from "@momen124/ai-monitor-core";
 
 const result = validateConfig(myConfig);
-// result.valid → boolean
-// result.errors → string[] of human-readable messages
+// result.valid â†’ boolean
+// result.errors â†’ string[] of human-readable messages
 ```
 
 ### Validated Fields
 
 | Field           | Check                                    |
 | --------------- | ---------------------------------------- |
-| `port`          | Number, 1–65535                          |
+| `port`          | Number, 1â€“65535                          |
 | `host`          | String                                   |
 | `enabled`       | Boolean                                  |
 | `notifiers`     | Array of objects with `sendAlert` method |

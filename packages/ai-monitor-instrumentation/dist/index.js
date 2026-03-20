@@ -58,8 +58,10 @@ var ErrorInterceptor = class {
     }
     this.originalUncaughtException = process.listeners("uncaughtException");
     process.removeAllListeners("uncaughtException");
-    process.on("uncaughtException", async (error) => {
-      await this.handleError(error, "uncaughtException");
+    process.on("uncaughtException", (error) => {
+      this.handleError(error, "uncaughtException").catch((e) => {
+        console.error("Failed to handle uncaught exception:", e);
+      });
       this.originalUncaughtException.forEach((handler) => {
         try {
           handler(error);
@@ -69,9 +71,11 @@ var ErrorInterceptor = class {
     });
     this.originalUnhandledRejection = process.listeners("unhandledRejection");
     process.removeAllListeners("unhandledRejection");
-    process.on("unhandledRejection", async (reason, promise) => {
+    process.on("unhandledRejection", (reason, promise) => {
       const error = reason instanceof Error ? reason : new Error(String(reason));
-      await this.handleError(error, "unhandledRejection");
+      this.handleError(error, "unhandledRejection").catch((e) => {
+        console.error("Failed to handle unhandled rejection:", e);
+      });
       this.originalUnhandledRejection.forEach((handler) => {
         try {
           handler(reason, promise);
@@ -701,10 +705,13 @@ var SystemMetricsCollector = class {
 var Instrumentation = class {
   constructor(config) {
     this.isRunning = false;
+    if (!config.monitor) {
+      throw new Error("Instrumentation requires a monitor instance (config.monitor)");
+    }
     this.config = {
       monitor: config.monitor,
       enablePrometheus: config.enablePrometheus ?? true,
-      thresholds: config.thresholds,
+      thresholds: config.thresholds ?? {},
       captureErrors: config.captureErrors ?? true,
       capturePerformance: config.capturePerformance ?? true,
       captureHttp: config.captureHttp ?? true,
@@ -713,7 +720,7 @@ var Instrumentation = class {
       systemMetricsInterval: config.systemMetricsInterval ?? 6e4,
       appName: config.appName ?? "unknown",
       environment: config.environment ?? process.env.NODE_ENV ?? "development",
-      errorFilter: config.errorFilter,
+      errorFilter: config.errorFilter ?? (() => true),
       performanceThreshold: config.performanceThreshold ?? 500
     };
     this.systemMetrics = new SystemMetricsCollector(this.config);
@@ -766,15 +773,19 @@ var Instrumentation = class {
       res.end = (...args) => {
         const duration = Date.now() - start;
         const isError = res.statusCode >= 500;
-        this.metricAggregator.recordRequest(duration, isError);
-        this.prometheusExporter.observe("http_request_duration_seconds", duration / 1e3, {
-          method: req.method,
-          path: req.path
-        });
-        this.prometheusExporter.observe("http_requests_total", 1, {
-          method: req.method,
-          status: res.statusCode.toString()
-        });
+        try {
+          this.metricAggregator.recordRequest(duration, isError);
+          this.prometheusExporter.observe("http_request_duration_seconds", duration / 1e3, {
+            method: req.method,
+            path: req.path
+          });
+          this.prometheusExporter.observe("http_requests_total", 1, {
+            method: req.method,
+            status: res.statusCode.toString()
+          });
+        } catch (err) {
+          console.error("Error recording metrics:", err);
+        }
         return originalEnd.apply(res, args);
       };
       return baseMiddleware(req, res, next);
@@ -850,7 +861,14 @@ var LogAggregator = class {
     for (const method of methods) {
       this.originalConsole[method] = console[method];
       console[method] = (...args) => {
-        const message = args.map((a) => typeof a === "string" ? a : JSON.stringify(a)).join(" ");
+        const message = args.map((a) => {
+          if (typeof a === "string") return a;
+          try {
+            return JSON.stringify(a);
+          } catch {
+            return String(a);
+          }
+        }).join(" ");
         this.capture(levelMap[method], message);
         this.originalConsole[method](...args);
       };

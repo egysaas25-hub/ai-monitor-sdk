@@ -16,7 +16,7 @@ jest.mock(
   { virtual: true },
 );
 
-import type { IAlert, IDailyReport, IDeployment, IPipelineStatus } from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, IPipelineStatus } from '@momen124/ai-monitor-core';
 import { SlackNotifier } from '../slack-notifier';
 
 describe('SlackNotifier', () => {
@@ -60,7 +60,7 @@ describe('SlackNotifier', () => {
 
       expect(payload.attachments).toHaveLength(1);
       expect(payload.attachments[0].color).toBe('danger');
-      expect(payload.attachments[0].title).toContain('🚨');
+      expect(payload.attachments[0].title).toContain('ðŸš¨');
       expect(payload.attachments[0].title).toContain('CPU Spike');
       expect(payload.attachments[0].text).toBe('CPU is at 99%');
     });

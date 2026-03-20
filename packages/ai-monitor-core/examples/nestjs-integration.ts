@@ -5,8 +5,8 @@
  * using a custom module and interceptor for automatic monitoring.
  */
 
-import { AIMonitor, WinstonLoggerAdapter } from '@aker/ai-monitor-core';
-import { TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor, WinstonLoggerAdapter } from '@momen124/ai-monitor-core';
+import { TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 import { type CallHandler, type ExecutionContext, Injectable, Module, type NestInterceptor } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { type Observable, throwError } from 'rxjs';

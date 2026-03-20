@@ -5,9 +5,9 @@
  * stack requested: Prometheus metrics, P95 latency, Error Rates, and Resource Saturation.
  */
 
-import { AIMonitor } from '@aker/ai-monitor-core';
-import { Instrumentation } from '@aker/ai-monitor-instrumentation';
-import { TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor } from '@momen124/ai-monitor-core';
+import { Instrumentation } from '@momen124/ai-monitor-instrumentation';
+import { TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 import express from 'express';
 
 // 1. Setup Monitor (Alerting)

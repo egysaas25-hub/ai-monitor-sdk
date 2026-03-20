@@ -1,10 +1,10 @@
-# @aker/ai-monitor-instrumentation
+# @momen124/ai-monitor-instrumentation
 
 **Plug-and-play auto-instrumentation for any Node.js application**
 
 Drop it in, start it, and your entire application is automatically monitored - errors, performance, HTTP requests, system metrics - everything!
 
-## 🎯 Golden Signals Monitoring
+## ðŸŽ¯ Golden Signals Monitoring
 
 Automatically tracks the four golden signals with industry-standard thresholds:
 
@@ -26,30 +26,30 @@ Just add the middleware, and you get a compatible `/metrics` endpoint automatica
 // Scrape this with Prometheus!
 ```
 
-## 🎯 What It Does
+## ðŸŽ¯ What It Does
 
 Automatically monitors:
 
-- ✅ **All errors** (uncaught exceptions, unhandled rejections)
-- ✅ **Performance** (slow operations, function timings)
-- ✅ **HTTP requests/responses** (latency, status codes, errors)
-- ✅ **System metrics** (CPU, memory, uptime)
-- ✅ **Database queries** (coming soon)
+- âœ… **All errors** (uncaught exceptions, unhandled rejections)
+- âœ… **Performance** (slow operations, function timings)
+- âœ… **HTTP requests/responses** (latency, status codes, errors)
+- âœ… **System metrics** (CPU, memory, uptime)
+- âœ… **Database queries** (coming soon)
 
 All without touching your application code!
 
-## 📦 Installation
+## ðŸ“¦ Installation
 
 ```bash
-pnpm add @aker/ai-monitor-instrumentation @aker/ai-monitor-core @aker/ai-monitor-notifiers
+pnpm add @momen124/ai-monitor-instrumentation @momen124/ai-monitor-core @momen124/ai-monitor-notifiers
 ```
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ```typescript
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
 
 // 1. Create monitor
 const monitor = new AIMonitor({
@@ -76,7 +76,7 @@ instrumentation.start();
 // That's it! Your app is now fully monitored!
 ```
 
-## 📊 What Gets Monitored Automatically
+## ðŸ“Š What Gets Monitored Automatically
 
 ### Errors
 
@@ -151,7 +151,7 @@ CPU and memory are automatically monitored:
 // - CPU usage > 80% (configurable)
 ```
 
-## ⚙️ Configuration
+## âš™ï¸ Configuration
 
 ```typescript
 const instrumentation = new Instrumentation({
@@ -181,13 +181,13 @@ const instrumentation = new Instrumentation({
 });
 ```
 
-## 🎨 Framework Integration
+## ðŸŽ¨ Framework Integration
 
 ### Express.js
 
 ```typescript
 import express from "express";
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
 
 const app = express();
 
@@ -205,7 +205,7 @@ app.get("/api/data", async (req, res) => {
 
 ```typescript
 import { NestFactory } from "@nestjs/core";
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -235,7 +235,7 @@ instrumentation.wrapHttpServer(fastify.server);
 instrumentation.start();
 ```
 
-## 🔧 Advanced Usage
+## ðŸ”§ Advanced Usage
 
 ### Manual Error Capture
 
@@ -280,26 +280,26 @@ class DataService {
 }
 ```
 
-## 📈 What You Get
+## ðŸ“ˆ What You Get
 
 Once instrumentation is running, you'll automatically receive alerts for:
 
-- ❌ **Uncaught errors** with stack traces
-- 🐌 **Slow HTTP requests** (> threshold)
-- 💾 **High memory usage** (> 90%)
-- 🔥 **High CPU usage** (> 80%)
-- 🚨 **500 errors** from your API
-- ⏱️ **Slow operations** (> threshold)
+- âŒ **Uncaught errors** with stack traces
+- ðŸŒ **Slow HTTP requests** (> threshold)
+- ðŸ’¾ **High memory usage** (> 90%)
+- ðŸ”¥ **High CPU usage** (> 80%)
+- ðŸš¨ **500 errors** from your API
+- â±ï¸ **Slow operations** (> threshold)
 
 All sent to your configured notifiers (Telegram, Slack, Email)!
 
-## 🎯 Real-World Example
+## ðŸŽ¯ Real-World Example
 
 ```typescript
 // app.ts
-import { AIMonitor } from '@aker/ai-monitor-core';
-import { Instrumentation } from '@aker/ai-monitor-instrumentation';
-import { TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor } from '@momen124/ai-monitor-core';
+import { Instrumentation } from '@momen124/ai-monitor-instrumentation';
+import { TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 import express from 'express';
 
 // Setup monitoring
@@ -342,7 +342,7 @@ app.listen(3000);
 // - AI-powered insights (if configured)
 ```
 
-## 🏆 Benefits
+## ðŸ† Benefits
 
 1. **Zero Configuration** - Works out of the box
 2. **Zero Code Changes** - No need to modify existing code
@@ -350,10 +350,10 @@ app.listen(3000);
 4. **Actionable** - Get alerts only when something is wrong
 5. **Extensible** - Can be customized for your needs
 
-## 📝 License
+## ðŸ“ License
 
 MIT
 
 ---
 
-Made with ❤️ by AKER Team
+Made with â¤ï¸ by AKER Team

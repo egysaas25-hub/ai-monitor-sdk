@@ -1,4 +1,4 @@
-import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@momen124/ai-monitor-core';
 
 /**
  * Slack notifier configuration
@@ -113,7 +113,7 @@ export class SlackNotifier implements INotifier {
     if (status.changes && status.changes.length > 0) {
       fields.push({
         title: 'Changes',
-        value: status.changes.map((c) => `• ${c}`).join('\n'),
+        value: status.changes.map((c) => `â€¢ ${c}`).join('\n'),
         short: false,
       });
     }
@@ -137,7 +137,7 @@ export class SlackNotifier implements INotifier {
   async sendDeploymentNotification(deployment: IDeployment): Promise<void> {
     if (!this.enabled) return;
 
-    const emoji = deployment.status === 'SUCCESS' ? '✅' : '❌';
+    const emoji = deployment.status === 'SUCCESS' ? 'âœ…' : 'âŒ';
     const color = deployment.status === 'SUCCESS' ? 'good' : 'danger';
 
     const fields: any[] = [
@@ -169,7 +169,7 @@ export class SlackNotifier implements INotifier {
     if (deployment.changes && deployment.changes.length > 0) {
       fields.push({
         title: 'Changes',
-        value: deployment.changes.map((c) => `• ${c}`).join('\n'),
+        value: deployment.changes.map((c) => `â€¢ ${c}`).join('\n'),
         short: false,
       });
     }
@@ -193,7 +193,7 @@ export class SlackNotifier implements INotifier {
   async sendDailyReport(report: IDailyReport): Promise<void> {
     if (!this.enabled) return;
 
-    const overallStatus = report.totalAlerts === 0 ? '✅ Healthy' : '⚠️ Issues Found';
+    const overallStatus = report.totalAlerts === 0 ? 'âœ… Healthy' : 'âš ï¸ Issues Found';
     const color = report.totalAlerts === 0 ? 'good' : 'warning';
 
     const fields: any[] = [
@@ -231,7 +231,7 @@ export class SlackNotifier implements INotifier {
       attachments: [
         {
           color: color,
-          title: `📊 Daily Health Report - ${report.date.toLocaleDateString()}`,
+          title: `ðŸ“Š Daily Health Report - ${report.date.toLocaleDateString()}`,
           text: `*Overall Status:* ${overallStatus}`,
           fields: fields,
           footer: 'AI Monitor',
@@ -243,13 +243,13 @@ export class SlackNotifier implements INotifier {
   private getSeverityEmoji(severity: string): string {
     switch (severity) {
       case 'CRITICAL':
-        return '🚨';
+        return 'ðŸš¨';
       case 'WARNING':
-        return '⚠️';
+        return 'âš ï¸';
       case 'INFO':
-        return 'ℹ️';
+        return 'â„¹ï¸';
       default:
-        return '📢';
+        return 'ðŸ“¢';
     }
   }
 
@@ -269,15 +269,15 @@ export class SlackNotifier implements INotifier {
   private getStatusEmoji(status: string): string {
     switch (status) {
       case 'SUCCESS':
-        return '✅';
+        return 'âœ…';
       case 'FAILURE':
-        return '❌';
+        return 'âŒ';
       case 'ABORTED':
-        return '⏹️';
+        return 'â¹ï¸';
       case 'UNSTABLE':
-        return '⚠️';
+        return 'âš ï¸';
       default:
-        return '📋';
+        return 'ðŸ“‹';
     }
   }
 

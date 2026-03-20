@@ -1,4 +1,4 @@
-# @aker/ai-monitor-core
+# @momen124/ai-monitor-core
 
 > **Plug-and-play AI monitoring for any Node.js application**  
 > Drop it in. Configure once. Monitor everywhere.
@@ -6,35 +6,35 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-## ✨ Features
+## âœ¨ Features
 
-- 🔌 **True Plug-and-Play** - Install and start monitoring in 5 lines of code
-- 🎯 **Zero Configuration Required** - Sensible defaults, configure only what you need
-- 🔧 **Fully Pluggable** - Bring your own logger, notifiers, or use ours
-- 📊 **HTTP API Built-in** - Ready-to-use endpoints for alerts, health checks, and CI/CD
-- 🎨 **TypeScript Native** - Full type safety with comprehensive type definitions
-- 🚀 **Framework Agnostic** - Works with Express, NestJS, vanilla Node.js, or anything else
+- ðŸ”Œ **True Plug-and-Play** - Install and start monitoring in 5 lines of code
+- ðŸŽ¯ **Zero Configuration Required** - Sensible defaults, configure only what you need
+- ðŸ”§ **Fully Pluggable** - Bring your own logger, notifiers, or use ours
+- ðŸ“Š **HTTP API Built-in** - Ready-to-use endpoints for alerts, health checks, and CI/CD
+- ðŸŽ¨ **TypeScript Native** - Full type safety with comprehensive type definitions
+- ðŸš€ **Framework Agnostic** - Works with Express, NestJS, vanilla Node.js, or anything else
 
 ---
 
-## 📦 Installation
+## ðŸ“¦ Installation
 
 ```bash
-npm install @aker/ai-monitor-core
+npm install @momen124/ai-monitor-core
 # or
-pnpm add @aker/ai-monitor-core
+pnpm add @momen124/ai-monitor-core
 # or
-yarn add @aker/ai-monitor-core
+yarn add @momen124/ai-monitor-core
 ```
 
 ---
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ### Minimal Setup (30 seconds)
 
 ```typescript
-import { AIMonitor } from "@aker/ai-monitor-core";
+import { AIMonitor } from "@momen124/ai-monitor-core";
 
 const monitor = new AIMonitor();
 await monitor.start();
@@ -45,8 +45,8 @@ await monitor.start();
 ### With Notifiers
 
 ```typescript
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   port: 3333,
@@ -71,7 +71,7 @@ await monitor.alert({
 ### With Custom Logger
 
 ```typescript
-import { AIMonitor, WinstonLoggerAdapter } from "@aker/ai-monitor-core";
+import { AIMonitor, WinstonLoggerAdapter } from "@momen124/ai-monitor-core";
 import winston from "winston";
 
 const logger = winston.createLogger({
@@ -88,8 +88,8 @@ await monitor.start();
 ### Using Configuration Builder
 
 ```typescript
-import { AIMonitor, createConfig } from "@aker/ai-monitor-core";
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
+import { AIMonitor, createConfig } from "@momen124/ai-monitor-core";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
 
 const config = createConfig()
   .port(4000)
@@ -109,7 +109,7 @@ await monitor.start();
 ### Load from Environment Variables
 
 ```typescript
-import { createConfig } from "@aker/ai-monitor-core";
+import { createConfig } from "@momen124/ai-monitor-core";
 
 const config = createConfig({
   fromEnv: true,
@@ -126,7 +126,7 @@ const monitor = new AIMonitor(config);
 
 ---
 
-## 📚 API Reference
+## ðŸ“š API Reference
 
 ### AIMonitor Class
 
@@ -231,12 +231,12 @@ Content-Type: application/json
 
 ---
 
-## 🔌 Creating Custom Notifiers
+## ðŸ”Œ Creating Custom Notifiers
 
 Implement the `INotifier` interface:
 
 ```typescript
-import type { INotifier, IAlert } from "@aker/ai-monitor-core";
+import type { INotifier, IAlert } from "@momen124/ai-monitor-core";
 
 class CustomNotifier implements INotifier {
   async send(message: string): Promise<void> {
@@ -263,13 +263,13 @@ class CustomNotifier implements INotifier {
 
 ---
 
-## 🎯 Use Cases
+## ðŸŽ¯ Use Cases
 
 ### Express.js Integration
 
 ```typescript
 import express from "express";
-import { AIMonitor } from "@aker/ai-monitor-core";
+import { AIMonitor } from "@momen124/ai-monitor-core";
 
 const app = express();
 const monitor = new AIMonitor({ port: 4000 });
@@ -293,7 +293,7 @@ app.listen(3000);
 
 ```typescript
 import { Module } from "@nestjs/common";
-import { AIMonitor } from "@aker/ai-monitor-core";
+import { AIMonitor } from "@momen124/ai-monitor-core";
 
 const monitorProvider = {
   provide: "AI_MONITOR",
@@ -327,22 +327,22 @@ export class MonitoringModule {}
 
 ---
 
-## 📖 Related Packages
+## ðŸ“– Related Packages
 
-- **[@aker/ai-monitor-notifiers](../ai-monitor-notifiers)** - Telegram, Slack, Email notifiers
-
----
-
-## 📝 License
-
-MIT © AKER Team
+- **[@momen124/ai-monitor-notifiers](../ai-monitor-notifiers)** - Telegram, Slack, Email notifiers
 
 ---
 
-## 🤝 Contributing
+## ðŸ“ License
+
+MIT Â© AKER Team
+
+---
+
+## ðŸ¤ Contributing
 
 Contributions are welcome! This is a plug-and-play module - help us make it even easier to use.
 
 ---
 
-**Made with ❤️ by the AKER Team**
+**Made with â¤ï¸ by the AKER Team**

@@ -5,8 +5,8 @@
  * for automatic error tracking and request monitoring.
  */
 
-import { AIMonitor, WinstonLoggerAdapter } from '@aker/ai-monitor-core';
-import { MultiNotifier, TelegramNotifier } from '@aker/ai-monitor-notifiers';
+import { AIMonitor, WinstonLoggerAdapter } from '@momen124/ai-monitor-core';
+import { MultiNotifier, TelegramNotifier } from '@momen124/ai-monitor-notifiers';
 import express from 'express';
 import winston from 'winston';
 

@@ -1,0 +1,127 @@
+# 🚀 AI Monitor SDK: Complete Integration Guide
+
+## 📌 1. Overview
+The AI Monitor SDK is a modular, enterprise-grade observability and alerting toolkit designed for Node.js backend applications (like NestJS, Express, or Vanilla Node). 
+
+It acts as a lightweight, highly-customizable alternative to heavy APM tools (like DataDog or Sentry). It allows you to automatically track unhandled errors, monitor HTTP performance, and log custom business events—routing all telemetry securely to your team via Telegram or Webhooks.
+
+---
+
+## 🏗️ 2. Architecture & Modules
+The SDK is built as a **monorepo** split into three distinct NPM packages to ensure your application only imports exactly what it needs:
+
+1. **`@momen124/ai-monitor-core`** 
+   * *The Brain.* Manages the event bus, log formatting, and the dispatcher queue.
+2. **`@momen124/ai-monitor-instrumentation`** 
+   * *The Sensors.* Hooks into your application to automatically catch errors and track metrics.
+3. **`@momen124/ai-monitor-notifiers`** 
+   * *The Megaphones.* Transmits alerts securely to external APIs (Telegram, Slack/Discord Webhooks).
+
+---
+
+## ✨ 3. Core Capabilities
+* **Zero-Config Error Tracking:** Automatically attaches listeners to Node's `uncaughtException` and `unhandledRejection` so fatal crashes are logged before the process exits.
+* **Custom Business Telemetry:** Track arbitrary application events (e.g., `PAYMENT_STARTED`, `NEW_USER_REGISTERED`) anywhere inside your service classes.
+* **Intelligent Formatting:** Deeply inspects and safely stringifies complex nested objects. Actively protects against "circular JSON reference" crashes when reading raw error stacks.
+* **Enterprise Reliability Built-In:**
+  * **DoS Prevention:** Truncates extremely large payload data (cap set at 1MB) before logging to prevent memory exhaustion from malicious actors.
+  * **Safe Network Calls:** Enforces strict Axios network timeouts. If the Telegram API is slow, the monitor will timeout and drop the alert rather than stalling your application's main thread.
+  * **Fire-and-Forget Pattern:** If a Notifier fails to deliver an alert, it gracefully degrades to a standard `console.error` fallback. The monitor is guaranteed to *never* crash your business logic.
+
+---
+
+## ⚠️ 4. Limitations
+* **Third-Party Rate Limits:** Because the SDK relies on external APIs (like Telegram or Discord Webhooks), you are strictly bound by their rate limits. If your app loops and fires 1,000 errors per second, the Notifier will hit a `HTTP 429 Too Many Requests` block from Telegram.
+* **No Historical Dashboard:** The SDK *pushes* data to you in real-time. It does not provide a queryable database, historical graph UI, or log search engine (like Kibana or Sentry provides).
+* **Node.js Environment Only:** The SDK uses Node-specific globals (`process.env`, `uncaughtException`) and is therefore meant for Backend microservices, not for Frontend (React/Vue) browser tracking.
+
+---
+
+## 💻 5. Complete Integration Guide
+
+### Step 1: Install in your target project
+In your backend directory (e.g., FitCoach or Siwa API):
+```bash
+npm install @momen124/ai-monitor-core @momen124/ai-monitor-instrumentation @momen124/ai-monitor-notifiers
+```
+
+### Step 2: Initialize the Monitor (On App Startup)
+In your main entry point file (e.g., `src/main.ts` or `src/index.ts`):
+
+```typescript
+import { AiMonitor } from '@momen124/ai-monitor-core';
+import { TelegramNotifier } from '@momen124/ai-monitor-notifiers';
+import { ErrorInstrumentation } from '@momen124/ai-monitor-instrumentation';
+
+async function bootstrap() {
+  // 1. Initialize the Core
+  const monitor = new AiMonitor({
+    appName: 'FitCoach-Production-Backend',
+    environment: process.env.NODE_ENV || 'production',
+  });
+
+  // 2. Attach Notifiers
+  if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
+    monitor.addNotifier(new TelegramNotifier({
+      botToken: process.env.TELEGRAM_BOT_TOKEN,
+      chatId: process.env.TELEGRAM_CHAT_ID,
+    }));
+  }
+
+  // 3. Attach Instrumentation
+  // Automatically listens for Fatal Node Errors
+  monitor.use(new ErrorInstrumentation());
+
+  // 4. Test it!
+  monitor.trackEvent('SYSTEM_START', { status: 'Running on Port 3000' }, 'info');
+
+  // Start your Express/NestJS server below...
+}
+bootstrap();
+```
+
+### Step 3: Trigger Custom Events across your App
+Because the monitor uses a Singleton pattern beneath the surface (or via Dependency Injection in NestJS), you can import the core anywhere to send custom business logic alerts:
+
+```typescript
+import { AiMonitor } from '@momen124/ai-monitor-core';
+
+export class PaymentService {
+  async processPayment(userId: string, amount: number) {
+    try {
+      // payment logic goes here...
+      
+      // Send a custom telemetry event
+      AiMonitor.getInstance().trackEvent('PAYMENT_SUCCESS', {
+         userId,
+         amount,
+         currency: 'USD'
+      }, 'info');
+      
+    } catch (error) {
+       // Catch and alert team immediately
+       AiMonitor.getInstance().captureException(error, { 
+         context: 'PaymentService.processPayment',
+         userId 
+       });
+       throw error;
+    }
+  }
+}
+```
+
+---
+
+## 🛠️ 6. How to Build Your Own Custom Notifier
+If you ever want to send alerts to a Custom Database or Slack instead of Telegram, you can easily write your own notifier by implementing the `Notifier` interface in the SDK repo.
+
+```typescript
+// Inside ai-monitor-notifiers/src/SlackNotifier.ts
+import { BaseNotifier, LogEvent } from '@momen124/ai-monitor-core';
+
+export class SlackNotifier extends BaseNotifier {
+    async notify(event: LogEvent): Promise<void> {
+        // Your custom logic to HTTP POST the event to Slack API goes here
+    }
+}
+```

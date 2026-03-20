@@ -2,8 +2,8 @@
 
 ## Prerequisites
 
-- **Node.js** ≥ 18
-- **pnpm** ≥ 9 (recommended) or npm/yarn
+- **Node.js** â‰¥ 18
+- **pnpm** â‰¥ 9 (recommended) or npm/yarn
 
 ---
 
@@ -15,10 +15,10 @@ Install only the packages you need:
 
 ```bash
 # Core + Notifiers (most common)
-pnpm add @aker/ai-monitor-core @aker/ai-monitor-notifiers
+pnpm add @momen124/ai-monitor-core @momen124/ai-monitor-notifiers
 
 # Full stack: Core + Notifiers + Auto-Instrumentation
-pnpm add @aker/ai-monitor-core @aker/ai-monitor-notifiers @aker/ai-monitor-instrumentation
+pnpm add @momen124/ai-monitor-core @momen124/ai-monitor-notifiers @momen124/ai-monitor-instrumentation
 ```
 
 Install optional peer dependencies for your chosen notifiers:
@@ -49,13 +49,13 @@ pnpm run test
 
 ---
 
-## Quick Start — 5 Minutes to Monitoring
+## Quick Start â€” 5 Minutes to Monitoring
 
 ### Step 1: Basic Monitor with Telegram
 
 ```typescript
-import { AIMonitor } from "@aker/ai-monitor-core";
-import { TelegramNotifier } from "@aker/ai-monitor-notifiers";
+import { AIMonitor } from "@momen124/ai-monitor-core";
+import { TelegramNotifier } from "@momen124/ai-monitor-notifiers";
 
 const monitor = new AIMonitor({
   port: 3333,
@@ -68,8 +68,8 @@ const monitor = new AIMonitor({
 });
 
 await monitor.start();
-// 🚀 AI Monitor started on http://0.0.0.0:3333
-// 📊 Health check: http://0.0.0.0:3333/health
+// ðŸš€ AI Monitor started on http://0.0.0.0:3333
+// ðŸ“Š Health check: http://0.0.0.0:3333/health
 ```
 
 ### Step 2: Send Your First Alert
@@ -78,7 +78,7 @@ await monitor.start();
 await monitor.alert({
   severity: "WARNING",
   title: "High Memory Usage",
-  message: "Memory usage at 85% — potential leak detected",
+  message: "Memory usage at 85% â€” potential leak detected",
   metrics: { heapUsed: "1.2GB", heapTotal: "1.4GB" },
 });
 ```
@@ -86,7 +86,7 @@ await monitor.alert({
 ### Step 3: Add Auto-Instrumentation
 
 ```typescript
-import { Instrumentation } from "@aker/ai-monitor-instrumentation";
+import { Instrumentation } from "@momen124/ai-monitor-instrumentation";
 
 const instrumentation = new Instrumentation({
   monitor,
@@ -101,7 +101,7 @@ const instrumentation = new Instrumentation({
 
 instrumentation.start();
 
-// Express middleware — auto-tracks all HTTP requests + exposes /metrics
+// Express middleware â€” auto-tracks all HTTP requests + exposes /metrics
 app.use(instrumentation.httpMiddleware());
 ```
 
@@ -130,10 +130,10 @@ const monitor = new AIMonitor({
 
 With AI enabled, every alert is enriched with:
 
-- 🤖 **Root cause analysis** — why it happened
-- 💡 **Fix suggestions** — actionable steps
-- 📊 **Confidence score** — how certain the AI is
-- 🔧 **Auto-heal command** — a command to fix it (when applicable)
+- ðŸ¤– **Root cause analysis** â€” why it happened
+- ðŸ’¡ **Fix suggestions** â€” actionable steps
+- ðŸ“Š **Confidence score** â€” how certain the AI is
+- ðŸ”§ **Auto-heal command** â€” a command to fix it (when applicable)
 
 ---
 
@@ -142,8 +142,8 @@ With AI enabled, every alert is enriched with:
 For complex setups, the `ConfigBuilder` provides a chainable API:
 
 ```typescript
-import { createConfig, AIMonitor } from "@aker/ai-monitor-core";
-import { TelegramNotifier, SlackNotifier } from "@aker/ai-monitor-notifiers";
+import { createConfig, AIMonitor } from "@momen124/ai-monitor-core";
+import { TelegramNotifier, SlackNotifier } from "@momen124/ai-monitor-notifiers";
 
 const config = createConfig({ fromEnv: true, envPrefix: "AI_MONITOR_" })
   .port(3333)
@@ -169,7 +169,7 @@ When `fromEnv: true` is set, the builder automatically reads environment variabl
 
 ```typescript
 import winston from "winston";
-import { AIMonitor, WinstonLoggerAdapter } from "@aker/ai-monitor-core";
+import { AIMonitor, WinstonLoggerAdapter } from "@momen124/ai-monitor-core";
 
 const logger = winston.createLogger({
   level: "info",
@@ -190,7 +190,7 @@ const monitor = new AIMonitor({
 Implement the `ILogger` interface:
 
 ```typescript
-import type { ILogger } from "@aker/ai-monitor-core";
+import type { ILogger } from "@momen124/ai-monitor-core";
 
 class MyLogger implements ILogger {
   info(message: string, ...meta: any[]) {
@@ -214,7 +214,7 @@ class MyLogger implements ILogger {
 
 ### Alert Deduplication
 
-Prevent notification storms — same alert fires only once per cooldown window:
+Prevent notification storms â€” same alert fires only once per cooldown window:
 
 ```typescript
 const monitor = new AIMonitor({
@@ -260,7 +260,7 @@ await monitor.use({
 ### Webhook (PagerDuty, Opsgenie, etc.)
 
 ```typescript
-import { WebhookNotifier } from "@aker/ai-monitor-notifiers";
+import { WebhookNotifier } from "@momen124/ai-monitor-notifiers";
 
 const pagerduty = new WebhookNotifier({
   url: "https://events.pagerduty.com/v2/enqueue",
@@ -272,7 +272,7 @@ const pagerduty = new WebhookNotifier({
 ### Discord
 
 ```typescript
-import { DiscordNotifier } from "@aker/ai-monitor-notifiers";
+import { DiscordNotifier } from "@momen124/ai-monitor-notifiers";
 
 const discord = new DiscordNotifier({
   webhookUrl: process.env.DISCORD_WEBHOOK_URL!,
@@ -290,7 +290,7 @@ const discord = new DiscordNotifier({
 import {
   traceMiddleware,
   TraceContext,
-} from "@aker/ai-monitor-instrumentation";
+} from "@momen124/ai-monitor-instrumentation";
 
 // Add to your Express app
 app.use(traceMiddleware());
@@ -302,7 +302,7 @@ const traceparent = TraceContext.createTraceparent(TraceContext.current()!);
 ### Capture & Query Logs
 
 ```typescript
-import { LogAggregator } from "@aker/ai-monitor-instrumentation";
+import { LogAggregator } from "@momen124/ai-monitor-instrumentation";
 
 const logs = new LogAggregator(10_000);
 logs.interceptConsole(); // Captures console.log/warn/error/debug
@@ -315,8 +315,8 @@ const errors = logs.query({ levels: ["error"], search: "timeout" });
 
 ## What's Next?
 
-- **[API Reference — Core](./03-api-core.md)** — Full `AIMonitor`, `AIService`, `ConfigBuilder`, Plugins, Health Probes API
-- **[API Reference — Notifiers](./04-api-notifiers.md)** — Telegram, Slack, Email, Discord, Webhook, Multi-channel
-- **[API Reference — Instrumentation](./05-api-instrumentation.md)** — Auto-instrumentation, Golden Signals, Tracing, Log Aggregation
-- **[Configuration Guide](./06-configuration.md)** — All environment variables and options
-- **[Deployment Guide](./07-deployment.md)** — Docker, Prometheus, Grafana setup
+- **[API Reference â€” Core](./03-api-core.md)** â€” Full `AIMonitor`, `AIService`, `ConfigBuilder`, Plugins, Health Probes API
+- **[API Reference â€” Notifiers](./04-api-notifiers.md)** â€” Telegram, Slack, Email, Discord, Webhook, Multi-channel
+- **[API Reference â€” Instrumentation](./05-api-instrumentation.md)** â€” Auto-instrumentation, Golden Signals, Tracing, Log Aggregation
+- **[Configuration Guide](./06-configuration.md)** â€” All environment variables and options
+- **[Deployment Guide](./07-deployment.md)** â€” Docker, Prometheus, Grafana setup

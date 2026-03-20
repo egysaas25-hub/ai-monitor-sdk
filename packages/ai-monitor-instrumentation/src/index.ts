@@ -1,5 +1,5 @@
 /**
- * @aker/ai-monitor-instrumentation
+ * @momen124/ai-monitor-instrumentation
  *
  * Plug-and-play auto-instrumentation for any Node.js application
  * Just start it and your app is automatically monitored!

@@ -1,4 +1,4 @@
-import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@aker/ai-monitor-core';
+import type { IAlert, IDailyReport, IDeployment, INotifier, IPipelineStatus } from '@momen124/ai-monitor-core';
 
 /**
  * Discord Notifier
@@ -30,9 +30,9 @@ const STATUS_COLORS: Record<string, number> = {
 };
 
 const SEVERITY_EMOJI: Record<string, string> = {
-  CRITICAL: '🚨',
-  WARNING: '⚠️',
-  INFO: 'ℹ️',
+  CRITICAL: 'ðŸš¨',
+  WARNING: 'âš ï¸',
+  INFO: 'â„¹ï¸',
 };
 
 export class DiscordNotifier implements INotifier {
@@ -54,7 +54,7 @@ export class DiscordNotifier implements INotifier {
   }
 
   async sendAlert(alert: IAlert): Promise<void> {
-    const emoji = SEVERITY_EMOJI[alert.severity] || '📢';
+    const emoji = SEVERITY_EMOJI[alert.severity] || 'ðŸ“¢';
     const color = SEVERITY_COLORS[alert.severity] || 0x5865f2;
 
     const embed: any = {
@@ -78,7 +78,7 @@ export class DiscordNotifier implements INotifier {
   }
 
   async sendPipelineStatus(status: IPipelineStatus): Promise<void> {
-    const statusEmoji = status.status === 'SUCCESS' ? '✅' : status.status === 'FAILURE' ? '❌' : '⚠️';
+    const statusEmoji = status.status === 'SUCCESS' ? 'âœ…' : status.status === 'FAILURE' ? 'âŒ' : 'âš ï¸';
     const color = STATUS_COLORS[status.status] || 0x5865f2;
 
     const fields: any[] = [
@@ -91,7 +91,7 @@ export class DiscordNotifier implements INotifier {
       fields.push({ name: 'Duration', value: `${status.duration}s`, inline: true });
     }
     if (status.changes && status.changes.length > 0) {
-      fields.push({ name: 'Changes', value: status.changes.map((c) => `• ${c}`).join('\n'), inline: false });
+      fields.push({ name: 'Changes', value: status.changes.map((c) => `â€¢ ${c}`).join('\n'), inline: false });
     }
 
     await this.post({
@@ -108,7 +108,7 @@ export class DiscordNotifier implements INotifier {
   }
 
   async sendDeploymentNotification(deployment: IDeployment): Promise<void> {
-    const emoji = deployment.status === 'SUCCESS' ? '🚀' : '❌';
+    const emoji = deployment.status === 'SUCCESS' ? 'ðŸš€' : 'âŒ';
     const color = STATUS_COLORS[deployment.status] || 0x5865f2;
 
     const fields: any[] = [
@@ -121,7 +121,7 @@ export class DiscordNotifier implements INotifier {
       fields.push({ name: 'Duration', value: `${deployment.duration}s`, inline: true });
     }
     if (deployment.changes && deployment.changes.length > 0) {
-      fields.push({ name: 'Changes', value: deployment.changes.map((c) => `• ${c}`).join('\n'), inline: false });
+      fields.push({ name: 'Changes', value: deployment.changes.map((c) => `â€¢ ${c}`).join('\n'), inline: false });
     }
 
     await this.post({
@@ -141,14 +141,14 @@ export class DiscordNotifier implements INotifier {
     await this.post({
       embeds: [
         {
-          title: '📊 Daily Health Report',
+          title: 'ðŸ“Š Daily Health Report',
           color: 0x5865f2,
           fields: [
             { name: 'Total Alerts', value: String(report.totalAlerts), inline: true },
             { name: 'Critical', value: String(report.criticalAlerts), inline: true },
             { name: 'Auto-Fixed', value: String(report.autoFixes), inline: true },
             { name: 'Uptime', value: report.uptime, inline: true },
-            { name: 'Top Issues', value: report.topIssues.map((i) => `• ${i}`).join('\n') || 'None', inline: false },
+            { name: 'Top Issues', value: report.topIssues.map((i) => `â€¢ ${i}`).join('\n') || 'None', inline: false },
           ],
           timestamp: report.date.toISOString(),
           footer: { text: 'AI Monitor' },

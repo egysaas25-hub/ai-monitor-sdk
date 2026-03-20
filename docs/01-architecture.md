@@ -1,6 +1,6 @@
 # Architecture & Design
 
-> **@aker/ai-monitor-sdk** — Plug-and-play AI-powered monitoring for any Node.js application.
+> **@momen124/ai-monitor-sdk** â€” Plug-and-play AI-powered monitoring for any Node.js application.
 
 ---
 
@@ -12,10 +12,10 @@ graph TB
         APP["Node.js / Express / NestJS"]
     end
 
-    subgraph SDK_SUB ["@aker/ai-monitor-sdk"]
-        CORE["@aker/ai-monitor-core<br/>AIMonitor · AIService · ConfigBuilder"]
-        INST["@aker/ai-monitor-instrumentation<br/>Golden Signals · Prometheus · HTTP · Errors"]
-        NOTIF["@aker/ai-monitor-notifiers<br/>Telegram · Slack · Email · Multi"]
+    subgraph SDK_SUB ["@momen124/ai-monitor-sdk"]
+        CORE["@momen124/ai-monitor-core<br/>AIMonitor Â· AIService Â· ConfigBuilder"]
+        INST["@momen124/ai-monitor-instrumentation<br/>Golden Signals Â· Prometheus Â· HTTP Â· Errors"]
+        NOTIF["@momen124/ai-monitor-notifiers<br/>Telegram Â· Slack Â· Email Â· Multi"]
     end
 
     subgraph OBS_SUB ["Observability Stack"]
@@ -40,10 +40,10 @@ graph TB
 
 | Principle              | How It's Applied                                                                                        |
 | ---------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Plug-and-Play**      | Install, configure, call `.start()` — zero boilerplate                                                  |
-| **Modular**            | Three independent packages — use only what you need                                                     |
+| **Plug-and-Play**      | Install, configure, call `.start()` â€” zero boilerplate                                                  |
+| **Modular**            | Three independent packages â€” use only what you need                                                     |
 | **AI-Native**          | Every alert can be enriched by LLM analysis before delivery                                             |
-| **Zero-Lock-In**       | All notifier dependencies are **optional peer deps** — bring your own `axios`, `telegram`, `nodemailer` |
+| **Zero-Lock-In**       | All notifier dependencies are **optional peer deps** â€” bring your own `axios`, `telegram`, `nodemailer` |
 | **SRE Best Practices** | Golden Signals (Latency, Traffic, Errors, Saturation) baked in by default                               |
 | **Observable**         | Built-in Prometheus exporter compatible with any Grafana dashboard                                      |
 
@@ -53,8 +53,8 @@ graph TB
 
 ```mermaid
 graph LR
-    INST["@aker/ai-monitor-instrumentation"] -->|peerDep| CORE["@aker/ai-monitor-core"]
-    NOTIF["@aker/ai-monitor-notifiers"] -->|devDep| CORE
+    INST["@momen124/ai-monitor-instrumentation"] -->|peerDep| CORE["@momen124/ai-monitor-core"]
+    NOTIF["@momen124/ai-monitor-notifiers"] -->|devDep| CORE
     EXAMPLE["examples/standalone-service"] --> CORE
     EXAMPLE --> NOTIF
 
@@ -65,7 +65,7 @@ graph LR
     CORE -.->|peerDep| WINSTON["winston"]
 ```
 
-**Key insight:** `ai-monitor-core` has **zero runtime dependencies**. Axios is loaded dynamically only when AI analysis is enabled. Every notifier channel is an optional peer dependency — you install only the extras you actually want.
+**Key insight:** `ai-monitor-core` has **zero runtime dependencies**. Axios is loaded dynamically only when AI analysis is enabled. Every notifier channel is an optional peer dependency â€” you install only the extras you actually want.
 
 ---
 
@@ -120,7 +120,7 @@ sequenceDiagram
 
 ---
 
-## Golden Signals — Default Thresholds
+## Golden Signals â€” Default Thresholds
 
 The SDK implements the four Golden Signals from Google's SRE handbook, extended with saturation metrics:
 
@@ -139,19 +139,19 @@ All thresholds are fully configurable via the `thresholds` option in `IInstrumen
 
 ## Package Breakdown
 
-### `@aker/ai-monitor-core`
+### `@momen124/ai-monitor-core`
 
 The brain. Contains the `AIMonitor` HTTP server, `AIService` (LLM integration), `ConfigBuilder` (fluent API), and all shared type contracts (`INotifier`, `IAlert`, `ILogger`, etc.).
 
 | Class                  | Purpose                                                                          |
 | ---------------------- | -------------------------------------------------------------------------------- |
-| `AIMonitor`            | Core monitoring server — starts HTTP endpoints, routes alerts to notifiers       |
-| `AIService`            | LLM-powered analysis — log analysis, anomaly detection, auto-healing suggestions |
+| `AIMonitor`            | Core monitoring server â€” starts HTTP endpoints, routes alerts to notifiers       |
+| `AIService`            | LLM-powered analysis â€” log analysis, anomaly detection, auto-healing suggestions |
 | `ConfigBuilder`        | Fluent builder with env-var auto-loading                                         |
 | `ConsoleLogger`        | Default `ILogger` implementation                                                 |
 | `WinstonLoggerAdapter` | Adapter for Winston logger                                                       |
 
-### `@aker/ai-monitor-notifiers`
+### `@momen124/ai-monitor-notifiers`
 
 Notification delivery channels. Every notifier implements the `INotifier` interface and can format alerts, pipeline statuses, deployments, and daily reports.
 
@@ -160,15 +160,15 @@ Notification delivery channels. Every notifier implements the `INotifier` interf
 | `TelegramNotifier` | Telegram Bot API         | `telegram`   |
 | `SlackNotifier`    | Slack Webhook            | `axios`      |
 | `EmailNotifier`    | SMTP (nodemailer)        | `nodemailer` |
-| `MultiNotifier`    | Composite of N notifiers | —            |
+| `MultiNotifier`    | Composite of N notifiers | â€”            |
 
-### `@aker/ai-monitor-instrumentation`
+### `@momen124/ai-monitor-instrumentation`
 
 Auto-instrumentation layer. Hooks into your app's runtime to collect Golden Signal metrics with zero code changes.
 
 | Class                     | Responsibility                                                     |
 | ------------------------- | ------------------------------------------------------------------ |
-| `Instrumentation`         | Orchestrator — starts/stops all collectors, provides middleware    |
+| `Instrumentation`         | Orchestrator â€” starts/stops all collectors, provides middleware    |
 | `SystemMetricsCollector`  | CPU & memory polling (interval-based)                              |
 | `HttpInterceptor`         | Express middleware + raw HTTP server wrapping                      |
 | `ErrorInterceptor`        | `uncaughtException` + `unhandledRejection` handlers                |
