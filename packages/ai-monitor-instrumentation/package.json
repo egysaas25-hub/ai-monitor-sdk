@@ -21,6 +21,10 @@
     "format": "biome format --write .",
     "format:check": "biome format ."
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "keywords": [
     "monitoring",
     "instrumentation",
