@@ -335,7 +335,7 @@ export class MonitoringModule {}
 
 ## ðŸ“ License
 
-MIT Â© AKER Team
+MIT © AKER Team
 
 ---
 

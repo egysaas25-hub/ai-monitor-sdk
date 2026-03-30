@@ -1,6 +1,6 @@
 # Contributing Guide
 
-> How to contribute to the AI Monitor SDK â€” development setup, project structure, coding standards, testing, and release process.
+> How to contribute to the AI Monitor SDK — development setup, project structure, coding standards, testing, and release process.
 
 ---
 
@@ -108,10 +108,10 @@ packages:
 
 ### Package Dependencies
 
-- `ai-monitor-core` â€” **zero runtime deps**, self-contained
-- `ai-monitor-notifiers` â€” depends on `core` (dev), optional peers: `telegram`, `axios`, `nodemailer`
-- `ai-monitor-instrumentation` â€” depends on `core` (peer + dev)
-- `examples/standalone-service` â€” depends on `core` + `notifiers`
+- `ai-monitor-core` — **zero runtime deps**, self-contained
+- `ai-monitor-notifiers` — depends on `core` (dev), optional peers: `telegram`, `axios`, `nodemailer`
+- `ai-monitor-instrumentation` — depends on `core` (peer + dev)
+- `examples/standalone-service` — depends on `core` + `notifiers`
 
 ---
 
@@ -135,9 +135,9 @@ tsup src/index.ts --format cjs,esm --dts --clean
 
 This produces:
 
-- `dist/index.js` â€” CommonJS
-- `dist/index.mjs` â€” ESM
-- `dist/index.d.ts` â€” TypeScript declarations
+- `dist/index.js` — CommonJS
+- `dist/index.mjs` — ESM
+- `dist/index.d.ts` — TypeScript declarations
 
 ### Code Style
 
@@ -201,6 +201,28 @@ moduleNameMapper: {
 
 ---
 
+## GitFlow & Branching Strategy
+
+We follow a strict **GitFlow** branching model to ensure a stable `main` branch and organized feature development.
+
+### Branch Conventions
+
+- **`main`**: Production-ready code. All changes reflect formal releases.
+- **`develop`**: The primary integration branch. All features merge here first.
+- **`feature/<name>`**: For developing new features. Branch off `develop`, and merge back to `develop` via PR. Example: `feature/slack-notifier`.
+- **`bugfix/<name>`**: For non-critical bug fixes. Branch off `develop`, merge back to `develop`.
+- **`hotfix/<name>`**: For critical production patches. Branch off `main`, merge to **both** `main` and `develop`. Example: `hotfix/memory-leak`.
+- **`release/<version>`**: Preparing for a production release. Bump versions and update CHANGELOG here. Branch off `develop`, merge to **both** `main` and `develop`. Example: `release/v1.2.0`.
+
+### Pull Request Guidelines
+
+1. **Target the right branch**: Features and bugfixes must target `develop`. Hotfixes target `main`.
+2. **Semantic Commits**: We strictly use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (e.g., `feat: foo`, `fix: bar`).
+3. **Tests Required**: Every new feature or bugfix must be accompanied by relevant tests in `src/__tests__`.
+4. **Pass CI Pipeline**: Ensure `pnpm run test` and `pnpm run lint` pass locally before requesting reviews.
+
+---
+
 ## Release Process
 
 1. Update version in relevant `package.json` files
@@ -214,4 +236,4 @@ moduleNameMapper: {
 
 ## License
 
-MIT Â© AKER Team
+MIT © AKER Team

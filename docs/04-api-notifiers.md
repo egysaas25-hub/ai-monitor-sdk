@@ -1,4 +1,4 @@
-# API Reference â€” `@momen124/ai-monitor-notifiers`
+# API Reference — `@momen124/ai-monitor-notifiers`
 
 > Notification delivery channels for the AI Monitor SDK. Each notifier implements the `INotifier` interface and can format alerts, pipeline statuses, deployments, and daily reports for its target platform.
 
@@ -10,18 +10,18 @@
 pnpm add @momen124/ai-monitor-notifiers
 ```
 
-All notifier dependencies are **optional peer dependencies** â€” install only the ones you need:
+All notifier dependencies are **optional peer dependencies** — install only the ones you need:
 
 | Notifier           | Peer Dependency | Install Command       |
 | ------------------ | --------------- | --------------------- |
 | `TelegramNotifier` | `telegram`      | `pnpm add telegram`   |
 | `SlackNotifier`    | `axios`         | `pnpm add axios`      |
 | `EmailNotifier`    | `nodemailer`    | `pnpm add nodemailer` |
-| `MultiNotifier`    | â€”               | â€”                     |
+| `MultiNotifier`    | —               | —                     |
 | `WebhookNotifier`  | `axios`         | `pnpm add axios`      |
 | `DiscordNotifier`  | `axios`         | `pnpm add axios`      |
 
-If a peer dependency is not installed, the notifier disables itself gracefully and logs a warning â€” it will **never** crash your application.
+If a peer dependency is not installed, the notifier disables itself gracefully and logs a warning — it will **never** crash your application.
 
 ---
 
@@ -137,7 +137,7 @@ const multi = new MultiNotifier({
 
 ## `WebhookNotifier`
 
-Generic HTTP notifier â€” POST JSON payloads to any URL. Works with PagerDuty, Opsgenie, custom dashboards, or any webhook consumer.
+Generic HTTP notifier — POST JSON payloads to any URL. Works with PagerDuty, Opsgenie, custom dashboards, or any webhook consumer.
 
 ### Configuration
 
@@ -222,10 +222,10 @@ const discord = new DiscordNotifier({
 
 ### Rich Embed Features
 
-- **Alerts** â€” Severity color sidebar, title with emoji, structured fields, optional metrics code block
-- **Pipelines** â€” Status emoji (âœ…/âŒ/âš ï¸), job name, build number, duration, changes list
-- **Deployments** â€” Environment, version, rocket/cross emoji, change log
-- **Daily Reports** â€” Total/critical/auto-fixed counts, uptime, top issues
+- **Alerts** — Severity color sidebar, title with emoji, structured fields, optional metrics code block
+- **Pipelines** — Status emoji (âœ…/âŒ/âš ï¸), job name, build number, duration, changes list
+- **Deployments** — Environment, version, rocket/cross emoji, change log
+- **Daily Reports** — Total/critical/auto-fixed counts, uptime, top issues
 
 ---
 

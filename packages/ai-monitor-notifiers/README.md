@@ -345,7 +345,7 @@ const monitor = new AIMonitor({
 
 ## ðŸ“ License
 
-MIT Â© AKER Team
+MIT © AKER Team
 
 ---
 

@@ -6,7 +6,7 @@
 
 ## 1. Express API with Full Stack Monitoring
 
-The most common use case â€” monitoring an Express API with all Golden Signals, AI analysis, and multi-channel notifications.
+The most common use case — monitoring an Express API with all Golden Signals, AI analysis, and multi-channel notifications.
 
 ```typescript
 import express from "express";

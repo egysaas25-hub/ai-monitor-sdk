@@ -1,4 +1,4 @@
-# API Reference â€” `@momen124/ai-monitor-core`
+# API Reference — `@momen124/ai-monitor-core`
 
 > The brain of the SDK. Contains the monitoring server, AI analysis service, configuration builder, and all shared type contracts.
 
@@ -164,7 +164,7 @@ interface IAIAnalysis {
   rootCause?: string;
   suggestions?: string[];
   isAnomaly?: boolean;
-  confidence?: number; // 0â€“1
+  confidence?: number; // 0–1
   relatedPatterns?: string[];
   autoHealCommand?: string;
 }
@@ -532,7 +532,7 @@ const config = createConfig()
 
 ## `validateConfig()`
 
-Runtime validation of `IMonitorConfig`. Called automatically in the `AIMonitor` constructor â€” invalid configs throw with clear error messages.
+Runtime validation of `IMonitorConfig`. Called automatically in the `AIMonitor` constructor — invalid configs throw with clear error messages.
 
 ### Usage
 
@@ -548,7 +548,7 @@ const result = validateConfig(myConfig);
 
 | Field           | Check                                    |
 | --------------- | ---------------------------------------- |
-| `port`          | Number, 1â€“65535                          |
+| `port`          | Number, 1–65535                          |
 | `host`          | String                                   |
 | `enabled`       | Boolean                                  |
 | `notifiers`     | Array of objects with `sendAlert` method |

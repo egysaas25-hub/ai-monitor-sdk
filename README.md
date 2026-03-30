@@ -7,7 +7,7 @@
 
 ---
 
-## Architecture
+## Architecture & Supported Paradigms
 
 ```mermaid
 graph TB
@@ -16,9 +16,9 @@ graph TB
     end
 
     subgraph "@momen124/ai-monitor-sdk"
-        CORE["@momen124/ai-monitor-core<br/>AIMonitor Â· AIService Â· Deduplicator Â· Plugins Â· Probes"]
-        INST["@momen124/ai-monitor-instrumentation<br/>Golden Signals Â· TraceContext Â· LogAggregator"]
-        NOTIF["@momen124/ai-monitor-notifiers<br/>Telegram Â· Slack Â· Discord Â· Webhook Â· Email"]
+        CORE["@momen124/ai-monitor-core<br/>AIMonitor · AIService · Deduplicator · Plugins · Probes"]
+        INST["@momen124/ai-monitor-instrumentation<br/>Golden Signals · TraceContext · LogAggregator"]
+        NOTIF["@momen124/ai-monitor-notifiers<br/>Telegram · Slack · Discord · Webhook · Email"]
     end
 
     subgraph "Observability Stack"
@@ -40,6 +40,18 @@ graph TB
     style INST fill:#1a1a2e,stroke:#0f3460,color:#fff
     style NOTIF fill:#1a1a2e,stroke:#16213e,color:#fff
 ```
+
+### Built for Any Architecture
+
+The AI Monitor SDK is designed to be highly robust and loosely coupled, making it perfectly suited for:
+
+- **Microservices & Distributed Systems**: Pass trace IDs across boundaries; aggregate scattered logs into single AI analyses.
+- **Monorepos**: Instrument multiple apps within a single workspace via shared metric exporters.
+- **Monolithic Applications**: Low-overhead internal probing and holistic system health checks.
+- **Event-Driven Architectures**: Hook directly into queue consumers (Kafka, RabbitMQ) to track processing latency and failures independently.
+- **Serverless (AWS Lambda, etc.)**: Configurable flush intervals and connectionless observability patterns (using direct webhooks or OTEL-compliant fire-and-forget streams).
+
+> **Production Ready / Robustness**: The SDK employs intelligent HTTP circuit breakers, built-in alert deduplication, payload size limiting to prevent memory/CPU exhaustion (e.g., maximum 1MB body), and strict request timeouts to ensure the monitor *never* brings down the host application.
 
 ## ðŸ“¦ Packages
 
@@ -101,7 +113,7 @@ const instrumentation = new Instrumentation({
 
 instrumentation.start();
 
-// Express middleware â€” auto-tracks all HTTP requests
+// Express middleware — auto-tracks all HTTP requests
 app.use(instrumentation.httpMiddleware());
 ```
 
@@ -140,17 +152,18 @@ See [`.env.example`](./.env.example) for all available configuration options.
 ## ðŸ”„ CI/CD
 
 - **CI**: Runs on every push to `main` and all PRs (Node 18 + 20)
-- **Publish**: Triggered on Git tags `v*` â€” publishes all packages to npm
+- **Publish**: Triggered on Git tags `v*` — publishes all packages to npm
 
 ## ðŸ“– Changelog
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history.
 
-## ðŸš€ Deployment
+## ðŸš€ Deployment & Resources
 
-- [Deployment Guide](./docs/DEPLOYMENT.md) â€” How to update existing installations.
-- [Production Setup Guide](./docs/PRODUCTION_SETUP.md) â€” **Start Here** for new servers (includes Visualization & AI setup).
+- [Deployment Guide](./docs/DEPLOYMENT.md) — How to update existing installations.
+- [Production Setup Guide](./docs/PRODUCTION_SETUP.md) — **Start Here** for new servers (includes Visualization & AI setup).
+- [Tools & Ecosystem Guide](./docs/12-tools-and-ecosystem.md) — Comprehensive breakdown of all internal, developer, and observability tools used by this SDK.
 
 ## ðŸ“„ License
 
-MIT Â© AKER Team
+MIT © AKER Team

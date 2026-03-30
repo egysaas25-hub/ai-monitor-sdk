@@ -1,4 +1,4 @@
-# @momen124/ai-monitor-sdk â€” Documentation
+# @momen124/ai-monitor-sdk — Documentation
 
 > **Plug-and-play AI-powered monitoring for any Node.js application.**
 > Drop it in, configure, and start monitoring with intelligent alerting, anomaly detection, and auto-healing suggestions.
@@ -11,9 +11,9 @@
 | --- | ---------------------------------------------------- | ------------------------------------------------------------------------------ |
 | 01  | [Architecture & Design](./01-architecture.md)        | High-level architecture, data flow diagrams, Golden Signals, package breakdown |
 | 02  | [Getting Started](./02-getting-started.md)           | Installation, 5-minute quickstart, fluent builder, custom loggers              |
-| 03  | [API â€” Core](./03-api-core.md)                       | `AIMonitor`, `AIService`, `ConfigBuilder`, all type interfaces                 |
-| 04  | [API â€” Notifiers](./04-api-notifiers.md)             | Telegram, Slack, Email, Multi-channel, custom notifier guide                   |
-| 05  | [API â€” Instrumentation](./05-api-instrumentation.md) | Auto-instrumentation, Prometheus, thresholds, collectors                       |
+| 03  | [API — Core](./03-api-core.md)                       | `AIMonitor`, `AIService`, `ConfigBuilder`, all type interfaces                 |
+| 04  | [API — Notifiers](./04-api-notifiers.md)             | Telegram, Slack, Email, Multi-channel, custom notifier guide                   |
+| 05  | [API — Instrumentation](./05-api-instrumentation.md) | Auto-instrumentation, Prometheus, thresholds, collectors                       |
 | 06  | [Configuration](./06-configuration.md)               | All environment variables, programmatic config, feature toggles                |
 | 07  | [Deployment & Operations](./07-deployment.md)        | Docker, Prometheus, Grafana, CI/CD, health checks                              |
 | 08  | [Examples & Recipes](./08-examples.md)               | Express, NestJS, CI/CD, DB/queue monitoring, webhooks                          |

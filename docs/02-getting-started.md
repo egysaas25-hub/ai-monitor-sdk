@@ -49,7 +49,7 @@ pnpm run test
 
 ---
 
-## Quick Start â€” 5 Minutes to Monitoring
+## Quick Start — 5 Minutes to Monitoring
 
 ### Step 1: Basic Monitor with Telegram
 
@@ -78,7 +78,7 @@ await monitor.start();
 await monitor.alert({
   severity: "WARNING",
   title: "High Memory Usage",
-  message: "Memory usage at 85% â€” potential leak detected",
+  message: "Memory usage at 85% — potential leak detected",
   metrics: { heapUsed: "1.2GB", heapTotal: "1.4GB" },
 });
 ```
@@ -101,7 +101,7 @@ const instrumentation = new Instrumentation({
 
 instrumentation.start();
 
-// Express middleware â€” auto-tracks all HTTP requests + exposes /metrics
+// Express middleware — auto-tracks all HTTP requests + exposes /metrics
 app.use(instrumentation.httpMiddleware());
 ```
 
@@ -130,10 +130,10 @@ const monitor = new AIMonitor({
 
 With AI enabled, every alert is enriched with:
 
-- ðŸ¤– **Root cause analysis** â€” why it happened
-- ðŸ’¡ **Fix suggestions** â€” actionable steps
-- ðŸ“Š **Confidence score** â€” how certain the AI is
-- ðŸ”§ **Auto-heal command** â€” a command to fix it (when applicable)
+- ðŸ¤– **Root cause analysis** — why it happened
+- ðŸ’¡ **Fix suggestions** — actionable steps
+- ðŸ“Š **Confidence score** — how certain the AI is
+- ðŸ”§ **Auto-heal command** — a command to fix it (when applicable)
 
 ---
 
@@ -214,7 +214,7 @@ class MyLogger implements ILogger {
 
 ### Alert Deduplication
 
-Prevent notification storms â€” same alert fires only once per cooldown window:
+Prevent notification storms — same alert fires only once per cooldown window:
 
 ```typescript
 const monitor = new AIMonitor({
@@ -315,8 +315,8 @@ const errors = logs.query({ levels: ["error"], search: "timeout" });
 
 ## What's Next?
 
-- **[API Reference â€” Core](./03-api-core.md)** â€” Full `AIMonitor`, `AIService`, `ConfigBuilder`, Plugins, Health Probes API
-- **[API Reference â€” Notifiers](./04-api-notifiers.md)** â€” Telegram, Slack, Email, Discord, Webhook, Multi-channel
-- **[API Reference â€” Instrumentation](./05-api-instrumentation.md)** â€” Auto-instrumentation, Golden Signals, Tracing, Log Aggregation
-- **[Configuration Guide](./06-configuration.md)** â€” All environment variables and options
-- **[Deployment Guide](./07-deployment.md)** â€” Docker, Prometheus, Grafana setup
+- **[API Reference — Core](./03-api-core.md)** — Full `AIMonitor`, `AIService`, `ConfigBuilder`, Plugins, Health Probes API
+- **[API Reference — Notifiers](./04-api-notifiers.md)** — Telegram, Slack, Email, Discord, Webhook, Multi-channel
+- **[API Reference — Instrumentation](./05-api-instrumentation.md)** — Auto-instrumentation, Golden Signals, Tracing, Log Aggregation
+- **[Configuration Guide](./06-configuration.md)** — All environment variables and options
+- **[Deployment Guide](./07-deployment.md)** — Docker, Prometheus, Grafana setup

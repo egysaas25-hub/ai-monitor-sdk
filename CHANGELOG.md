@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `performanceThreshold` type error â€” field was used in `http-interceptor.ts` and `performance-monitor.ts` but missing from `IInstrumentationConfig`
+- `performanceThreshold` type error — field was used in `http-interceptor.ts` and `performance-monitor.ts` but missing from `IInstrumentationConfig`
 
 ### Changed
 
@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of `@momen124/ai-monitor-core` â€” AIMonitor, AIService, ConfigBuilder
-- Initial release of `@momen124/ai-monitor-notifiers` â€” Telegram, Slack, Email, Multi
-- Initial release of `@momen124/ai-monitor-instrumentation` â€” Golden Signals, Prometheus, HTTP/error/performance interceptors
+- Initial release of `@momen124/ai-monitor-core` — AIMonitor, AIService, ConfigBuilder
+- Initial release of `@momen124/ai-monitor-notifiers` — Telegram, Slack, Email, Multi
+- Initial release of `@momen124/ai-monitor-instrumentation` — Golden Signals, Prometheus, HTTP/error/performance interceptors
 - Standalone service example with Docker Compose

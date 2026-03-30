@@ -1,6 +1,6 @@
 # Deployment & Operations Guide
 
-> How to run the AI Monitor SDK in production â€” Docker, Prometheus, Grafana, CI/CD, and operational best practices.
+> How to run the AI Monitor SDK in production — Docker, Prometheus, Grafana, CI/CD, and operational best practices.
 
 ---
 
@@ -103,10 +103,10 @@ scrape_configs:
 | ------------------------------- | --------- | ------------------ | ----------------------- |
 | `http_request_duration_seconds` | histogram | `method`, `path`   | Request latency         |
 | `http_requests_total`           | counter   | `method`, `status` | Total request count     |
-| `process_cpu_usage_ratio`       | gauge     | â€”                  | CPU usage (0â€“1)         |
-| `process_memory_usage_bytes`    | gauge     | â€”                  | Memory usage in bytes   |
-| `db_connections_active`         | gauge     | â€”                  | Active DB connections   |
-| `job_queue_length`              | gauge     | â€”                  | Current job queue depth |
+| `process_cpu_usage_ratio`       | gauge     | —                  | CPU usage (0–1)         |
+| `process_memory_usage_bytes`    | gauge     | —                  | Memory usage in bytes   |
+| `db_connections_active`         | gauge     | —                  | Active DB connections   |
+| `job_queue_length`              | gauge     | —                  | Current job queue depth |
 
 ### Example PromQL Queries
 

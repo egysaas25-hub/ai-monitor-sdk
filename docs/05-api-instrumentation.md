@@ -1,4 +1,4 @@
-# API Reference â€” `@momen124/ai-monitor-instrumentation`
+# API Reference — `@momen124/ai-monitor-instrumentation`
 
 > Auto-instrumentation layer for any Node.js application. Hooks into your app's runtime to collect Golden Signal metrics with zero code changes beyond a single middleware line.
 
@@ -64,7 +64,7 @@ app.use(instrumentation.httpMiddleware());
 
 #### `wrapHttpServer(server: http.Server): void`
 
-Alternative to middleware â€” wraps a raw Node.js HTTP server's `emit` to instrument all requests:
+Alternative to middleware — wraps a raw Node.js HTTP server's `emit` to instrument all requests:
 
 ```typescript
 const server = http.createServer(app);
@@ -170,24 +170,24 @@ Hooks into `process.on('uncaughtException')` and `process.on('unhandledRejection
 
 Manual and automatic operation timing. Provides:
 
-- `measure()` â€” wrap a function
-- `startMeasure()` / `endMeasure()` â€” split timing
-- `measureDecorator()` â€” TypeScript method decorator
+- `measure()` — wrap a function
+- `startMeasure()` / `endMeasure()` — split timing
+- `measureDecorator()` — TypeScript method decorator
 
 ### `HttpInterceptor`
 
 Express/Connect middleware and raw HTTP server wrapping. Alerts on:
 
-- **Slow requests** â€” duration > `performanceThreshold`
-- **5xx errors** â€” `CRITICAL` severity
-- **4xx errors** â€” logged at debug level (no alert)
+- **Slow requests** — duration > `performanceThreshold`
+- **5xx errors** — `CRITICAL` severity
+- **4xx errors** — logged at debug level (no alert)
 
 ### `MetricAggregator`
 
 Sliding-window aggregator (1-minute windows). Calculates:
 
-- **P95 response time** â€” sorted array, 95th percentile index
-- **Error rate** â€” `(errors / total) * 100`
+- **P95 response time** — sorted array, 95th percentile index
+- **Error rate** — `(errors / total) * 100`
 
 Alerts when P95 or error rate exceeds configured thresholds.
 
@@ -199,7 +199,7 @@ Zero-dependency Prometheus text format exporter. Pre-registers these metrics:
 | ------------------------------- | --------- | --------------------- |
 | `http_request_duration_seconds` | histogram | HTTP request latency  |
 | `http_requests_total`           | counter   | Total HTTP requests   |
-| `process_cpu_usage_ratio`       | gauge     | CPU usage (0â€“1)       |
+| `process_cpu_usage_ratio`       | gauge     | CPU usage (0–1)       |
 | `process_memory_usage_bytes`    | gauge     | Memory usage in bytes |
 | `db_connections_active`         | gauge     | Active DB connections |
 | `job_queue_length`              | gauge     | Current queue length  |
@@ -225,9 +225,9 @@ Polls user-provided callbacks every 30 seconds for:
 ```typescript
 interface IThresholds {
   responseTime?: { warning: number; critical: number }; // ms
-  errorRate?: { warning: number; critical: number }; // percentage (0â€“100)
-  cpu?: { warning: number; critical: number }; // ratio (0â€“1)
-  memory?: { warning: number; critical: number }; // ratio (0â€“1)
+  errorRate?: { warning: number; critical: number }; // percentage (0–100)
+  cpu?: { warning: number; critical: number }; // ratio (0–1)
+  memory?: { warning: number; critical: number }; // ratio (0–1)
   dbConnections?: { warning: number; critical: number }; // percentage or count
   queueLength?: { warning: number; critical: number }; // count
 }
@@ -287,7 +287,7 @@ interface ISystemMetrics {
 
 ---
 
-## `TraceContext` â€” Distributed Tracing
+## `TraceContext` — Distributed Tracing
 
 W3C Trace Context implementation for tracking requests across microservices. Uses Node.js `AsyncLocalStorage` for zero-dependency context propagation.
 
