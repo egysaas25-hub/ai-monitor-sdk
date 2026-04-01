@@ -1,0 +1,18 @@
+{
+  "incident_id": "inc-kafka-011",
+  "status": "firing",
+  "severity": "high",
+  "trigger": "Kafka Consumer Lag > 50,000 messages on topic 'user-events'",
+  "timestamp": "2026-04-01T06:00:00Z",
+  "context": {
+    "service_name": "analytics-consumer",
+    "traces": [],
+    "recent_logs": [
+      "[WARN] 05:30:00 Consumer lag increasing: 5,000 messages behind on partition 0",
+      "[WARN] 05:45:00 Consumer lag critical: 25,000 messages behind on partition 0",
+      "[ERROR] 05:55:00 Processing throughput dropped: 50 msg/s → 5 msg/s after GC pause (12s)",
+      "[ERROR] 06:00:00 Consumer lag: 52,341 messages. Estimated catch-up time: 2h 54m",
+      "[INFO] 06:00:00 Current consumer group: analytics-v2, partitions assigned: [0, 1, 2, 3]"
+    ]
+  }
+}

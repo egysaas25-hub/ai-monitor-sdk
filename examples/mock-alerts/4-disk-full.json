@@ -1,0 +1,17 @@
+{
+  "incident_id": "inc-disk-004",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Host Disk Usage > 95%",
+  "timestamp": "2026-04-01T14:45:00Z",
+  "context": {
+    "service_name": "image-processing-node-01",
+    "traces": [],
+    "recent_logs": [
+      "[INFO] 14:44:00 Starting background resize job for img_9912.png",
+      "[ERROR] 14:44:50 Error: ENOSPC: no space left on device, write",
+      "[ERROR] 14:44:50 Failed to write converted/img_9912_thumb.png to local /tmp cache",
+      "[FATAL] 14:45:00 Worker crashed: unhandled exception ENOSPC"
+    ]
+  }
+}

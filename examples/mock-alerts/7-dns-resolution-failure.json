@@ -1,0 +1,24 @@
+{
+  "incident_id": "inc-dns-007",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "HTTP 5xx Spike on /api/notifications",
+  "timestamp": "2026-04-01T03:45:00Z",
+  "context": {
+    "service_name": "notification-service",
+    "traces": [
+      {
+        "trace_id": "dns-fail-007",
+        "duration_ms": 30020,
+        "error": "Error: getaddrinfo ENOTFOUND smtp.sendgrid.net"
+      }
+    ],
+    "recent_logs": [
+      "[INFO] 03:44:30 Dispatching 500 welcome emails in batch #42",
+      "[ERROR] 03:44:45 Error: getaddrinfo ENOTFOUND smtp.sendgrid.net",
+      "[ERROR] 03:44:45 DNS resolution failed for smtp.sendgrid.net — is /etc/resolv.conf correct?",
+      "[WARN] 03:44:50 Retry #1 failed, backing off 5s",
+      "[FATAL] 03:45:00 All 3 retries exhausted. 500 emails stuck in queue."
+    ]
+  }
+}

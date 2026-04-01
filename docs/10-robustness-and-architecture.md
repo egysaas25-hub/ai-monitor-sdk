@@ -1,56 +1,43 @@
 # Robustness & Architecture Guide
 
-The AI Monitor SDK is engineered to be a non-intrusive, zero-impact observability layer. It operates under the strictest assumption: **Monitoring must never crash or degrade the performance of the host application.**
+The AI Monitor service is engineered to be a non-intrusive, zero-impact observability layer. It operates under the strictest assumption: **Monitoring must never crash or degrade the performance of the host application.**
 
-## Supported Architectures
+## Supported Architectures (Zero-Impact via OTel)
+
+By delegating telemetry to OpenTelemetry (OTel), we ensure robust monitoring for any architecture:
 
 ### 1. Microservices & Distributed Systems
-In a microservices environment, a single user request often touches dozens of services. 
-- **Trace Context Propagation**: The SDK's `Instrumentation` package automatically attaches and forwards `X-Trace-Id` across service boundaries.
-- **Log Aggregation**: Each service sends its isolated logs to the central AI service via the `AIMonitor`, which reconstructs the full context of a distributed failure.
+- **Trace Context Propagation**: OpenTelemetry automatically attaches and forwards `traceparent` across service boundaries natively.
+- **Log Aggregation**: Each service sends its isolated logs to SigNoz. When an alert triggers, the AI Brain fetches the exact distributed trace to reconstruct the full context.
 
-### 2. Monorepos
-For teams using Turborepo, Nx, or pnpm workspaces (like this SDK itself):
-- You can install the core SDK once at the root, or share a pre-configured internal `@my-org/monitor` package across all your internal applications.
-- Unified configuration allows consistent alert routing (e.g., all apps in the monorepo alert the same Slack channel).
+### 2. Serverless (AWS Lambda, Google Cloud Functions)
+- **Batched Flushing**: The OTel generic serverless wrappers handle batching and synchronous flushing before the execution context freezes, ensuring no data loss.
 
-### 3. Serverless (AWS Lambda, Google Cloud Functions)
-Serverless environments pose unique challenges for observability due to their ephemeral nature and "frozen" background execution.
-- **Fire-and-Forget Mode**: The SDK can be configured to use non-blocking background promises that resolve before the Lambda execution context freezes.
-- **Batched Flushing**: Instead of holding continuous WebSocket or long-polling connections, metrics are batched and flushed synchronously upon function completion.
-
-### 4. Event-Driven Architectures (Kafka, RabbitMQ, SQS)
-When processing asynchronous events:
-- **Consumer Hooks**: The SDK provides manual wrap functions (`monitor.trackOperation`) which can wrap message handlers to record processing duration, retry loops, and unhandled consumer exceptions.
-- **Dead-Letter Queue Alerts**: You can wire the `AIMonitor` directly to DLQ events to instantly notify engineers when an event fails all retries.
-
-### 5. Monoliths
-For traditional single-server architecture (e.g., a large Express/NestJS monolith):
-- **Holistic Resource Probing**: Built-in CPU and Memory probes keep an eye on the entire node process.
-- **Express Middleware**: A single `app.use(instrumentation.httpMiddleware())` at the top level is all that's required to instrument the entire app.
+### 3. Monoliths
+- **Holistic Resource Probing**: The OTel Collector's Host Metrics Receiver tracks CPU and Memory without weighing down the Node process itself.
 
 ---
 
 ## Production Robustness Safeguards
 
-When running in production, the AI Monitor SDK protects the host application through several defensive mechanisms (implemented based on extensive audits from previous production deployments):
+When running the AI Brain service in production, the system protects itself and the host applications through several defensive mechanisms:
 
-### 1. Payload Size Limits & Circular Reference Protection
-To prevent Denial of Service (DoS) and out-of-memory errors from massive request payloads:
-- The HTTP interceptor forcefully truncates any request or response body exceeding **1MB**.
-- The JSON serializer includes a safe `replacer` to drop circular references preventing `TypeError: Converting circular structure to JSON` crashes during alert generation.
+### 1. Zero In-Process Overhead
+Because the AI Brain is deployed as a standalone service (or worker), the heavy lifting of LLM context compilation, token calculation, and prompt execution happens **outside** of your application's memory pool. If the AI Brain exhausts its memory, your application is unaffected.
 
-### 2. Axios Timeouts & Circuit Breaking
-When the AI Service (e.g., OpenAI) or Notifier APIs (Telegram/Slack) are slow or degraded:
-- Strict **timeout limits** protect against hanging I/O. If a notifier takes longer than 5 seconds, the SDK drops the notification and moves on.
-- **Circuit Breakers**: Repeated failures trip a circuit breaker, preventing the SDK from hammering an already-down third-party API.
+### 2. Payload Size Limits & PII Redaction
+To prevent Denial of Service (DoS), out-of-memory errors, and data privacy breaches before sending data to LLMs:
+- The AI Brain forcefully truncates any trace context exceeding **1MB** before parsing.
+- A dedicated **RedactionPipeline** strips PII, credit cards, and tokens via Regex/AST sweeps before the payload ever reaches OpenAI.
 
-### 3. Alert Deduplication
-To prevent "alert storms" (e.g., a database goes down and triggers 10,000 exceptions a minute):
-- The `Deduplicator` caches the hash of previous alerts. If the identical fingerprint occurs repeatedly within a configurable time window (e.g., 5 minutes), it is suppressed, saving API costs and avoiding channel spam.
+### 3. Circuit Breaking & Fail-Open AI
+When the LLM Provider (e.g., OpenAI) is slow or degraded:
+- **Strict Timeouts**: If the LLM takes longer than 15 seconds to reply, the AI Brain aborts the enrichment.
+- **Fail-Open Routing**: Instead of dropping the alert, the AI Brain immediately forwards the *raw, unenriched* alert back to Keep for human delivery. The humans still get paged, even if the AI is down.
 
-### 4. Fire-and-Forget Error Handling
-A failure inside the SDK will never bubble up to crash your main server. All internal `AIMonitor` errors are trapped and routed to an internal fallback logger. 
+### 4. Alert Deduplication (via Keep)
+To prevent "alert storms" (e.g., a database goes down and triggers 10k errors):
+- We delegate the heavy lifting of stateful deduplication to **Keep**. Keep hashes the alerts and suppresses identical occurrences within a given time window *before* waking up the AI Brain, saving massive LLM API costs.
 
 ---
-_By adhering to these architectural patterns, you can confidently deploy the AI Monitor SDK in production environments at any scale._
+_By adhering to these architectural patterns, you can confidently deploy the AI Monitor ecosystem in production environments at any scale._

@@ -1,0 +1,24 @@
+{
+  "incident_id": "inc-redis-005",
+  "status": "firing",
+  "severity": "high",
+  "trigger": "Redis Connection Refused on cache-cluster-02",
+  "timestamp": "2026-04-01T09:12:00Z",
+  "context": {
+    "service_name": "session-service",
+    "traces": [
+      {
+        "trace_id": "r3d1s-f41l",
+        "duration_ms": 120,
+        "error": "ECONNREFUSED: connect ECONNREFUSED 10.0.2.15:6379"
+      }
+    ],
+    "recent_logs": [
+      "[INFO] 09:11:55 GET /api/me - validating session token for user_id=usr_8842",
+      "[WARN] 09:11:58 Redis reconnect attempt #3 to cache-cluster-02 (10.0.2.15:6379)",
+      "[ERROR] 09:12:00 ECONNREFUSED: connect ECONNREFUSED 10.0.2.15:6379",
+      "[ERROR] 09:12:00 SessionStore.get() failed: all 3 retries exhausted",
+      "[WARN] 09:12:00 Falling back to DB session lookup — significant latency expected"
+    ]
+  }
+}

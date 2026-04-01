@@ -1,0 +1,30 @@
+{
+  "incident_id": "inc-sqli-018",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "WAF: SQL Injection pattern detected in request payload",
+  "timestamp": "2026-04-01T04:10:00Z",
+  "context": {
+    "service_name": "public-api-gateway",
+    "security": {
+      "attack_type": "sql_injection",
+      "source_ip": "103.45.67.89",
+      "endpoint": "POST /api/search",
+      "blocked": true
+    },
+    "traces": [
+      {
+        "trace_id": "sqli-018",
+        "duration_ms": 3,
+        "error": "WAF_BLOCK: SQL injection pattern detected"
+      }
+    ],
+    "recent_logs": [
+      "[WARN] 04:09:58 Suspicious payload on POST /api/search from 103.45.67.89",
+      "[CRITICAL] 04:09:58 SQLi pattern detected: body.query=\"'; DROP TABLE users; --\"",
+      "[INFO] 04:09:58 Request blocked by WAF rule #42 — response: 403 Forbidden",
+      "[WARN] 04:10:00 3 additional SQLi attempts from same IP in last 60s",
+      "[INFO] 04:10:00 IP 103.45.67.89 added to temporary blocklist (TTL: 1h)"
+    ]
+  }
+}

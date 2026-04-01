@@ -1,0 +1,17 @@
+{
+  "incident_id": "inc-oom-002",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Node Memory Usage > 90%",
+  "timestamp": "2026-04-01T11:15:22Z",
+  "context": {
+    "service_name": "report-generator-worker",
+    "traces": [],
+    "recent_logs": [
+      "[INFO] 11:14:00 Starting monthly PDF generation for org_id=987",
+      "[WARN] 11:15:10 V8 Heap size critical: 1.4GB / 1.5GB limit",
+      "[ERROR] 11:15:22 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory",
+      "[FATAL] 11:15:22 process exited with code 134"
+    ]
+  }
+}

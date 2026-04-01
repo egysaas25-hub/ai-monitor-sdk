@@ -1,0 +1,24 @@
+{
+  "incident_id": "inc-ratelimit-008",
+  "status": "firing",
+  "severity": "warning",
+  "trigger": "Upstream 429 Errors > 20/min from OpenAI",
+  "timestamp": "2026-04-01T16:00:00Z",
+  "context": {
+    "service_name": "ai-enrichment-worker",
+    "traces": [
+      {
+        "trace_id": "rl-429-abc",
+        "duration_ms": 200,
+        "error": "AxiosError: Request failed with status code 429"
+      }
+    ],
+    "recent_logs": [
+      "[INFO] 15:59:00 Processing enrichment batch: 50 incidents queued",
+      "[WARN] 15:59:30 OpenAI API responded 429: Rate limit exceeded. Retry-After: 60s",
+      "[WARN] 15:59:35 Backing off. 48 incidents still in queue.",
+      "[ERROR] 16:00:00 Circuit breaker OPEN for provider=openai — 15 consecutive 429s",
+      "[INFO] 16:00:00 Falling back to provider=ollama-local for remaining batch"
+    ]
+  }
+}

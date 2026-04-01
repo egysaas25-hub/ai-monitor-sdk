@@ -1,0 +1,26 @@
+{
+  "incident_id": "inc-bruteforce-017",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Security: 500+ failed login attempts from single IP in 5 minutes",
+  "timestamp": "2026-04-01T02:30:00Z",
+  "context": {
+    "service_name": "auth-service",
+    "security": {
+      "attack_type": "brute_force",
+      "source_ip": "185.220.101.42",
+      "geo": "Unknown / TOR exit node",
+      "attempts": 547,
+      "unique_usernames_tried": 312,
+      "window_seconds": 300
+    },
+    "traces": [],
+    "recent_logs": [
+      "[WARN] 02:25:00 Failed login: user=admin@company.com from 185.220.101.42",
+      "[WARN] 02:25:01 Failed login: user=root@company.com from 185.220.101.42",
+      "[WARN] 02:25:01 Failed login: user=test@company.com from 185.220.101.42",
+      "[ERROR] 02:27:00 Rate limit triggered: 200 failed attempts from 185.220.101.42 in 120s",
+      "[CRITICAL] 02:30:00 SECURITY ALERT: 547 failed logins from TOR exit node 185.220.101.42 — credential stuffing attack suspected"
+    ]
+  }
+}

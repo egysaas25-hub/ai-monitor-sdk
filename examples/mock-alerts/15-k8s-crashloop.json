@@ -1,0 +1,26 @@
+{
+  "incident_id": "inc-k8s-015",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Pod CrashLoopBackOff: 8 restarts in 10 minutes",
+  "timestamp": "2026-04-01T05:15:00Z",
+  "context": {
+    "service_name": "cron-scheduler",
+    "kubernetes": {
+      "namespace": "production",
+      "pod": "cron-scheduler-7f8b9c6d4-xk2lp",
+      "node": "worker-node-02",
+      "restart_count": 8,
+      "last_exit_code": 1,
+      "image": "registry.example.com/cron-scheduler:v1.3.2"
+    },
+    "traces": [],
+    "recent_logs": [
+      "[INFO] 05:14:00 Container starting...",
+      "[ERROR] 05:14:02 Error: REDIS_URL environment variable is not set",
+      "[FATAL] 05:14:02 Cannot connect to job queue — exiting with code 1",
+      "[INFO] 05:14:30 Container restarting (attempt #8)...",
+      "[ERROR] 05:14:32 Error: REDIS_URL environment variable is not set"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "incident_id": "inc-deploy-012",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Error Rate jumped from 0.1% to 12% within 5 minutes of deploy",
+  "timestamp": "2026-04-01T14:05:00Z",
+  "context": {
+    "service_name": "user-api",
+    "deploy_info": {
+      "commit_sha": "a3f8c91",
+      "deployed_at": "2026-04-01T14:00:00Z",
+      "deployed_by": "ci-bot",
+      "previous_version": "v2.4.1",
+      "current_version": "v2.5.0"
+    },
+    "traces": [
+      {
+        "trace_id": "deploy-regression-012",
+        "duration_ms": 45,
+        "error": "TypeError: Cannot read properties of undefined (reading 'preferences')"
+      }
+    ],
+    "recent_logs": [
+      "[INFO] 14:00:00 Deployment v2.5.0 (a3f8c91) started by ci-bot",
+      "[INFO] 14:00:30 Deployment v2.5.0 rollout complete: 4/4 pods healthy",
+      "[ERROR] 14:01:00 TypeError: Cannot read properties of undefined (reading 'preferences') at UserController.getProfile",
+      "[ERROR] 14:02:00 250 occurrences of TypeError in last 60s",
+      "[WARN] 14:05:00 Error rate 12.3% — exceeds rollback threshold of 5%"
+    ]
+  }
+}

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0-alpha.1] - 2026-04-01
+
+### Changed
+
+- **Architecture Pivot**: Transitioned from an in-process Node.js telemetry SDK to a standalone AI SRE service model.
+- **Delegation**: Telemetry collection is now officially delegated to OpenTelemetry (`@opentelemetry/auto-instrumentations-node`).
+- **Delegation**: Storage and APM are now delegated to SigNoz.
+- **Delegation**: Alert workflow, maintenance windows, and deduplication are now delegated to Keep.
+- **Refactoring**: Restructured into three dedicated packages focusing on the AI Moat: `@momen124/ai-monitor-ai`, `@momen124/ai-monitor-otel`, and `@momen124/ai-monitor-core`.
+- **Docs**: Completely rewrote the documentation to reflect the new architecture, stack-agnostic approach, and `docker-compose` quickstart.
+
 ## [1.1.0] - 2026-02-08
 
 ### Added

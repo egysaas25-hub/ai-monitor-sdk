@@ -1,0 +1,23 @@
+{
+  "incident_id": "inc-memleak-014",
+  "status": "firing",
+  "severity": "warning",
+  "trigger": "Memory Usage growing 2% per hour for 12 hours",
+  "timestamp": "2026-04-01T22:00:00Z",
+  "context": {
+    "service_name": "websocket-gateway",
+    "host": {
+      "memory_used_mb": 3400,
+      "memory_total_mb": 4096,
+      "memory_percent": 83
+    },
+    "traces": [],
+    "recent_logs": [
+      "[INFO] 10:00:00 Memory: 1200MB (29%) — post-restart baseline",
+      "[INFO] 14:00:00 Memory: 2100MB (51%) — normal growth?",
+      "[WARN] 18:00:00 Memory: 2800MB (68%) — trending above forecast",
+      "[WARN] 22:00:00 Memory: 3400MB (83%) — projected OOM in ~4 hours",
+      "[INFO] 22:00:00 Active WebSocket connections: 12,340. Event listeners per conn: ~8"
+    ]
+  }
+}

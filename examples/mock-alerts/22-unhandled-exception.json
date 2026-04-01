@@ -1,0 +1,24 @@
+{
+  "incident_id": "inc-unhandled-022",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Unhandled Promise Rejection crashing worker",
+  "timestamp": "2026-04-01T07:22:00Z",
+  "context": {
+    "service_name": "email-worker",
+    "traces": [
+      {
+        "trace_id": "unhandled-022",
+        "duration_ms": 15,
+        "error": "UnhandledPromiseRejection: Cannot read properties of null (reading 'templateId')"
+      }
+    ],
+    "recent_logs": [
+      "[INFO] 07:21:55 Processing email job #88412 for user sara.jones@example.com",
+      "[ERROR] 07:21:55 TypeError: Cannot read properties of null (reading 'templateId')",
+      "[ERROR] 07:21:55 at EmailRenderer.render (src/renderer.ts:45:22)",
+      "[ERROR] 07:21:55 at async EmailWorker.processJob (src/worker.ts:112:18)",
+      "[FATAL] 07:22:00 UnhandledPromiseRejection — Node.js process exiting with code 1"
+    ]
+  }
+}

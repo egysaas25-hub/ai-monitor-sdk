@@ -1,0 +1,42 @@
+{
+  "incident_id": "inc-cascade-009",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Multi-Service Failure: 3 services reporting 5xx simultaneously",
+  "timestamp": "2026-04-01T08:30:00Z",
+  "context": {
+    "service_name": "order-orchestrator",
+    "traces": [
+      {
+        "trace_id": "cascade-root-trace",
+        "duration_ms": 15200,
+        "spans": [
+          {
+            "service": "order-orchestrator",
+            "operation": "POST /api/orders",
+            "duration_ms": 15200,
+            "error": "Error: downstream inventory-service returned 503"
+          },
+          {
+            "service": "inventory-service",
+            "operation": "POST /api/inventory/reserve",
+            "duration_ms": 10100,
+            "error": "Error: downstream warehouse-db returned 503"
+          },
+          {
+            "service": "warehouse-db-proxy",
+            "operation": "query",
+            "duration_ms": 5000,
+            "error": "ConnectionError: too many connections (max=100, active=100)"
+          }
+        ]
+      }
+    ],
+    "recent_logs": [
+      "[ERROR] 08:29:50 warehouse-db-proxy: ConnectionError: too many connections (max=100, active=100)",
+      "[ERROR] 08:29:55 inventory-service: POST /api/inventory/reserve failed: upstream 503",
+      "[ERROR] 08:30:00 order-orchestrator: POST /api/orders failed: downstream inventory-service returned 503",
+      "[INFO] 08:30:00 3 services affected in chain: warehouse-db-proxy → inventory-service → order-orchestrator"
+    ]
+  }
+}

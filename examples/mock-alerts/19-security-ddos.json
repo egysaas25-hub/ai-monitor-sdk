@@ -1,0 +1,25 @@
+{
+  "incident_id": "inc-ddos-019",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Traffic Spike: 50x normal request volume in 2 minutes",
+  "timestamp": "2026-04-01T20:00:00Z",
+  "context": {
+    "service_name": "edge-load-balancer",
+    "security": {
+      "attack_type": "ddos_volumetric",
+      "requests_per_second": 45000,
+      "baseline_rps": 900,
+      "top_source_ips": ["203.0.113.1", "203.0.113.2", "203.0.113.3", "198.51.100.5"],
+      "geo_distribution": "90% from single ASN (AS12345)"
+    },
+    "traces": [],
+    "recent_logs": [
+      "[WARN] 19:58:00 Traffic spike detected: 5000 req/s (baseline: 900 req/s)",
+      "[WARN] 19:59:00 Traffic accelerating: 25000 req/s — 95% are GET /",
+      "[ERROR] 20:00:00 Backend connection queue full — 2000 requests dropped",
+      "[CRITICAL] 20:00:00 DDoS signature match: volumetric flood from AS12345",
+      "[INFO] 20:00:00 Auto-mitigation activated: rate-limiting all traffic from AS12345"
+    ]
+  }
+}

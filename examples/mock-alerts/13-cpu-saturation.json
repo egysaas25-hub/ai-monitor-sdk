@@ -1,0 +1,25 @@
+{
+  "incident_id": "inc-cpu-013",
+  "status": "firing",
+  "severity": "high",
+  "trigger": "Host CPU Usage > 95% for 5 minutes",
+  "timestamp": "2026-04-01T17:30:00Z",
+  "context": {
+    "service_name": "ml-inference-worker",
+    "host": {
+      "hostname": "gpu-node-03",
+      "cpu_cores": 8,
+      "cpu_percent": 97.2,
+      "load_avg_1m": 14.3,
+      "load_avg_5m": 12.8
+    },
+    "traces": [],
+    "recent_logs": [
+      "[WARN] 17:25:00 CPU load average 10.2 (8 cores) — elevated",
+      "[WARN] 17:27:00 CPU load average 13.1 — possible runaway process",
+      "[INFO] 17:28:00 Top process: PID 4521 node inference-server.js — 780% CPU",
+      "[ERROR] 17:30:00 Request queue depth 342 — processing stalled due to CPU saturation",
+      "[WARN] 17:30:00 Health check latency 8200ms (threshold: 5000ms)"
+    ]
+  }
+}

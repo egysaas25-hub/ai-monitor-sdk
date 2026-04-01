@@ -1,0 +1,35 @@
+{
+  "incident_id": "inc-slowquery-016",
+  "status": "firing",
+  "severity": "warning",
+  "trigger": "Slow Query: P95 DB query duration > 3000ms",
+  "timestamp": "2026-04-01T11:45:00Z",
+  "context": {
+    "service_name": "reporting-api",
+    "traces": [
+      {
+        "trace_id": "slow-q-016",
+        "duration_ms": 8500,
+        "spans": [
+          {
+            "service": "reporting-api",
+            "operation": "GET /api/reports/monthly",
+            "duration_ms": 8500
+          },
+          {
+            "service": "postgres",
+            "operation": "SELECT",
+            "duration_ms": 8200,
+            "db_statement": "SELECT o.*, u.name, u.email FROM orders o JOIN users u ON o.user_id = u.id WHERE o.created_at BETWEEN $1 AND $2 ORDER BY o.total DESC"
+          }
+        ]
+      }
+    ],
+    "recent_logs": [
+      "[WARN] 11:44:50 Slow query detected: 8200ms on table 'orders' (rows_examined: 2,400,000)",
+      "[INFO] 11:44:50 Query plan: Seq Scan on orders — no index on (created_at, user_id)",
+      "[WARN] 11:45:00 P95 query duration spiked to 5400ms (baseline: 200ms)",
+      "[INFO] 11:45:00 Concurrent connections: 45/50 — pool near saturation"
+    ]
+  }
+}

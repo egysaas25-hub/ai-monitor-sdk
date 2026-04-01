@@ -1,0 +1,24 @@
+{
+  "incident_id": "inc-dbrep-020",
+  "status": "firing",
+  "severity": "high",
+  "trigger": "Database Replication Lag > 30 seconds",
+  "timestamp": "2026-04-01T09:00:00Z",
+  "context": {
+    "service_name": "postgres-replica-02",
+    "database": {
+      "primary": "postgres-primary-01",
+      "replica": "postgres-replica-02",
+      "replication_lag_seconds": 45,
+      "wal_bytes_behind": 524288000
+    },
+    "traces": [],
+    "recent_logs": [
+      "[WARN] 08:50:00 Replication lag: 5s — within tolerance",
+      "[WARN] 08:55:00 Replication lag: 18s — rising, heavy write load on primary",
+      "[ERROR] 09:00:00 Replication lag: 45s — read replicas serving stale data",
+      "[INFO] 09:00:00 Primary WAL generation rate: 50MB/s, replica apply rate: 12MB/s",
+      "[WARN] 09:00:00 Read queries on replica may return data up to 45s old"
+    ]
+  }
+}

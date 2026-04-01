@@ -6,57 +6,38 @@ The current guide shows the SDK already has `AIMonitor`, `AIService`, `Deduplica
 ## Product split
 Treat the platform as three layers:
 
-1. **Telemetry + integrations layer**
-   - OTEL/Collector integration
-   - metrics/logs/traces/profile adapters
-   - backend connectors
+1. **Telemetry & Storage (Delegated to OSS)**
+   - OTel Auto-instrumentation (Node, Python, Go, Java, etc.)
+   - OpenTelemetry Collector (routing/batching)
+   - SigNoz (metrics, logs, traces storage & dashboards)
 
-2. **Monitoring control plane**
-   - normalized event model
-   - correlation engine
-   - alert routing
-   - incident lifecycle
-   - SLOs, probes, synthetics
+2. **Monitoring Control Plane (Delegated to OSS)**
+   - Keep (alert deduplication, grouping, routing)
+   - Keep (incident lifecycle, maintenance windows)
+   - Coroot (optional, eBPF K8s discovery)
 
-3. **AI layer**
-   - provider abstraction
-   - prompt/evaluation pipeline
-   - root cause summarization
-   - anomaly classification
-   - remediation suggestions
-   - model safety and redaction
+3. **The AI Layer (What We Build)**
+   - Provider abstraction (OpenAI, Ollama, internal LLMs)
+   - Prompt/evaluation pipeline
+   - Context gathering (querying SigNoz for traces/logs around an incident)
+   - PII redaction and payload compression
+   - Root cause summarization & remediation suggestions
 
-The AI layer must be optional and fail-open. Alert delivery must still work if the model fails, times out, or is disabled.
+Because layers 1 and 2 are handled by proven open-source tools, our build effort is laser-focused on layer 3.
 
 ## Repo structure target
 
 ```text
 packages/
-  ai-monitor-core/
-  ai-monitor-otel/
-  ai-monitor-logs/
-  ai-monitor-tracing/
-  ai-monitor-alerting/
-  ai-monitor-incident/
-  ai-monitor-slo/
-  ai-monitor-probes/
-  ai-monitor-synthetics/
-  ai-monitor-k8s/
-  ai-monitor-browser/
-  ai-monitor-workers/
-  ai-monitor-serverless/
-  ai-monitor-exporters/
-  ai-monitor-ai/
-  ai-monitor-cli/
+  ai-monitor-core/    (slim wrapper: ConfigBuilder, Keep/GlitchTip hooks)
+  ai-monitor-otel/    (thin presets for OTel Auto-instrumentation)
+  ai-monitor-ai/      (THE MOAT: LLM orchestration, evaluation, prompts)
 examples/
-  node-basic/
-  express-lgtm/
-  k8s-demo/
-  ai-enrichment-demo/
+  standalone-infra/   (docker-compose for SigNoz + Keep + OTel Collector)
+  node-basic/         (Node.js app with OTel wrapper)
 docs/
   architecture/
   runbooks/
-  adr/
 ```
 
 ## Branch strategy
@@ -67,14 +48,11 @@ docs/
 - `release/*` — release hardening only
 
 ### Delivery branches
-- `feat/foundation-core-split`
-- `feat/otel-foundation`
-- `feat/logs-traces-correlation`
-- `feat/alerting-incident-control-plane`
-- `feat/slo-synthetics`
-- `feat/k8s-infra-pack`
-- `feat/browser-workers-runtime`
-- `feat/exporters-enterprise`
+- `feat/v2-architecture-pivot` (docs & repo restructure)
+- `feat/otel-presets`
+- `feat/ai-provider-abstraction`
+- `feat/ai-orchestration`
+- `feat/infra-compose-profiles`
 
 ### AI teammate branch
 Use one long-running branch only if they are doing deep experiments:
@@ -138,17 +116,9 @@ export interface AIProvider {
 
 ### Platform team
 Owns:
-- `ai-monitor-core`
-- `ai-monitor-otel`
-- `ai-monitor-logs`
-- `ai-monitor-tracing`
-- `ai-monitor-alerting`
-- `ai-monitor-incident`
-- `ai-monitor-slo`
-- `ai-monitor-probes`
-- `ai-monitor-synthetics`
-- `ai-monitor-exporters`
-- overall schemas and interfaces
+- `ai-monitor-core` (Keep/GlitchTip hooks, config)
+- `ai-monitor-otel` (thin OTel config presets)
+- Docker Compose local environment (SigNoz, Keep, Collector)
 
 ### AI teammate / AI squad
 Owns:
@@ -182,70 +152,20 @@ Exit criteria:
 - AI teammate can work without waiting on core refactors
 - Core package exposes stable interface contracts
 
-## Epic 1 — OTEL and telemetry foundation
-Goal: make observability ingestion standard and backend-agnostic.
+## Epic 1 — OTEL Foundation (Thin Wrapper)
+Goal: Delegate ingestion to OTel seamlessly.
 
 Stories:
-- Create `ai-monitor-otel` package — 5 points
-- Add resource attributes and environment metadata — 3 points
-- Add trace context propagation helpers — 5 points
-- Build OTLP exporter wrapper and collector presets — 5 points
-- Add example service exporting metrics/logs/traces — 5 points
+- Create `ai-monitor-otel` package — 3 points
+- Export preset configs for `@opentelemetry/auto-instrumentations-node` — 5 points
+- Build `docker-compose.yml` with SigNoz + Keep + Collector — 8 points
+- Add example service exporting telemetry — 3 points
 
 Exit criteria:
-- One demo service emits normalized telemetry through OTEL
+- Node.js app runs with our wrapper and data appears in SigNoz
 
-## Epic 2 — Logs, traces, and correlation
-Goal: make incidents clickable across logs, traces, and metrics.
-
-Stories:
-- Add structured log adapters — 5 points
-- Add trace-to-log correlation helpers — 5 points
-- Add deep link builders for dashboards/logs/traces — 3 points
-- Add exemplars/correlation metadata — 5 points
-- Add correlation tests across signals — 5 points
-
-Exit criteria:
-- An alert can open related logs and traces from one incident object
-
-## Epic 3 — Alerting and incident control plane
-Goal: move from simple deduplication to full incident handling.
-
-Stories:
-- Expand dedup into grouping/inhibition/silencing model — 8 points
-- Add incident state machine (open, acked, resolved) — 5 points
-- Add maintenance windows — 3 points
-- Add notifier policy engine — 5 points
-- Add alert routing adapters and escalation hooks — 5 points
-
-Exit criteria:
-- Repeated alerts collapse into one incident lifecycle
-
-## Epic 4 — SLOs, probes, and synthetics
-Goal: alert on user impact, not just raw thresholds.
-
-Stories:
-- Build SLO spec models — 5 points
-- Add burn-rate alert templates — 5 points
-- Expand probes to DB/HTTP/TCP/TLS/queue — 5 points
-- Add scheduled synthetic workflow runner — 8 points
-- Add SLO dashboard example — 3 points
-
-Exit criteria:
-- At least one service can define SLOs and active checks
-
-## Epic 5 — Runtime and infrastructure adapters
-Goal: make the SDK useful in real deployments.
-
-Stories:
-- Add K8s metadata enricher — 5 points
-- Add deployment event correlation — 5 points
-- Add worker/queue instrumentation — 5 points
-- Add serverless lifecycle hooks — 5 points
-- Add infra example deployment — 5 points
-
-Exit criteria:
-- Rollouts, pod restarts, and job failures can be tied to incidents
+## Epic 2 & 3 & 4 & 5 — (DELEGATED TO OSS)
+*Previously covered Alerting, Incident Control, SLOs, and Probes. These are now 100% delegated to SigNoz and Keep. No custom SDK logic required.*
 
 ## Epic 6 — AI enrichment engine
 Goal: give the AI teammate a clear vertical slice they can own end to end.
@@ -256,6 +176,7 @@ Stories:
 - Add OpenAI provider adapter — 5 points
 - Add local/internal model adapter — 5 points
 - Add prompt template system — 5 points
+- Implement SigNoz trace/log context fetcher — 8 points
 - Add context compression/summarization pipeline — 8 points
 - Add redaction and safety filter — 8 points
 - Add timeout/retry/circuit-breaker behavior — 5 points
@@ -299,41 +220,24 @@ Assume 2-week sprints.
 
 ### Sprint 1
 - Epic 0 complete
-- Start Epic 1
-- AI teammate starts `feat/ai-provider-abstraction`
+- Establish `docker-compose` infra (SigNoz/Keep)
+- Start Epic 1 (OTel wrap)
 
 ### Sprint 2
 - Finish Epic 1
-- Start Epic 2
-- AI teammate builds OpenAI + local provider adapters
+- Start Epic 6 (AI Engine)
+- AI teammate builds provider adapters
 
 ### Sprint 3
-- Finish Epic 2
-- Start Epic 3
-- AI teammate builds prompt system + context compressor
+- AI teammate builds prompt/context fetcher (from SigNoz)
 
 ### Sprint 4
-- Finish Epic 3
-- Start Epic 4
-- AI teammate builds redaction, timeout, and fallback logic
+- Finish Epic 6
+- AI teammate starts evaluation harness (Epic 7)
 
 ### Sprint 5
-- Finish Epic 4
-- Start Epic 5
-- AI teammate starts evaluation harness and dataset format
-
-### Sprint 6
-- Finish Epic 5
-- Finish Epic 6
-- AI teammate finishes regression tests and model dashboards
-
-### Sprint 7
-- Epic 7
-- hardening gaps from earlier sprints
-
-### Sprint 8
-- Epic 8
-- release prep for v1 beta
+- Finish Epic 7
+- Hardening & Release Prep (Epic 8)
 
 ## What the AI teammate should be allowed to change freely
 Inside `packages/ai-monitor-ai`, let them experiment with:

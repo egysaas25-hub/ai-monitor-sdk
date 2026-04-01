@@ -1,0 +1,24 @@
+{
+  "incident_id": "inc-tls-010",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "TLS Handshake Failures > 100/min on payments.example.com",
+  "timestamp": "2026-04-01T00:05:00Z",
+  "context": {
+    "service_name": "payment-gateway-ingress",
+    "traces": [
+      {
+        "trace_id": "tls-exp-010",
+        "duration_ms": 5,
+        "error": "Error: certificate has expired (notAfter: 2026-03-31T23:59:59Z)"
+      }
+    ],
+    "recent_logs": [
+      "[ERROR] 00:00:01 TLS handshake failed for payments.example.com: certificate has expired",
+      "[ERROR] 00:00:01 Certificate CN=payments.example.com expired at 2026-03-31T23:59:59Z",
+      "[WARN] 00:00:05 100% of incoming HTTPS connections failing",
+      "[INFO] 00:00:10 Certificate issuer: Let's Encrypt Authority X3, Serial: 04:A1:B2:C3",
+      "[FATAL] 00:05:00 No successful TLS handshake in 5 minutes — all traffic blocked"
+    ]
+  }
+}

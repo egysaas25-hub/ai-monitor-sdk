@@ -1,0 +1,30 @@
+{
+  "incident_id": "inc-network-024",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "Network Partition: service-a cannot reach service-b",
+  "timestamp": "2026-04-01T01:00:00Z",
+  "context": {
+    "service_name": "order-service",
+    "network": {
+      "source": "order-service (10.0.1.0/24)",
+      "destination": "inventory-service (10.0.2.0/24)",
+      "packet_loss_percent": 100,
+      "last_successful_contact": "2026-04-01T00:55:00Z"
+    },
+    "traces": [
+      {
+        "trace_id": "netpart-024",
+        "duration_ms": 30000,
+        "error": "ETIMEDOUT: connect ETIMEDOUT 10.0.2.15:3000"
+      }
+    ],
+    "recent_logs": [
+      "[INFO] 00:55:00 POST /api/inventory/check — 200 OK (45ms)",
+      "[ERROR] 00:56:00 ETIMEDOUT: connect ETIMEDOUT 10.0.2.15:3000",
+      "[ERROR] 00:57:00 ETIMEDOUT: 5 consecutive failures to inventory-service",
+      "[WARN] 01:00:00 Network partition suspected: 0% packet delivery to 10.0.2.0/24",
+      "[INFO] 01:00:00 Health checks to other subnets (10.0.3.0/24, 10.0.4.0/24) are OK"
+    ]
+  }
+}

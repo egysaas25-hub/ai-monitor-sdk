@@ -1,0 +1,23 @@
+{
+  "incident_id": "inc-db-timeout-001",
+  "status": "firing",
+  "severity": "critical",
+  "trigger": "P95 Latency > 2000ms on /checkout",
+  "timestamp": "2026-04-01T10:05:00Z",
+  "context": {
+    "service_name": "checkout-api",
+    "traces": [
+      {
+        "trace_id": "4b98dc12489",
+        "duration_ms": 5002,
+        "error": "TimeoutError: Connection to postgres-cluster-main timed out after 5000ms"
+      }
+    ],
+    "recent_logs": [
+      "[INFO] 10:04:55 Starting checkout session for user momen@example.com",
+      "[WARN] 10:04:58 DB connection pool saturated, waiting for connection...",
+      "[ERROR] 10:05:00 TimeoutError: Connection to postgres-cluster-main timed out after 5000ms",
+      "[ERROR] 10:05:00 Transaction rolled back for user momen@example.com"
+    ]
+  }
+}

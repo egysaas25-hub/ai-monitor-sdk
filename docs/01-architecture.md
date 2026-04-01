@@ -1,202 +1,129 @@
 # Architecture & Design
 
-> **@momen124/ai-monitor-sdk** — Plug-and-play AI-powered monitoring for any Node.js application.
+> **@momen124/ai-monitor-sdk** — A standalone AI SRE service for monitoring *any* project on *any* stack.
 
 ---
 
-## High-Level Architecture
+## High-Level Architecture (V2)
 
 ```mermaid
 graph TB
-    subgraph APP_SUB ["Your Application"]
-        APP["Node.js / Express / NestJS"]
+    subgraph "Any Application / Any Stack"
+        APP[Node.js / Python / Go<br/>OTel SDK]
     end
 
-    subgraph SDK_SUB ["@momen124/ai-monitor-sdk"]
-        CORE["@momen124/ai-monitor-core<br/>AIMonitor · AIService · ConfigBuilder"]
-        INST["@momen124/ai-monitor-instrumentation<br/>Golden Signals · Prometheus · HTTP · Errors"]
-        NOTIF["@momen124/ai-monitor-notifiers<br/>Telegram · Slack · Email · Multi"]
+    subgraph "Observability Backbone (OSS)"
+        OTEL[OpenTelemetry Collector<br/>Router]
+        SIG[SigNoz<br/>ClickHouse APM]
+        KEEP[Keep<br/>Alert Workflow]
+        GLITCH[GlitchTip<br/>Error Tracking]
     end
 
-    subgraph OBS_SUB ["Observability Stack"]
-        PROM[Prometheus]
-        GRAF[Grafana]
-        AI["OpenAI / LLM API"]
+    subgraph "AI Brain Service (@momen124/ai-monitor-ai)"
+        AI_ENGINE[AI Incident Triage<br/>Correlate • Enrich]
+        LLM[LLM Provider]
     end
 
-    APP --> INST
-    INST --> CORE
-    CORE --> NOTIF
-    CORE --> AI
-    INST --> PROM
-    PROM --> GRAF
+    subgraph "Human SREs"
+        SLACK[Slack / Telegram]
+    end
 
-    style CORE fill:#1a1a2e,stroke:#e94560,color:#fff
-    style INST fill:#1a1a2e,stroke:#0f3460,color:#fff
-    style NOTIF fill:#1a1a2e,stroke:#16213e,color:#fff
+    APP -- OTLP --> OTEL
+    APP -- Sentry Protocol --> GLITCH
+    OTEL -- Metrics/Traces/Logs --> SIG
+    SIG -- Threshold Alerts --> KEEP
+    GLITCH -- Exception Alerts --> KEEP
+    KEEP -- Webhook Trigger --> AI_ENGINE
+    AI_ENGINE <--> LLM
+    AI_ENGINE -- Enriched Context --> KEEP
+    KEEP -- Human-Readable Alert --> SLACK
+
+    style AI_ENGINE fill:#1a1a2e,stroke:#e94560,color:#fff
 ```
 
 ## Design Principles
 
-| Principle              | How It's Applied                                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Plug-and-Play**      | Install, configure, call `.start()` — zero boilerplate                                                  |
-| **Modular**            | Three independent packages — use only what you need                                                     |
-| **AI-Native**          | Every alert can be enriched by LLM analysis before delivery                                             |
-| **Zero-Lock-In**       | All notifier dependencies are **optional peer deps** — bring your own `axios`, `telegram`, `nodemailer` |
-| **SRE Best Practices** | Golden Signals (Latency, Traffic, Errors, Saturation) baked in by default                               |
-| **Observable**         | Built-in Prometheus exporter compatible with any Grafana dashboard                                      |
-
----
-
-## Package Dependency Graph
-
-```mermaid
-graph LR
-    INST["@momen124/ai-monitor-instrumentation"] -->|peerDep| CORE["@momen124/ai-monitor-core"]
-    NOTIF["@momen124/ai-monitor-notifiers"] -->|devDep| CORE
-    EXAMPLE["examples/standalone-service"] --> CORE
-    EXAMPLE --> NOTIF
-
-    CORE -.->|optional| AXIOS["axios"]
-    NOTIF -.->|optional| AXIOS
-    NOTIF -.->|optional| TELEGRAM["telegram"]
-    NOTIF -.->|optional| NODEMAILER["nodemailer"]
-    CORE -.->|peerDep| WINSTON["winston"]
-```
-
-**Key insight:** `ai-monitor-core` has **zero runtime dependencies**. Axios is loaded dynamically only when AI analysis is enabled. Every notifier channel is an optional peer dependency — you install only the extras you actually want.
+| Principle                 | How It's Applied                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Stack-Agnostic**        | Monitors any language or paradigm natively through OpenTelemetry standardization.                       |
+| **OSS-Native Validation** | We don't reinvent the wheel. Storage is delegated to SigNoz. Notification routing is delegated to Keep. |
+| **Fail-Open AI**          | The LLM enrichment layer sits asynchronously; if the LLM is down, raw alerts still reach the team.      |
+| **Zero-Lock-In**          | Swap out OpenAI for a local Ollama model instantly via the provider abstraction.                        |
+| **SRE Best Practices**    | Incident routing, maintenance windows, and rate-limiting happen at the platform layer (Keep).           |
 
 ---
 
 ## Data Flow
 
-### 1. Alert Flow
+### 1. Alert Lifecycle
 
 ```mermaid
 sequenceDiagram
-    participant App as Your Application
-    participant Inst as Instrumentation
-    participant Mon as AIMonitor
-    participant AI as AIService (LLM)
-    participant N as Notifiers
+    participant App as Application
+    participant SigNoz as SigNoz / OTel
+    participant Keep as Keep (Workflow)
+    participant AI as AI Brain Service
+    participant LLM as OpenAI / Local
+    participant Chat as Slack/Telegram
 
-    App->>Inst: HTTP request / error / slow op
-    Inst->>Mon: monitor.alert({ severity, title, message })
-
-    alt AI Enabled
-        Mon->>AI: analyzeLog(logEntry)
-        AI-->>Mon: { rootCause, suggestions, severity }
-        Mon->>Mon: Enrich alert with AI insights
-    end
-
-    Mon->>N: notifier.sendAlert(enhancedAlert)
-    N-->>App: Telegram / Slack / Email delivered
+    App->>SigNoz: Push telemetry (OTLP)
+    Note over SigNoz: CPU hits 95%
+    SigNoz->>Keep: Trigger Threshold Alert
+    Keep->>Keep: Deduplicate & Group
+    Keep->>AI: Webhook: Enhance Alert
+    AI->>SigNoz: Fetch related logs/traces
+    AI->>LLM: Analyze context & redact PII
+    LLM-->>AI: Root cause summary + fixes
+    AI-->>Keep: Enriched Alert Payload
+    Keep->>Chat: Deliver final human-readable alert
 ```
-
-### 2. Metrics Flow
-
-```mermaid
-sequenceDiagram
-    participant App as Express App
-    participant MW as httpMiddleware()
-    participant Agg as MetricAggregator
-    participant Prom as PrometheusExporter
-    participant Scraper as Prometheus Server
-
-    App->>MW: Incoming HTTP request
-    MW->>MW: Start timer
-    MW-->>App: next()
-    App-->>MW: Response complete
-    MW->>Agg: recordRequest(duration, isError)
-    MW->>Prom: observe(http_request_duration_seconds)
-
-    Note over Agg: Every 60s: calculate P95, error rate
-    Agg->>Agg: Check against Golden Signal thresholds
-
-    Scraper->>Prom: GET /metrics
-    Prom-->>Scraper: Prometheus text format
-```
-
----
-
-## Golden Signals — Default Thresholds
-
-The SDK implements the four Golden Signals from Google's SRE handbook, extended with saturation metrics:
-
-| Signal         | Metric            | Warning  | Critical | Action             |
-| -------------- | ----------------- | -------- | -------- | ------------------ |
-| **Latency**    | P95 Response Time | > 200 ms | > 500 ms | Optimize queries   |
-| **Errors**     | Error Rate (%)    | > 0.1%   | > 1.0%   | Investigate errors |
-| **Saturation** | CPU Usage         | > 50%    | > 70%    | Scale up           |
-| **Saturation** | Memory Usage      | > 60%    | > 80%    | Check for leaks    |
-| **Saturation** | DB Connections    | > 50%    | > 80%    | Increase pool      |
-| **Saturation** | Queue Length      | > 100    | > 1000   | Add workers        |
-
-All thresholds are fully configurable via the `thresholds` option in `IInstrumentationConfig`.
 
 ---
 
 ## Package Breakdown
 
+The SDK has been restructured into a standalone service with three lean packages:
+
+### `@momen124/ai-monitor-ai` (The Moat)
+
+This is the core intelligence engine. It is deployed as a standalone worker service.
+
+| Component                   | Purpose                                                                          |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| `IncidentEnricher`          | Coordinates fetching context and orchestrating the LLM.                          |
+| `ProviderAdapter`           | Interfaces for OpenAI, Ollama, and internal LLMs.                                |
+| `SigNozFetcher`             | Connects to ClickHouse to pull surrounding traces and logs for an incident.      |
+| `RedactionPipeline`         | Strips PII, secrets, and truncates massive payloads before touching third-party APIs. |
+| `EvaluationHarness`         | Offline testing suite to grade LLM summary quality and prevent hallucination regressions. |
+
+### `@momen124/ai-monitor-otel`
+
+A hyper-thin configuration wrapper. You only install this if you are instrumenting a Node.js application.
+
+| Component                 | Responsibility                                                     |
+| ------------------------- | ------------------------------------------------------------------ |
+| `initTelemetry()`         | One-liner preset for `@opentelemetry/auto-instrumentations-node`   |
+| `GoldenSignalsEnhancer`   | Enriches standard OTel traces to specifically highlight Google SRE signals. |
+
 ### `@momen124/ai-monitor-core`
 
-The brain. Contains the `AIMonitor` HTTP server, `AIService` (LLM integration), `ConfigBuilder` (fluent API), and all shared type contracts (`INotifier`, `IAlert`, `ILogger`, etc.).
+The structural glue.
 
-| Class                  | Purpose                                                                          |
-| ---------------------- | -------------------------------------------------------------------------------- |
-| `AIMonitor`            | Core monitoring server — starts HTTP endpoints, routes alerts to notifiers       |
-| `AIService`            | LLM-powered analysis — log analysis, anomaly detection, auto-healing suggestions |
-| `ConfigBuilder`        | Fluent builder with env-var auto-loading                                         |
-| `ConsoleLogger`        | Default `ILogger` implementation                                                 |
-| `WinstonLoggerAdapter` | Adapter for Winston logger                                                       |
-
-### `@momen124/ai-monitor-notifiers`
-
-Notification delivery channels. Every notifier implements the `INotifier` interface and can format alerts, pipeline statuses, deployments, and daily reports.
-
-| Class              | Channel                  | Requires     |
-| ------------------ | ------------------------ | ------------ |
-| `TelegramNotifier` | Telegram Bot API         | `telegram`   |
-| `SlackNotifier`    | Slack Webhook            | `axios`      |
-| `EmailNotifier`    | SMTP (nodemailer)        | `nodemailer` |
-| `MultiNotifier`    | Composite of N notifiers | —            |
-
-### `@momen124/ai-monitor-instrumentation`
-
-Auto-instrumentation layer. Hooks into your app's runtime to collect Golden Signal metrics with zero code changes.
-
-| Class                     | Responsibility                                                     |
-| ------------------------- | ------------------------------------------------------------------ |
-| `Instrumentation`         | Orchestrator — starts/stops all collectors, provides middleware    |
-| `SystemMetricsCollector`  | CPU & memory polling (interval-based)                              |
-| `HttpInterceptor`         | Express middleware + raw HTTP server wrapping                      |
-| `ErrorInterceptor`        | `uncaughtException` + `unhandledRejection` handlers                |
-| `PerformanceMonitor`      | Manual + automatic operation timing                                |
-| `MetricAggregator`        | Sliding-window P95 & error rate calculation                        |
-| `PrometheusExporter`      | Zero-dependency `/metrics` endpoint (counters, gauges, histograms) |
-| `ExternalResourceMonitor` | Pluggable DB connection & queue length checks                      |
+| Component              | Responsibility                                                     |
+| ---------------------- | ------------------------------------------------------------------ |
+| `ConfigBuilder`        | Fluent builder for loading service environment variables robustly. |
+| `KeepWebhookBridge`    | Express/Fastify routes to receive payloads exclusively from Keep.  |
+| `GlitchTipBridge`      | Adapters for Sentry-compatible payload ingestion.                  |
 
 ---
 
-## HTTP Endpoints
+## Golden Signals
 
-The `AIMonitor` server exposes three built-in endpoints:
+We still prioritize the four Golden Signals (Latency, Traffic, Errors, Saturation). However, instead of calculating these manually in memory, they are derived via **OpenTelemetry**:
 
-| Method | Path        | Description               | Toggle                               |
-| ------ | ----------- | ------------------------- | ------------------------------------ |
-| `GET`  | `/health`   | Health check (JSON)       | `enableHealthEndpoint`               |
-| `POST` | `/alert`    | Receive alerts via HTTP   | `enableAlertEndpoint`                |
-| `POST` | `/pipeline` | Receive pipeline statuses | `enablePipelineEndpoint`             |
-| `GET`  | `/metrics`  | Prometheus scrape target  | `enablePrometheus` (instrumentation) |
+- **Latency**: `http.server.duration` histograms.
+- **Errors**: `http.server.requests` where `http.status_code >= 500`.
+- **Traffic**: Request rates derived from OTel counters.
+- **Saturation**: Pushed via the OTel host metrics receiver (CPU/Memory/Disk).
 
-### Health Check Response
-
-```json
-{
-  "status": "healthy",
-  "enabled": true,
-  "notifiers": 2,
-  "timestamp": "2026-02-08T12:00:00.000Z"
-}
-```
+SigNoz provides the pre-built dashboards to visualize these natively.
