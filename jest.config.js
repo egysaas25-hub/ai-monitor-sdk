@@ -15,5 +15,6 @@ module.exports = {
     '^@momen124/ai-monitor-core$': '<rootDir>/packages/ai-monitor-core/src',
     '^@momen124/ai-monitor-notifiers$': '<rootDir>/packages/ai-monitor-notifiers/src',
     '^@momen124/ai-monitor-instrumentation$': '<rootDir>/packages/ai-monitor-instrumentation/src',
+    '^@momen124/ai-monitor-ai$': '<rootDir>/packages/ai-monitor-ai/src',
   },
 };

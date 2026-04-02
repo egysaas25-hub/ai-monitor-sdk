@@ -30,6 +30,9 @@ export type { IAIMonitorRef, IPlugin } from './plugin';
 export { PluginManager } from './plugin';
 // Export types
 export type {
+  AIEnrichmentResult,
+  AIIncidentContext,
+  AIProvider,
   AlertSeverity,
   DeploymentStatus,
   IAlert,

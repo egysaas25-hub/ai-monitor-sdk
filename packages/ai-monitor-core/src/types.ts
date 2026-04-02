@@ -231,3 +231,47 @@ export interface IConfigBuilderOptions {
   fromEnv?: boolean;
   envPrefix?: string;
 }
+
+/**
+ * AI Incident Context
+ * Normalized format allowing consistent ingestion from varied sources
+ */
+export interface AIIncidentContext {
+  incidentId: string;
+  title: string;
+  summary?: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  service: string;
+  environment: string;
+  labels: Record<string, string>;
+  metrics?: Array<{ name: string; value: number; unit?: string }>;
+  logs?: Array<{ timestamp: string; level: string; message: string }>;
+  traces?: Array<{ traceId: string; spanId?: string; name?: string; durationMs?: number }>;
+  deployments?: Array<{ version: string; time: string; actor?: string }>;
+  runbooks?: Array<{ title: string; url: string }>;
+}
+
+/**
+ * AI Enrichment Result
+ * Standard structure for AI output regarding an incident
+ */
+export interface AIEnrichmentResult {
+  summary: string;
+  probableCauses: Array<{ cause: string; confidence: number }>;
+  recommendedActions: Array<{ action: string; priority: 'p1' | 'p2' | 'p3' }>;
+  risk: 'low' | 'medium' | 'high';
+  needsHumanReview: boolean;
+  model?: string;
+  provider?: string;
+  latencyMs?: number;
+}
+
+/**
+ * AI Provider interface
+ * The base interface any AI adapter must implement (e.g. OpenAI, internal LLM)
+ */
+export interface AIProvider {
+  name: string;
+  enrich(context: AIIncidentContext): Promise<AIEnrichmentResult>;
+  healthCheck?(): Promise<boolean>;
+}
