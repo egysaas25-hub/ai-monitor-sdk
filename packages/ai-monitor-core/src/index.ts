@@ -42,3 +42,12 @@ export type {
   IPipelineStatus,
   PipelineStatus,
 } from './types';
+
+// Epic 4 Synthetics
+export { SyntheticRunner } from './synthetics/synthetic-runner';
+export type {
+  ISyntheticRunResult,
+  ISyntheticStep,
+  ISyntheticStepResult,
+  ISyntheticWorkflow,
+} from './synthetics/types';

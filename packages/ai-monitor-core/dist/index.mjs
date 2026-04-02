@@ -1217,6 +1217,127 @@ ${analysis.suggestions.map((s) => `\u2022 ${s}`).join("\n")}` : ""}`,
     });
   }
 };
+
+// src/synthetics/synthetic-runner.ts
+var SyntheticRunner = class {
+  constructor(alertFn, opts) {
+    this.workflows = /* @__PURE__ */ new Map();
+    this.intervals = /* @__PURE__ */ new Map();
+    this.history = /* @__PURE__ */ new Map();
+    this.lastState = /* @__PURE__ */ new Map();
+    this.alertFn = alertFn;
+    this.logger = opts?.logger ?? new ConsoleLogger();
+    this.maxHistory = opts?.maxHistory ?? 50;
+  }
+  /** Register a synthetic workflow. */
+  addWorkflow(workflow) {
+    this.workflows.set(workflow.name, workflow);
+    this.history.set(workflow.name, []);
+    this.lastState.set(workflow.name, true);
+    return this;
+  }
+  /** Start polling all registered workflows. */
+  start() {
+    for (const [name, workflow] of this.workflows) {
+      const intervalMs = workflow.intervalMs ?? 6e4;
+      const interval = setInterval(() => {
+        this.runWorkflow(workflow).catch((err) => {
+          this.logger.error(`Synthetic '${name}' runner error:`, err);
+        });
+      }, intervalMs);
+      this.intervals.set(name, interval);
+      this.runWorkflow(workflow).catch((err) => {
+        this.logger.error(`Synthetic '${name}' initial run error:`, err);
+      });
+      this.logger.info(`\u{1F9EA} Synthetic '${name}' started (every ${intervalMs / 1e3}s)`);
+    }
+  }
+  /** Stop all synthetic workflows. */
+  stop() {
+    for (const [name, interval] of this.intervals) {
+      clearInterval(interval);
+      this.logger.debug(`Synthetic '${name}' stopped`);
+    }
+    this.intervals.clear();
+  }
+  /** Get run history for a workflow. */
+  getHistory(workflowName) {
+    return [...this.history.get(workflowName) ?? []];
+  }
+  /** Get a summary of all workflows. */
+  getSummary() {
+    const summary = {};
+    for (const [name] of this.workflows) {
+      const hist = this.history.get(name) ?? [];
+      summary[name] = {
+        passing: this.lastState.get(name) ?? true,
+        lastRun: hist[hist.length - 1]
+      };
+    }
+    return summary;
+  }
+  /** Execute a single workflow run. */
+  async runWorkflow(workflow) {
+    const runStart = Date.now();
+    const stepResults = [];
+    let workflowPassed = true;
+    for (const step of workflow.steps) {
+      const stepStart = Date.now();
+      try {
+        const result = await step.execute();
+        stepResults.push({
+          stepName: step.name,
+          passed: result.passed,
+          durationMs: result.durationMs,
+          error: result.error
+        });
+        if (!result.passed) {
+          workflowPassed = false;
+        }
+      } catch (err) {
+        const durationMs = Date.now() - stepStart;
+        stepResults.push({
+          stepName: step.name,
+          passed: false,
+          durationMs,
+          error: err.message ?? "Unknown step error"
+        });
+        workflowPassed = false;
+      }
+    }
+    const runResult = {
+      workflowName: workflow.name,
+      passed: workflowPassed,
+      startedAt: new Date(runStart),
+      durationMs: Date.now() - runStart,
+      stepResults
+    };
+    const hist = this.history.get(workflow.name);
+    hist.push(runResult);
+    if (hist.length > this.maxHistory) {
+      hist.shift();
+    }
+    const wasPassing = this.lastState.get(workflow.name) ?? true;
+    if (!workflowPassed && wasPassing) {
+      const failedSteps = stepResults.filter((s) => !s.passed);
+      await this.alertFn({
+        severity: "CRITICAL",
+        title: `\u{1F9EA} Synthetic '${workflow.name}' FAILED`,
+        message: `Workflow failed at step(s): ${failedSteps.map((s) => `${s.stepName} (${s.error})`).join(", ")}`,
+        metrics: { durationMs: runResult.durationMs, failedSteps: failedSteps.length },
+        timestamp: /* @__PURE__ */ new Date()
+      });
+    } else if (workflowPassed && !wasPassing) {
+      await this.alertFn({
+        severity: "INFO",
+        title: `\u2705 Synthetic '${workflow.name}' recovered`,
+        message: `Workflow is passing again (${runResult.durationMs}ms)`,
+        timestamp: /* @__PURE__ */ new Date()
+      });
+    }
+    this.lastState.set(workflow.name, workflowPassed);
+  }
+};
 export {
   AIMonitor,
   AIService,
@@ -1225,6 +1346,7 @@ export {
   ConsoleLogger,
   HealthProbeManager,
   PluginManager,
+  SyntheticRunner,
   WinstonLoggerAdapter,
   createConfig,
   validateConfig

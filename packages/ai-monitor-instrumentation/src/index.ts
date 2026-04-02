@@ -29,3 +29,9 @@ export type {
   ISystemMetrics,
   IThresholds,
 } from './types';
+
+// Epic 5 Infra Modules
+export { K8sMetadataEnricher, type K8sMetadata } from './k8s-enricher';
+export { DeploymentTracker, type IDeploymentEvent, type IDeploymentCorrelation } from './deployment-tracker';
+export { QueueMonitor, type IQueueMetrics } from './queue-monitor';
+export { ServerlessLifecycle, type IServerlessMetrics } from './serverless-hooks';

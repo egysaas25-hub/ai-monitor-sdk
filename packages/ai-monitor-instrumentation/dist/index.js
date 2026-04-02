@@ -30,14 +30,18 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
+  DeploymentTracker: () => DeploymentTracker,
   ErrorInterceptor: () => ErrorInterceptor,
   ExternalResourceMonitor: () => ExternalResourceMonitor,
   HttpInterceptor: () => HttpInterceptor,
   Instrumentation: () => Instrumentation,
+  K8sMetadataEnricher: () => K8sMetadataEnricher,
   LogAggregator: () => LogAggregator,
   MetricAggregator: () => MetricAggregator,
   PerformanceMonitor: () => PerformanceMonitor,
   PrometheusExporter: () => PrometheusExporter,
+  QueueMonitor: () => QueueMonitor,
+  ServerlessLifecycle: () => ServerlessLifecycle,
   SystemMetricsCollector: () => SystemMetricsCollector,
   TraceContext: () => TraceContext,
   traceMiddleware: () => traceMiddleware
@@ -1050,16 +1054,280 @@ function traceMiddleware() {
     TraceContext.run(ctx, () => next());
   };
 }
+
+// src/k8s-enricher.ts
+var fs = __toESM(require("fs"));
+var K8sMetadataEnricher = class {
+  constructor() {
+    this.cached = null;
+  }
+  /** Read and cache K8s metadata. */
+  getMetadata() {
+    if (this.cached) return this.cached;
+    this.cached = {
+      podName: this.readEnv("HOSTNAME") ?? this.readEnv("POD_NAME"),
+      namespace: this.readFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace") ?? this.readEnv("POD_NAMESPACE"),
+      nodeName: this.readEnv("NODE_NAME"),
+      containerName: this.readEnv("CONTAINER_NAME"),
+      clusterName: this.readEnv("CLUSTER_NAME"),
+      podIp: this.readEnv("POD_IP")
+    };
+    return this.cached;
+  }
+  /** Returns true if we appear to be running in a K8s pod. */
+  isRunningInK8s() {
+    const meta = this.getMetadata();
+    return !!(meta.namespace || this.fileExists("/var/run/secrets/kubernetes.io/serviceaccount/token"));
+  }
+  /** Returns metadata as a flat labels object for telemetry tagging. */
+  toLabels() {
+    const meta = this.getMetadata();
+    const labels = {};
+    if (meta.podName) labels["k8s.pod.name"] = meta.podName;
+    if (meta.namespace) labels["k8s.namespace"] = meta.namespace;
+    if (meta.nodeName) labels["k8s.node.name"] = meta.nodeName;
+    if (meta.containerName) labels["k8s.container.name"] = meta.containerName;
+    if (meta.clusterName) labels["k8s.cluster.name"] = meta.clusterName;
+    if (meta.podIp) labels["k8s.pod.ip"] = meta.podIp;
+    return labels;
+  }
+  /** Reset cached metadata (useful for testing). */
+  reset() {
+    this.cached = null;
+  }
+  readEnv(key) {
+    return process.env[key] || void 0;
+  }
+  readFile(filePath) {
+    try {
+      return fs.readFileSync(filePath, "utf-8").trim() || void 0;
+    } catch {
+      return void 0;
+    }
+  }
+  fileExists(filePath) {
+    try {
+      fs.accessSync(filePath);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+};
+
+// src/deployment-tracker.ts
+var DeploymentTracker = class {
+  /**
+   * @param opts.maxEvents Maximum deployment events to retain (default: 100)
+   * @param opts.correlationWindowMs Time window in ms to consider a deploy relevant (default: 30 min)
+   */
+  constructor(opts) {
+    this.deployments = [];
+    this.maxEvents = opts?.maxEvents ?? 100;
+    this.correlationWindowMs = opts?.correlationWindowMs ?? 30 * 60 * 1e3;
+  }
+  /** Record a new deployment event. */
+  recordDeployment(event) {
+    this.deployments.push(event);
+    if (this.deployments.length > this.maxEvents) {
+      this.deployments.shift();
+    }
+  }
+  /**
+   * Check if an alert timestamp falls within the correlation window
+   * after any recent deployment.
+   */
+  correlate(alertTimestamp) {
+    const alertMs = alertTimestamp.getTime();
+    for (let i = this.deployments.length - 1; i >= 0; i--) {
+      const dep = this.deployments[i];
+      const depMs = dep.time.getTime();
+      const diff = alertMs - depMs;
+      if (diff >= 0 && diff <= this.correlationWindowMs) {
+        return {
+          deployment: dep,
+          timeSinceDeployMs: diff
+        };
+      }
+    }
+    return null;
+  }
+  /** Return all stored deployment events. */
+  getDeployments() {
+    return [...this.deployments];
+  }
+  /** Clear all recorded deployments. */
+  clear() {
+    this.deployments = [];
+  }
+};
+
+// src/queue-monitor.ts
+var import_ai_monitor_core = require("@momen124/ai-monitor-core");
+var QueueMonitor = class {
+  constructor(alertFn, opts) {
+    this.enqueueCount = 0;
+    this.dequeueCount = 0;
+    this.errorCount = 0;
+    this.totalProcessingMs = 0;
+    this.processedItems = 0;
+    this.lastAlertSeverity = null;
+    this.alertFn = alertFn;
+    this.logger = opts?.logger ?? new import_ai_monitor_core.ConsoleLogger();
+    this.depthWarning = opts?.depthWarning ?? 100;
+    this.depthCritical = opts?.depthCritical ?? 1e3;
+  }
+  /** Record an enqueue event. */
+  recordEnqueue(count = 1) {
+    this.enqueueCount += count;
+    this.checkThresholds();
+  }
+  /** Record a dequeue / processing completion. */
+  recordDequeue(durationMs) {
+    this.dequeueCount++;
+    this.totalProcessingMs += durationMs;
+    this.processedItems++;
+  }
+  /** Record a processing error. */
+  recordError() {
+    this.errorCount++;
+  }
+  /** Get current queue metrics. */
+  getMetrics() {
+    return {
+      depth: this.enqueueCount - this.dequeueCount,
+      totalEnqueued: this.enqueueCount,
+      totalDequeued: this.dequeueCount,
+      totalErrors: this.errorCount,
+      avgProcessingMs: this.processedItems > 0 ? this.totalProcessingMs / this.processedItems : 0
+    };
+  }
+  /** Reset all counters. */
+  reset() {
+    this.enqueueCount = 0;
+    this.dequeueCount = 0;
+    this.errorCount = 0;
+    this.totalProcessingMs = 0;
+    this.processedItems = 0;
+    this.lastAlertSeverity = null;
+  }
+  checkThresholds() {
+    const depth = this.enqueueCount - this.dequeueCount;
+    if (depth >= this.depthCritical && this.lastAlertSeverity !== "CRITICAL") {
+      this.lastAlertSeverity = "CRITICAL";
+      this.alertFn({
+        severity: "CRITICAL",
+        title: "\u{1F534} Queue depth CRITICAL",
+        message: `Queue depth is ${depth} (threshold: ${this.depthCritical})`,
+        metrics: { depth, threshold: this.depthCritical },
+        timestamp: /* @__PURE__ */ new Date()
+      }).catch((e) => this.logger.error("Queue alert error:", e));
+    } else if (depth >= this.depthWarning && depth < this.depthCritical && this.lastAlertSeverity !== "WARNING") {
+      this.lastAlertSeverity = "WARNING";
+      this.alertFn({
+        severity: "WARNING",
+        title: "\u26A0\uFE0F Queue depth WARNING",
+        message: `Queue depth is ${depth} (threshold: ${this.depthWarning})`,
+        metrics: { depth, threshold: this.depthWarning },
+        timestamp: /* @__PURE__ */ new Date()
+      }).catch((e) => this.logger.error("Queue alert error:", e));
+    } else if (depth < this.depthWarning) {
+      this.lastAlertSeverity = null;
+    }
+  }
+};
+
+// src/serverless-hooks.ts
+var import_ai_monitor_core2 = require("@momen124/ai-monitor-core");
+var ServerlessLifecycle = class {
+  constructor(opts) {
+    this.isCold = true;
+    this.coldStarts = 0;
+    this.warmInvocations = 0;
+    this.totalColdStartMs = 0;
+    this.totalWarmMs = 0;
+    this.shutdownHandlers = [];
+    this.logger = opts?.logger ?? new import_ai_monitor_core2.ConsoleLogger();
+  }
+  /** Call at the start of each invocation. Returns cold-start indicator. */
+  onInvocationStart() {
+    const isColdStart = this.isCold;
+    if (isColdStart) {
+      this.coldStarts++;
+      this.isCold = false;
+      this.logger.info("\u2744\uFE0F Cold start detected");
+    } else {
+      this.warmInvocations++;
+    }
+    return { isColdStart, startTime: Date.now() };
+  }
+  /** Call at the end of each invocation with the context from onInvocationStart. */
+  onInvocationEnd(ctx) {
+    const durationMs = Date.now() - ctx.startTime;
+    if (ctx.isColdStart) {
+      this.totalColdStartMs += durationMs;
+    } else {
+      this.totalWarmMs += durationMs;
+    }
+  }
+  /** Register a shutdown handler (e.g. flush buffers, close connections). */
+  onShutdown(handler) {
+    this.shutdownHandlers.push(handler);
+  }
+  /** Execute all registered shutdown handlers. */
+  async executeShutdown() {
+    this.logger.info("\u{1F6D1} Executing serverless shutdown handlers");
+    for (const handler of this.shutdownHandlers) {
+      try {
+        await handler();
+      } catch (err) {
+        this.logger.error(`Shutdown handler error: ${err.message}`);
+      }
+    }
+  }
+  /**
+   * Wrap a serverless handler function with lifecycle instrumentation.
+   * Works with AWS Lambda style `(event, context) => Promise<result>` handlers.
+   */
+  wrapHandler(fn) {
+    return async (event) => {
+      const ctx = this.onInvocationStart();
+      try {
+        const result = await fn(event);
+        this.onInvocationEnd(ctx);
+        return result;
+      } catch (err) {
+        this.onInvocationEnd(ctx);
+        throw err;
+      }
+    };
+  }
+  /** Get current serverless lifecycle metrics. */
+  getMetrics() {
+    const total = this.coldStarts + this.warmInvocations;
+    return {
+      coldStarts: this.coldStarts,
+      warmInvocations: this.warmInvocations,
+      totalInvocations: total,
+      avgColdStartMs: this.coldStarts > 0 ? this.totalColdStartMs / this.coldStarts : 0,
+      avgWarmMs: this.warmInvocations > 0 ? this.totalWarmMs / this.warmInvocations : 0
+    };
+  }
+};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  DeploymentTracker,
   ErrorInterceptor,
   ExternalResourceMonitor,
   HttpInterceptor,
   Instrumentation,
+  K8sMetadataEnricher,
   LogAggregator,
   MetricAggregator,
   PerformanceMonitor,
   PrometheusExporter,
+  QueueMonitor,
+  ServerlessLifecycle,
   SystemMetricsCollector,
   TraceContext,
   traceMiddleware

@@ -198,14 +198,14 @@ interface IProbeResult {
     consecutiveFailures: number;
     responseTimeMs?: number;
 }
-type AlertFn = (alert: IAlert) => Promise<void>;
+type AlertFn$1 = (alert: IAlert) => Promise<void>;
 declare class HealthProbeManager {
     private probes;
     private results;
     private intervals;
     private alertFn;
     private logger;
-    constructor(alertFn: AlertFn, logger?: ILogger);
+    constructor(alertFn: AlertFn$1, logger?: ILogger);
     /**
      * Add an HTTP health probe.
      */
@@ -720,4 +720,83 @@ declare class AIMonitor {
     private notifyAll;
 }
 
-export { AIMonitor, AIService, AlertDeduplicator, type AlertSeverity, ConfigBuilder, ConsoleLogger, type DeploymentStatus, HealthProbeManager, type IAIAnalysis, type IAIConfig, type IAIMonitorRef, type IAIService, type IAlert, type IConfigBuilderOptions, type IDailyReport, type IDeduplicationConfig, type IDeployment, type ILogEntry, type ILogger, type IMetricData, type IMonitorConfig, type INotifier, type IPipelineStatus, type IPlugin, type IProbeConfig, type IProbeResult, type PipelineStatus, PluginManager, WinstonLoggerAdapter, createConfig, validateConfig };
+/**
+ * Synthetic workflow types
+ */
+/**
+ * A single step inside a synthetic workflow.
+ */
+interface ISyntheticStep {
+    /** Human-readable step name */
+    name: string;
+    /** Async function that performs the check */
+    execute: () => Promise<ISyntheticStepResult>;
+}
+/**
+ * Result of a single synthetic step execution.
+ */
+interface ISyntheticStepResult {
+    passed: boolean;
+    durationMs: number;
+    error?: string;
+}
+/**
+ * Definition of a synthetic workflow (a sequence of steps).
+ */
+interface ISyntheticWorkflow {
+    /** Unique workflow name */
+    name: string;
+    /** Polling interval in ms (default: 60_000) */
+    intervalMs?: number;
+    /** Ordered list of steps to execute */
+    steps: ISyntheticStep[];
+}
+/**
+ * Result of a full workflow run (all steps).
+ */
+interface ISyntheticRunResult {
+    workflowName: string;
+    passed: boolean;
+    startedAt: Date;
+    durationMs: number;
+    stepResults: Array<ISyntheticStepResult & {
+        stepName: string;
+    }>;
+    error?: string;
+}
+
+type AlertFn = (alert: IAlert) => Promise<void>;
+/**
+ * SyntheticRunner — schedules and executes synthetic workflow checks
+ * on a configurable interval and fires alerts on failure/recovery.
+ */
+declare class SyntheticRunner {
+    private workflows;
+    private intervals;
+    private history;
+    private lastState;
+    private alertFn;
+    private logger;
+    private maxHistory;
+    constructor(alertFn: AlertFn, opts?: {
+        logger?: ILogger;
+        maxHistory?: number;
+    });
+    /** Register a synthetic workflow. */
+    addWorkflow(workflow: ISyntheticWorkflow): this;
+    /** Start polling all registered workflows. */
+    start(): void;
+    /** Stop all synthetic workflows. */
+    stop(): void;
+    /** Get run history for a workflow. */
+    getHistory(workflowName: string): ISyntheticRunResult[];
+    /** Get a summary of all workflows. */
+    getSummary(): Record<string, {
+        passing: boolean;
+        lastRun?: ISyntheticRunResult;
+    }>;
+    /** Execute a single workflow run. */
+    private runWorkflow;
+}
+
+export { AIMonitor, AIService, AlertDeduplicator, type AlertSeverity, ConfigBuilder, ConsoleLogger, type DeploymentStatus, HealthProbeManager, type IAIAnalysis, type IAIConfig, type IAIMonitorRef, type IAIService, type IAlert, type IConfigBuilderOptions, type IDailyReport, type IDeduplicationConfig, type IDeployment, type ILogEntry, type ILogger, type IMetricData, type IMonitorConfig, type INotifier, type IPipelineStatus, type IPlugin, type IProbeConfig, type IProbeResult, type ISyntheticRunResult, type ISyntheticStep, type ISyntheticStepResult, type ISyntheticWorkflow, type PipelineStatus, PluginManager, SyntheticRunner, WinstonLoggerAdapter, createConfig, validateConfig };
